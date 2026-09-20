@@ -139,6 +139,38 @@ def _cmd_explain(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_label_outcomes(args: argparse.Namespace) -> int:
+    """Emit VECTA.OUTCOME.* research outcomes for every session under a
+    QSIPrep results tree. Writes one JSON per session (one array per file)
+    and a flat cohort-level TSV."""
+    from .research.outcomes import label_cohort
+
+    outcomes = label_cohort(Path(args.results_root), pipeline_version=args.pipeline_version)
+    out = Path(args.output)
+    out.mkdir(parents=True, exist_ok=True)
+
+    by_session: dict[tuple[str, str], list] = {}
+    for o in outcomes:
+        by_session.setdefault((o.subject_id, o.session_id), []).append(o)
+    for (subj, ses), records in by_session.items():
+        per = out / f"{subj}_{ses}"
+        per.mkdir(exist_ok=True)
+        (per / "outcomes.json").write_text(
+            json.dumps([r.to_dict() for r in records], indent=2)
+        )
+
+    # Long-format TSV across the cohort
+    lines = ["subject_id\tsession_id\toutcome_id\tvalue\tstate"]
+    for o in outcomes:
+        val = "" if o.value is None else str(o.value)
+        lines.append(f"{o.subject_id}\t{o.session_id}\t{o.outcome_id}\t{val}\t{o.state}")
+    (out / "outcomes_long.tsv").write_text("\n".join(lines) + "\n")
+
+    print(f"Labeled {len(by_session)} sessions, {len(outcomes)} outcome records → {out}",
+          file=sys.stderr)
+    return 0
+
+
 def _cmd_version(args: argparse.Namespace) -> int:
     print(f"vecta-dwi software: {VECTA_VERSION}")
     print(f"specification:      {SPEC_VERSION}")
@@ -175,6 +207,17 @@ def build_parser() -> argparse.ArgumentParser:
     e.add_argument("--assessment", required=True, help="Path to a vecta.json file")
     e.add_argument("--finding-id", required=True)
     e.set_defaults(func=_cmd_explain)
+
+    lo = sub.add_parser(
+        "label-outcomes",
+        help="Emit ResearchOutcome records from a QSIPrep/QSIRecon results tree",
+    )
+    lo.add_argument("--results-root", required=True,
+                    help="Root containing qsiprep_single_run_output/, qc/, qsirecon_single_run_output/")
+    lo.add_argument("--output", required=True, help="Directory for per-session + cohort outcomes")
+    lo.add_argument("--pipeline-version", default=None,
+                    help="Pipeline version identifier to record in every outcome record")
+    lo.set_defaults(func=_cmd_label_outcomes)
 
     ver = sub.add_parser("version", help="Print software + spec versions")
     ver.set_defaults(func=_cmd_version)

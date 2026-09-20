@@ -274,6 +274,51 @@ that separates Vecta from BIDS-only readiness tools.
 
 ---
 
+## v0.1.0 — 2026-09-19 (draft, outcome extractor + first Vecta × outcome join)
+
+Enables the CIDUR internal validation loop described in Study Design §12
+("Internal validation should test both software correctness and
+scientific association") on the actual Gugger Lab pipeline outputs.
+
+### Added
+- `src/vecta/research/outcomes.py` — outcome extractor for the CIDUR-
+  shape QSIPrep results tree:
+  - `check_session_derivatives()` — structural sanity of the
+    required-derivative inventory per outcome-labeling manual §3.
+  - `read_subject_qc()` — parse `subject_qc.json` (CIDUR team's
+    ready-made PASS/FAIL structure).
+  - `label_session()` / `label_cohort()` — emit the six primary +
+    secondary outcome records per outcome-labeling manual §6.
+  - Deliberately does NOT parse raw QSIPrep logs; log-based failure
+    attribution is a v0.2 task requiring a stable log-format contract.
+- `specification/v0.1/schemas/output/research_outcome.schema.json` —
+  formal contract for the outcome record, keeping outcome labeling
+  cleanly separate from the deterministic assessment (Output Tech
+  Spec §35).
+- `cli.py`: `vecta label-outcomes` subcommand.
+- `tests/integration/test_outcomes.py` — 5 tests covering success,
+  failure, count mismatch, SKIP → not_applicable mapping, and
+  schema-validation of every emitted outcome.
+
+### First live CIDUR × QSIPrep join
+- Labeled all 62 CIDUR sessions from `/mnt/nfs/Gugger_Lab/NIR/dwi_CIDUR/results`.
+- Joined against the earlier Vecta run → 60/62 sessions matched.
+- Full report at `~/Documents/vecta_dwi_cidur_run/JOIN_REPORT.md`.
+- Headline (engineering, not scientific):
+  - **26/26 Vecta-`ready` sessions produced QSIPrep derivatives (100%).**
+  - **33/34 Vecta-`ready_with_limitations` sessions produced derivatives (97%).**
+  - The one failure (`sub-076/ses-1`) is a GE SIGNA Premier session
+    where Vecta had flagged missing reverse-PE — the exact
+    upstream-to-downstream pattern Paper 1 is designed to characterize.
+- The 2 outcome-only sessions (`sub-002/ses-1`, `sub-044/ses-2`)
+  exposed a v0.2 gap: Vecta should emit a cohort-integrity finding
+  when an expected session has no DWI at all.
+
+### Verified
+- All 27 integration tests pass (was 22).
+
+---
+
 ## v0.1.0 — 2026-09-19 (draft, D2/D4 encoded + VECTA-DWI-030 added)
 
 Encoding the D2 (localizer exclusion) and D4 (tolerance justification)
