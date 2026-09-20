@@ -1,0 +1,624 @@
+{
+  "assessment_id": "va-<UUID>",
+  "assessment_status": {
+    "completed_at": "<TIMESTAMP>",
+    "domains_attempted": [
+      "scanner",
+      "acquisition",
+      "bids"
+    ],
+    "domains_completed": [
+      "scanner",
+      "acquisition",
+      "bids"
+    ],
+    "errors": [],
+    "started_at": "<TIMESTAMP>",
+    "state": "completed_with_unknowns",
+    "warnings": []
+  },
+  "criteria": [
+    {
+      "criterion_id": "VECTA-DWI-001",
+      "criterion_version": "0.1.0",
+      "evaluated_at": "<TIMESTAMP>",
+      "evaluation_engine_version": "0.1.0",
+      "finding_refs": [
+        "finding-0001"
+      ],
+      "input_snapshot": {
+        "VECTA.DWI.ACQ.PE_DIRECTION": {
+          "state": "unknown",
+          "value": null
+        }
+      },
+      "profile_id": "dwi_connectomics",
+      "status": "finding"
+    },
+    {
+      "criterion_id": "VECTA-DWI-014",
+      "criterion_version": "0.1.0",
+      "evaluated_at": "<TIMESTAMP>",
+      "evaluation_engine_version": "0.1.0",
+      "finding_refs": [],
+      "input_snapshot": {
+        "VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE": {
+          "state": "unknown",
+          "value": null
+        }
+      },
+      "profile_id": "dwi_connectomics",
+      "status": "unknown"
+    },
+    {
+      "criterion_id": "VECTA-DWI-021",
+      "criterion_version": "0.1.0",
+      "evaluated_at": "<TIMESTAMP>",
+      "evaluation_engine_version": "0.1.0",
+      "finding_refs": [
+        "finding-0002"
+      ],
+      "input_snapshot": {
+        "VECTA.DWI.ACQ.PE_DIRECTION": {
+          "state": "unknown",
+          "value": null
+        },
+        "VECTA.DWI.ACQ.TOTAL_READOUT_TIME_PRESENT": {
+          "state": "observed",
+          "value": false
+        }
+      },
+      "profile_id": "dwi_connectomics",
+      "status": "finding"
+    },
+    {
+      "criterion_id": "VECTA-DWI-050",
+      "criterion_version": "0.1.0",
+      "evaluated_at": "<TIMESTAMP>",
+      "evaluation_engine_version": "0.1.0",
+      "finding_refs": [],
+      "input_snapshot": {},
+      "profile_id": "dwi_connectomics",
+      "status": "unknown"
+    },
+    {
+      "criterion_id": "VECTA-DWI-060",
+      "criterion_version": "0.1.0",
+      "evaluated_at": "<TIMESTAMP>",
+      "evaluation_engine_version": "0.1.0",
+      "finding_refs": [],
+      "input_snapshot": {},
+      "profile_id": "dwi_connectomics",
+      "status": "unknown"
+    }
+  ],
+  "derived_metrics": {},
+  "evidence": [
+    {
+      "collector_id": "bids_collector",
+      "collector_version": "0.1.0",
+      "evidence_id": "ev-00001",
+      "privacy_status": "safe",
+      "raw_value": "Siemens",
+      "source_field": "Manufacturer",
+      "source_hash": "<HASH>",
+      "source_locator": "<FIXTURE_ROOT>/sub-001/ses-01/dwi/sub-001_ses-01_dwi.json",
+      "source_type": "bids_json",
+      "timestamp": "<TIMESTAMP>"
+    },
+    {
+      "collector_id": "bids_collector",
+      "collector_version": "0.1.0",
+      "evidence_id": "ev-00002",
+      "privacy_status": "safe",
+      "raw_value": "Prisma",
+      "source_field": "ManufacturersModelName",
+      "source_hash": "<HASH>",
+      "source_locator": "<FIXTURE_ROOT>/sub-001/ses-01/dwi/sub-001_ses-01_dwi.json",
+      "source_type": "bids_json",
+      "timestamp": "<TIMESTAMP>"
+    },
+    {
+      "collector_id": "bids_collector",
+      "collector_version": "0.1.0",
+      "evidence_id": "ev-00003",
+      "privacy_status": "safe",
+      "raw_value": 3.0,
+      "source_field": "MagneticFieldStrength",
+      "source_hash": "<HASH>",
+      "source_locator": "<FIXTURE_ROOT>/sub-001/ses-01/dwi/sub-001_ses-01_dwi.json",
+      "source_type": "bids_json",
+      "timestamp": "<TIMESTAMP>"
+    },
+    {
+      "collector_id": "bids_collector",
+      "collector_version": "0.1.0",
+      "evidence_id": "ev-00004",
+      "privacy_status": "safe",
+      "raw_value": 8.4,
+      "source_field": "RepetitionTime",
+      "source_hash": "<HASH>",
+      "source_locator": "<FIXTURE_ROOT>/sub-001/ses-01/dwi/sub-001_ses-01_dwi.json",
+      "source_type": "bids_json",
+      "timestamp": "<TIMESTAMP>"
+    },
+    {
+      "collector_id": "bids_collector",
+      "collector_version": "0.1.0",
+      "evidence_id": "ev-00005",
+      "privacy_status": "safe",
+      "raw_value": 0.081,
+      "source_field": "EchoTime",
+      "source_hash": "<HASH>",
+      "source_locator": "<FIXTURE_ROOT>/sub-001/ses-01/dwi/sub-001_ses-01_dwi.json",
+      "source_type": "bids_json",
+      "timestamp": "<TIMESTAMP>"
+    },
+    {
+      "collector_id": "bids_collector",
+      "collector_version": "0.1.0",
+      "evidence_id": "ev-00006",
+      "privacy_status": "safe",
+      "source_field": "nifti_header",
+      "source_hash": "<HASH>",
+      "source_locator": "<FIXTURE_ROOT>/sub-001/ses-01/dwi/sub-001_ses-01_dwi.nii.gz",
+      "source_type": "nifti_header",
+      "timestamp": "<TIMESTAMP>"
+    },
+    {
+      "collector_id": "bids_collector",
+      "collector_version": "0.1.0",
+      "evidence_id": "ev-00007",
+      "privacy_status": "safe",
+      "source_field": "bval",
+      "source_hash": "<HASH>",
+      "source_locator": "<FIXTURE_ROOT>/sub-001/ses-01/dwi/sub-001_ses-01_dwi.bval",
+      "source_type": "bval",
+      "timestamp": "<TIMESTAMP>"
+    },
+    {
+      "collector_id": "bids_collector",
+      "collector_version": "0.1.0",
+      "evidence_id": "ev-00008",
+      "privacy_status": "safe",
+      "source_field": "bvec",
+      "source_hash": "<HASH>",
+      "source_locator": "<FIXTURE_ROOT>/sub-001/ses-01/dwi/sub-001_ses-01_dwi.bvec",
+      "source_type": "bvec",
+      "timestamp": "<TIMESTAMP>"
+    }
+  ],
+  "findings": [
+    {
+      "affected_profile": "dwi_connectomics",
+      "category": "evidence_insufficiency",
+      "confidence": "high",
+      "criterion_id": "VECTA-DWI-001",
+      "criterion_version": "0.1.0",
+      "empirical_status": {
+        "state": "not_tested"
+      },
+      "evidence_refs": [
+        "EV-DWI-PE-002"
+      ],
+      "finding_id": "finding-0001",
+      "label": "Phase-encoding direction cannot be determined",
+      "lifecycle_origin": "L3_METADATA",
+      "metric_refs": [],
+      "observed_condition": {
+        "pe_direction_state": "unknown"
+      },
+      "potential_effects": [
+        {
+          "causal_claim": false,
+          "effect_id": "distortion_correction_configuration_ambiguous",
+          "evidence_refs": [
+            "EV-DWI-PE-002"
+          ],
+          "relation": "plausible",
+          "wording": "Selected distortion-correction strategy may be ambiguous or\nrequire manual configuration in the absence of a documented\nPE direction.\n"
+        },
+        {
+          "causal_claim": false,
+          "effect_id": "manual_intervention_required",
+          "evidence_refs": [
+            "EV-DWI-PE-002"
+          ],
+          "relation": "plausible",
+          "wording": "The pipeline is likely to require case-specific human review\nto select or approve a distortion-correction path.\n"
+        }
+      ],
+      "recommended_actions": [
+        {
+          "action_class": "re_export",
+          "action_id": "recover_pe_from_source",
+          "automated": false,
+          "changes_source_data": false,
+          "requires_human_approval": true,
+          "text": "Attempt to recover PhaseEncodingDirection from source DICOM\nor scanner protocol documentation, then regenerate the BIDS\nsidecar.\n"
+        },
+        {
+          "action_class": "document",
+          "action_id": "document_pe_absence",
+          "automated": false,
+          "changes_source_data": false,
+          "requires_human_approval": true,
+          "text": "If PhaseEncodingDirection cannot be recovered, document the\nlimitation in the study's analysis notes.\n"
+        }
+      ],
+      "reference_condition": {
+        "essential_metadata": [
+          "phase_encoding_direction"
+        ],
+        "profile": "dwi_connectomics"
+      },
+      "severity": "major",
+      "severity_basis": [
+        "pipeline_requirement"
+      ],
+      "severity_status": "provisional",
+      "spec_version": "0.1.0",
+      "variable_refs": [
+        "VECTA.DWI.ACQ.PE_DIRECTION"
+      ]
+    },
+    {
+      "affected_profile": "dwi_connectomics",
+      "category": "metadata_integrity",
+      "confidence": "high",
+      "criterion_id": "VECTA-DWI-021",
+      "criterion_version": "0.1.0",
+      "empirical_status": {
+        "state": "not_tested"
+      },
+      "evidence_refs": [
+        "EV-DWI-META-001"
+      ],
+      "finding_id": "finding-0002",
+      "label": "One or more essential metadata items are missing or unknown",
+      "lifecycle_origin": "L3_METADATA",
+      "metric_refs": [],
+      "observed_condition": {
+        "essential_metadata_missing_or_unknown": true
+      },
+      "potential_effects": [
+        {
+          "causal_claim": false,
+          "effect_id": "distortion_correction_strategy_constrained",
+          "evidence_refs": [
+            "EV-DWI-META-001"
+          ],
+          "relation": "plausible",
+          "wording": "Distortion correction may fall back to a suboptimal strategy\nor be skipped when essential PE / timing metadata are absent.\n"
+        }
+      ],
+      "recommended_actions": [
+        {
+          "action_class": "review",
+          "action_id": "review_essential_metadata",
+          "automated": false,
+          "changes_source_data": false,
+          "requires_human_approval": true,
+          "text": "Confirm which essential metadata items are missing and\nrecover them from source data or protocol documentation\nwhere possible.\n"
+        }
+      ],
+      "reference_condition": {
+        "essential_metadata": [
+          "phase_encoding_direction",
+          "total_readout_time_or_equivalent"
+        ],
+        "profile": "dwi_connectomics"
+      },
+      "severity": "major",
+      "severity_basis": [
+        "pipeline_requirement"
+      ],
+      "severity_status": "provisional",
+      "spec_version": "0.1.0",
+      "variable_refs": [
+        "VECTA.DWI.ACQ.PE_DIRECTION",
+        "VECTA.DWI.ACQ.TOTAL_READOUT_TIME_PRESENT"
+      ]
+    }
+  ],
+  "profile": {
+    "id": "dwi_connectomics",
+    "version": "0.1.0"
+  },
+  "provenance": {
+    "executed_at": "<TIMESTAMP>",
+    "profile_version": "0.1.0",
+    "schema_version": "0.1.0",
+    "specification_version": "0.1.0",
+    "vecta_software_version": "0.1.0-dev0"
+  },
+  "readiness": {
+    "blocking_finding_refs": [],
+    "dimensions": {
+      "assessment_completeness": {
+        "applicable_variables": 16,
+        "calculation_id": "assessment_completeness_v1",
+        "evaluable_criteria": 2,
+        "extraction_failed": 0,
+        "invalid": 0,
+        "not_collected": 0,
+        "observed_or_derived": 11,
+        "ratio": 0.6875,
+        "unknown": 5,
+        "unknown_criteria": 3
+      },
+      "processing_readiness": {
+        "contributing_findings": [
+          "finding-0001"
+        ],
+        "state": "review_required"
+      }
+    },
+    "limitations": [],
+    "profile_id": "dwi_connectomics",
+    "profile_version": "0.1.0",
+    "review_finding_refs": [
+      "finding-0001"
+    ],
+    "rule_version": "readiness_dwi_v1",
+    "state": "review_required"
+  },
+  "schema_version": "0.1.0",
+  "session_id": "01",
+  "subject_id": "001",
+  "variables": {
+    "VECTA.DWI.ACQ.BVAL_COUNT": {
+      "canonical_unit": "count",
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [
+        "ev-00007"
+      ],
+      "extractor_id": "extract_bval_count_v1",
+      "extractor_version": "0.1.0",
+      "state": "observed",
+      "value": 7,
+      "variable_id": "VECTA.DWI.ACQ.BVAL_COUNT",
+      "warnings": []
+    },
+    "VECTA.DWI.ACQ.BVEC_COUNT": {
+      "canonical_unit": "count",
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [
+        "ev-00008"
+      ],
+      "extractor_id": "extract_bvec_count_v1",
+      "extractor_version": "0.1.0",
+      "state": "observed",
+      "value": 7,
+      "variable_id": "VECTA.DWI.ACQ.BVEC_COUNT",
+      "warnings": []
+    },
+    "VECTA.DWI.ACQ.BVEC_PLAUSIBILITY": {
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [
+        "ev-00008",
+        "ev-00007"
+      ],
+      "extractor_id": "derive_bvec_plausibility_v1",
+      "extractor_version": "0.1.0",
+      "state": "derived",
+      "value": true,
+      "variable_id": "VECTA.DWI.ACQ.BVEC_PLAUSIBILITY",
+      "warnings": []
+    },
+    "VECTA.DWI.ACQ.PE_DIRECTION": {
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [],
+      "extractor_id": "extract_pe_direction_v1",
+      "extractor_version": "0.1.0",
+      "normalization_rule": "bids_pe_direction_v1",
+      "state": "unknown",
+      "value": null,
+      "variable_id": "VECTA.DWI.ACQ.PE_DIRECTION",
+      "warnings": []
+    },
+    "VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE": {
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [],
+      "extractor_id": "reverse_pe_availability_v1",
+      "extractor_version": "0.1.0",
+      "state": "unknown",
+      "value": null,
+      "variable_id": "VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE",
+      "warnings": []
+    },
+    "VECTA.DWI.ACQ.SHELL_COUNT": {
+      "canonical_unit": "count",
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [
+        "ev-00007"
+      ],
+      "extractor_id": "derive_shell_count_v1",
+      "extractor_version": "0.1.0",
+      "state": "derived",
+      "value": 1,
+      "variable_id": "VECTA.DWI.ACQ.SHELL_COUNT",
+      "warnings": []
+    },
+    "VECTA.DWI.ACQ.TOTAL_READOUT_TIME_PRESENT": {
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [],
+      "extractor_id": "extract_total_readout_time_present_v1",
+      "extractor_version": "0.1.0",
+      "state": "observed",
+      "value": false,
+      "variable_id": "VECTA.DWI.ACQ.TOTAL_READOUT_TIME_PRESENT",
+      "warnings": []
+    },
+    "VECTA.DWI.ACQ.VOLUME_COUNT": {
+      "canonical_unit": "count",
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [
+        "ev-00006"
+      ],
+      "extractor_id": "extract_volume_count_v1",
+      "extractor_version": "0.1.0",
+      "state": "observed",
+      "value": 7,
+      "variable_id": "VECTA.DWI.ACQ.VOLUME_COUNT",
+      "warnings": []
+    },
+    "VECTA.DWI.ACQ.VOXEL_SIZE": {
+      "canonical_unit": "mm",
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [
+        "ev-00006"
+      ],
+      "extractor_id": "extract_voxel_size_v1",
+      "extractor_version": "0.1.0",
+      "state": "observed",
+      "value": [
+        2.0,
+        2.0,
+        2.0
+      ],
+      "variable_id": "VECTA.DWI.ACQ.VOXEL_SIZE",
+      "warnings": []
+    },
+    "VECTA.DWI.BIDS.REQUIRED_SERIES_PRESENT": {
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [],
+      "extractor_id": "derive_required_series_present_v1",
+      "extractor_version": "0.1.0",
+      "state": "derived",
+      "value": {
+        "missing": [
+          "anatomical_t1"
+        ],
+        "present": {
+          "anatomical_t1": false,
+          "dwi": true
+        }
+      },
+      "variable_id": "VECTA.DWI.BIDS.REQUIRED_SERIES_PRESENT",
+      "warnings": []
+    },
+    "VECTA.DWI.BIDS.VALIDATOR_ERROR_COUNT": {
+      "canonical_unit": "count",
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [],
+      "extractor_id": "extract_bids_validator_errors_v1",
+      "extractor_version": "0.1.0",
+      "state": "unknown",
+      "value": null,
+      "variable_id": "VECTA.DWI.BIDS.VALIDATOR_ERROR_COUNT",
+      "warnings": [
+        "no .bids-validator-output.json found; run bids-validator externally to populate"
+      ]
+    },
+    "VECTA.DWI.BIDS.VALIDATOR_WARNING_COUNT": {
+      "canonical_unit": "count",
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [],
+      "extractor_id": "extract_bids_validator_warnings_v1",
+      "extractor_version": "0.1.0",
+      "state": "unknown",
+      "value": null,
+      "variable_id": "VECTA.DWI.BIDS.VALIDATOR_WARNING_COUNT",
+      "warnings": []
+    },
+    "VECTA.DWI.SCANNER.FIELD_STRENGTH": {
+      "canonical_unit": "tesla",
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [
+        "ev-00003"
+      ],
+      "extractor_id": "extract_field_strength_v1",
+      "extractor_version": "0.1.0",
+      "state": "observed",
+      "value": 3.0,
+      "variable_id": "VECTA.DWI.SCANNER.FIELD_STRENGTH",
+      "warnings": []
+    },
+    "VECTA.DWI.SCANNER.MANUFACTURER": {
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [
+        "ev-00001"
+      ],
+      "extractor_id": "extract_manufacturer_v1",
+      "extractor_version": "0.1.0",
+      "normalization_rule": "strip_whitespace",
+      "state": "observed",
+      "value": "Siemens",
+      "variable_id": "VECTA.DWI.SCANNER.MANUFACTURER",
+      "warnings": []
+    },
+    "VECTA.DWI.SCANNER.MODEL": {
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [
+        "ev-00002"
+      ],
+      "extractor_id": "extract_model_v1",
+      "extractor_version": "0.1.0",
+      "normalization_rule": "strip_whitespace",
+      "state": "observed",
+      "value": "Prisma",
+      "variable_id": "VECTA.DWI.SCANNER.MODEL",
+      "warnings": []
+    },
+    "VECTA.DWI.SCANNER.SOFTWARE_VERSION": {
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [],
+      "extractor_id": "extract_software_version_v1",
+      "extractor_version": "0.1.0",
+      "normalization_rule": "strip_whitespace",
+      "state": "unknown",
+      "value": null,
+      "variable_id": "VECTA.DWI.SCANNER.SOFTWARE_VERSION",
+      "warnings": []
+    }
+  }
+}

@@ -271,3 +271,35 @@ that separates Vecta from BIDS-only readiness tools.
 
 ### Dependencies
 - Added: `jinja2>=3.0`.
+
+---
+
+## v0.1.0 — 2026-09-19 (draft, expanded fixtures + golden regression)
+
+### Added
+- Four new synthetic BIDS fixtures covering additional Spec Blueprint
+  §27 coverage cases:
+  - `dataset_002_missing_bvec` — DWI has NIfTI + bval but no bvec.
+    Verifies `BVEC_COUNT.state=unknown`, plausibility=unknown.
+  - `dataset_003_bval_volume_mismatch` — NIfTI has 7 volumes but bval
+    has 8 entries. Verifies `BVEC_PLAUSIBILITY.state=extraction_failed`
+    from bval/bvec length disagreement.
+  - `dataset_005_missing_readout` — PE present but TotalReadoutTime
+    absent. Triggers `VECTA-DWI-021` (essential metadata insufficient).
+  - `dataset_011_dicom_bids_conflict` — BIDS declares 3.0T,
+    source DICOM reports 1.5T. Triggers `VECTA-DWI-060`
+    (representation_integrity / transformation-fidelity).
+- `tests/integration/test_expanded_fixtures.py` — behavior tests for
+  the four new fixtures, parametrized.
+- `tests/integration/test_golden_json_regression.py` — golden JSON
+  regression tests with normalized-placeholder diffing. Volatile
+  fields (UUIDs, ISO timestamps, sha256 hashes, absolute source paths)
+  are normalized to placeholders before diffing. Any structural
+  behavior change requires an explicit golden update via
+  `VECTA_REGEN_GOLDEN=1 pytest`.
+- `tests/golden/*.expected.json` — 5 golden reference outputs locked in.
+
+### Verified
+- All 20 integration tests pass under Python 3.11.
+- Golden regression catches unintentional output changes; goldens
+  can be regenerated deterministically after intentional changes.

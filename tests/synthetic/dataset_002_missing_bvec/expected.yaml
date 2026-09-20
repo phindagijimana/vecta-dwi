@@ -1,0 +1,25 @@
+assessment_status_state: completed_with_unknowns
+readiness_state: ready_with_limitations
+variables:
+  VECTA.DWI.ACQ.BVAL_COUNT:
+    value: 7
+    state: observed
+  VECTA.DWI.ACQ.BVEC_COUNT:
+    value: null
+    state: unknown
+  VECTA.DWI.ACQ.BVEC_PLAUSIBILITY:
+    value: null
+    state: unknown
+  VECTA.DWI.ACQ.PE_DIRECTION:
+    value: "j-"
+    state: observed
+  VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE:
+    value: false
+    state: observed
+criteria:
+  VECTA-DWI-001: satisfied
+  VECTA-DWI-014: finding             # PE known + no complementary → false → finding
+  VECTA-DWI-021: satisfied
+findings_present:
+  VECTA-DWI-001: false
+  VECTA-DWI-014: true

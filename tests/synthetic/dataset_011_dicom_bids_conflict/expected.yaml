@@ -1,0 +1,22 @@
+assessment_status_state: completed
+readiness_state: ready_with_limitations
+variables:
+  VECTA.DWI.SCANNER.FIELD_STRENGTH:
+    value: 3.0
+    state: observed                 # BIDS side
+  VECTA.DWI.DICOM.FIELD_STRENGTH_AGREES_WITH_BIDS:
+    value: false                    # DICOM says 1.5T, BIDS says 3.0T
+    state: derived
+  VECTA.DWI.ACQ.PE_DIRECTION:
+    value: "j-"
+    state: observed
+  VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE:
+    value: false                    # AP only, inventory complete
+    state: observed
+criteria:
+  VECTA-DWI-014: finding            # missing reverse PE
+  VECTA-DWI-050: satisfied          # geometry consistent
+  VECTA-DWI-060: finding            # DICOM/BIDS disagreement
+findings_present:
+  VECTA-DWI-014: true
+  VECTA-DWI-060: true

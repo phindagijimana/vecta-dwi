@@ -1,0 +1,26 @@
+assessment_status_state: completed_with_unknowns
+readiness_state: ready_with_limitations
+variables:
+  VECTA.DWI.ACQ.VOLUME_COUNT:
+    value: 7
+    state: observed
+  VECTA.DWI.ACQ.BVAL_COUNT:
+    value: 8
+    state: observed
+  VECTA.DWI.ACQ.BVEC_COUNT:
+    value: 7
+    state: observed
+  VECTA.DWI.ACQ.BVEC_PLAUSIBILITY:
+    value: null
+    state: extraction_failed          # length mismatch triggers this path
+  VECTA.DWI.ACQ.PE_DIRECTION:
+    value: "j-"
+    state: observed
+  VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE:
+    value: false
+    state: observed
+criteria:
+  VECTA-DWI-001: satisfied
+  VECTA-DWI-014: finding
+findings_present:
+  VECTA-DWI-014: true

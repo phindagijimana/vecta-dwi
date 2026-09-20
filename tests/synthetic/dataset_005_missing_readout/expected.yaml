@@ -1,0 +1,20 @@
+assessment_status_state: completed_with_unknowns
+readiness_state: ready_with_limitations
+variables:
+  VECTA.DWI.ACQ.PE_DIRECTION:
+    value: "j-"
+    state: observed
+  VECTA.DWI.ACQ.TOTAL_READOUT_TIME_PRESENT:
+    value: false
+    state: observed
+  VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE:
+    value: false
+    state: observed
+criteria:
+  VECTA-DWI-001: satisfied
+  VECTA-DWI-014: finding
+  VECTA-DWI-021: finding
+findings_present:
+  VECTA-DWI-001: false
+  VECTA-DWI-014: true
+  VECTA-DWI-021: true                 # essential-metadata insufficient (missing TotalReadoutTime)
