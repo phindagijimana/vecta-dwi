@@ -1,6 +1,12 @@
 assessment_status_state: completed_with_unknowns
 readiness_state: review_required
 variables:
+  VECTA.DWI.SCANNER.MANUFACTURER:
+    value: "Siemens"
+    state: observed
+  VECTA.DWI.ACQ.VOLUME_COUNT:
+    value: 7
+    state: observed
   VECTA.DWI.ACQ.PE_DIRECTION:
     value: null
     state: unknown

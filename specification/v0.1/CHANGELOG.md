@@ -118,10 +118,50 @@ BIDS input and emits schema-validated `vecta.json`.
 
 ### Not yet built
 - DICOM collector (`collectors/dicom.py`).
-- Extractors for scanner/voxel/volume/bval/bvec variables.
 - CLI (`cli.py`).
 - HTML report renderer.
 - TSV projection.
 - Cohort aggregator.
 - Golden JSON fixtures with normalized-placeholder diffing (currently
   using structured expected.yaml assertions instead).
+
+---
+
+## v0.1.0 — 2026-09-19 (draft, first slice completed)
+
+Completed the first vertical slice by wiring up all 10+ foundational
+variables and fleshing out the previously-stub criteria.
+
+### Added
+- `extract/scanner.py` — Manufacturer, ManufacturersModelName,
+  MagneticFieldStrength (with plausibility bounds → invalid state),
+  SoftwareVersions.
+- `extract/acquisition.py` — voxel size (NIfTI zooms), volume count
+  (NIfTI dim[4]), bval count, shell count derivation (b0 threshold +
+  greedy grouping under `b_shell_grouping` tolerance), bvec count,
+  bvec plausibility derivation (per-vector norm within `vector_norm`
+  tolerance).
+- `extract/bids.py` — BIDS Validator error/warning counts (reads
+  optional external `.bids-validator-output.json`), required-series
+  presence per profile (structured object with `present` map +
+  `missing` list, per Spec Blueprint §9.1).
+- BIDS collector now emits evidence records for `.nii.gz`, `.bval`,
+  `.bvec` companion files and additional sidecar fields (Manufacturer,
+  ModelName, FieldStrength, SoftwareVersions, RepetitionTime, EchoTime).
+
+### Filled out
+- `EV-DWI-PE-002` — PhaseEncodingDirection required for
+  distortion-correction configuration (QSIPrep/FSL topup).
+- `EV-DWI-META-001` — PE + TotalReadoutTime essential for topup.
+- `VECTA-DWI-001` — full finding template with observed/reference
+  condition, potential effects, recommended actions, empirical status.
+- `VECTA-DWI-021` — full finding template.
+
+### Verified
+- All 4 existing integration tests still pass under Python 3.11 with
+  the expanded variable set.
+- All new variables validate against the output schema.
+- Fixture datasets now include real NIfTI/bval/bvec companion files.
+
+### Dependencies
+- Added: `nibabel>=5.0`, `pydicom>=2.4`, `numpy>=1.24`.

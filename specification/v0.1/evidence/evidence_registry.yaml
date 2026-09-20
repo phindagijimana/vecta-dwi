@@ -25,16 +25,35 @@ evidence:
       distortion-correction strategy available to QSIPrep. Does not imply
       universal diagnostic inadequacy when absent.
 
-  # ── Placeholders for other criteria referenced in the dwi_connectomics
-  # profile. Author before freeze. ──
   - evidence_id: EV-DWI-PE-002
-    type: TODO
-    title: TODO — supports VECTA-DWI-001 (PE direction unknown)
-    source: TODO
-    status: draft
+    type: pipeline_requirement
+    title: PhaseEncodingDirection is required to configure susceptibility-distortion correction
+    source: QSIPrep / FSL topup documented processing requirement
+    version_scope: specified_version
+    status: active
+    supports:
+      - VECTA-DWI-001
+    strength:
+      category: operational_requirement
+    notes: |
+      Absence of PhaseEncodingDirection prevents the pipeline from
+      selecting or configuring distortion correction unambiguously.
+      Absence in metadata does not by itself indicate a corrupt
+      acquisition — it is an evidence-insufficiency condition.
 
   - evidence_id: EV-DWI-META-001
-    type: TODO
-    title: TODO — supports VECTA-DWI-021 (essential metadata sufficiency)
-    source: TODO
-    status: draft
+    type: pipeline_requirement
+    title: PhaseEncodingDirection + TotalReadoutTime (or equivalent) are essential for topup-style susceptibility correction
+    source: FSL topup documentation; QSIPrep documented requirements
+    version_scope: specified_version
+    status: active
+    supports:
+      - VECTA-DWI-021
+    strength:
+      category: operational_requirement
+    notes: |
+      Both PhaseEncodingDirection and TotalReadoutTime (or equivalent
+      timing information derivable from EffectiveEchoSpacing +
+      ReconMatrixPE) must be available for topup-based distortion
+      correction. Absence forces the pipeline into a fallback strategy
+      or a documented limitation.

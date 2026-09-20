@@ -108,7 +108,16 @@ def collect(root: Path, subject_id: str, session_id: str) -> BidsSession:
             dir_entity=_parse_dir_entity(json_path),
         )
         # Record evidence for each sidecar field we care about
-        for field_name in ("PhaseEncodingDirection", "TotalReadoutTime"):
+        for field_name in (
+            "PhaseEncodingDirection",
+            "TotalReadoutTime",
+            "Manufacturer",
+            "ManufacturersModelName",
+            "MagneticFieldStrength",
+            "SoftwareVersions",
+            "RepetitionTime",
+            "EchoTime",
+        ):
             if field_name in sidecar:
                 ev = _make_evidence(
                     evidence_id=next_ev_id(),
@@ -122,10 +131,27 @@ def collect(root: Path, subject_id: str, session_id: str) -> BidsSession:
 
         # Companion files
         base = json_path.with_suffix("")   # strip .json
-        for suffix, attr in [(".nii.gz", "nifti_path"), (".bval", "bval_path"), (".bvec", "bvec_path")]:
+        for suffix, attr, source_type in [
+            (".nii.gz", "nifti_path", SourceType.NIFTI_HEADER),
+            (".bval", "bval_path", SourceType.BVAL),
+            (".bvec", "bvec_path", SourceType.BVEC),
+        ]:
             candidate = base.with_suffix(suffix) if suffix != ".nii.gz" else Path(str(base) + ".nii.gz")
             if candidate.is_file():
                 setattr(entity, attr, candidate)
+                ev = _make_evidence(
+                    evidence_id=next_ev_id(),
+                    source_type=source_type,
+                    path=candidate,
+                    source_field={
+                        SourceType.NIFTI_HEADER: "nifti_header",
+                        SourceType.BVAL: "bval",
+                        SourceType.BVEC: "bvec",
+                    }[source_type],
+                    raw_value=None,
+                )
+                entity.evidence.append(ev)
+                session.evidence.append(ev)
 
         session.dwi_entities.append(entity)
 

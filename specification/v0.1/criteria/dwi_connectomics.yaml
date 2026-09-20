@@ -120,14 +120,13 @@ criteria:
       - TEST-REVPE-003    # DWI present + PE metadata unavailable → unknown (no finding)
 
   # ─────────────────────────────────────────────────────────────────────────
-  # VECTA-DWI-001 — Phase-encoding direction unknown
-  # STUB — full author-out required before freeze.
+  # VECTA-DWI-001 — Phase-encoding direction unknown (evidence insufficiency)
   # ─────────────────────────────────────────────────────────────────────────
   - criterion_id: VECTA-DWI-001
     version: 0.1.0
     name: phase_encoding_direction_unknown
     lifecycle_origin: L3_METADATA
-    status: stub
+    status: active
 
     requires:
       - VECTA.DWI.ACQ.PE_DIRECTION
@@ -143,26 +142,70 @@ criteria:
     finding:
       label: Phase-encoding direction cannot be determined
       category: evidence_insufficiency
+      observed_condition:
+        pe_direction_state: unknown
+      reference_condition:
+        profile: dwi_connectomics
+        essential_metadata:
+          - phase_encoding_direction
       severity:
         level: major
         status: provisional
         basis:
           - evidence_type: pipeline_requirement
-            evidence_ref: EV-DWI-PE-002   # TODO — currently placeholder
-      # TODO: potential_effects, recommended_actions, empirical_status
+            evidence_ref: EV-DWI-PE-002
+      confidence:
+        default: high
+      potential_effects:
+        - effect_id: distortion_correction_configuration_ambiguous
+          relation: plausible
+          evidence_refs: [EV-DWI-PE-002]
+          wording: |
+            Selected distortion-correction strategy may be ambiguous or
+            require manual configuration in the absence of a documented
+            PE direction.
+          causal_claim: false
+        - effect_id: manual_intervention_required
+          relation: plausible
+          evidence_refs: [EV-DWI-PE-002]
+          wording: |
+            The pipeline is likely to require case-specific human review
+            to select or approve a distortion-correction path.
+          causal_claim: false
+      recommended_actions:
+        - action_id: recover_pe_from_source
+          action_class: re_export
+          text: |
+            Attempt to recover PhaseEncodingDirection from source DICOM
+            or scanner protocol documentation, then regenerate the BIDS
+            sidecar.
+          automated: false
+          changes_source_data: false
+          requires_human_approval: true
+        - action_id: document_pe_absence
+          action_class: document
+          text: |
+            If PhaseEncodingDirection cannot be recovered, document the
+            limitation in the study's analysis notes.
+          automated: false
+          changes_source_data: false
+          requires_human_approval: true
+      empirical_status:
+        state: not_tested
+
     evidence_refs:
       - EV-DWI-PE-002
-    tests: []
+    tests:
+      - TEST-PEUNK-001
 
   # ─────────────────────────────────────────────────────────────────────────
-  # VECTA-DWI-021 — Essential metadata sufficiency
-  # STUB — full author-out required before freeze.
+  # VECTA-DWI-021 — Essential metadata insufficient
   # ─────────────────────────────────────────────────────────────────────────
   - criterion_id: VECTA-DWI-021
     version: 0.1.0
     name: essential_metadata_insufficient
     lifecycle_origin: L3_METADATA
-    status: stub
+    status: active
 
     requires:
       - VECTA.DWI.ACQ.PE_DIRECTION
@@ -182,13 +225,43 @@ criteria:
     finding:
       label: One or more essential metadata items are missing or unknown
       category: metadata_integrity
+      observed_condition:
+        essential_metadata_missing_or_unknown: true
+      reference_condition:
+        profile: dwi_connectomics
+        essential_metadata:
+          - phase_encoding_direction
+          - total_readout_time_or_equivalent
       severity:
         level: major
         status: provisional
         basis:
           - evidence_type: pipeline_requirement
-            evidence_ref: EV-DWI-META-001   # TODO — currently placeholder
-      # TODO: potential_effects, recommended_actions, empirical_status
+            evidence_ref: EV-DWI-META-001
+      confidence:
+        default: high
+      potential_effects:
+        - effect_id: distortion_correction_strategy_constrained
+          relation: plausible
+          evidence_refs: [EV-DWI-META-001]
+          wording: |
+            Distortion correction may fall back to a suboptimal strategy
+            or be skipped when essential PE / timing metadata are absent.
+          causal_claim: false
+      recommended_actions:
+        - action_id: review_essential_metadata
+          action_class: review
+          text: |
+            Confirm which essential metadata items are missing and
+            recover them from source data or protocol documentation
+            where possible.
+          automated: false
+          changes_source_data: false
+          requires_human_approval: true
+      empirical_status:
+        state: not_tested
+
     evidence_refs:
       - EV-DWI-META-001
-    tests: []
+    tests:
+      - TEST-METASUFF-001

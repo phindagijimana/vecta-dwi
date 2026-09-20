@@ -22,9 +22,28 @@ from ..enums import (
     ReadinessState,
     ValueState,
 )
+from ..extract.acquisition import (
+    derive_bvec_plausibility,
+    derive_shell_count,
+    extract_bval_count,
+    extract_bvec_count,
+    extract_volume_count,
+    extract_voxel_size,
+)
+from ..extract.bids import (
+    derive_required_series_present,
+    extract_validator_error_count,
+    extract_validator_warning_count,
+)
 from ..extract.pe import (
     extract_pe_direction,
     extract_total_readout_time_present,
+)
+from ..extract.scanner import (
+    extract_field_strength,
+    extract_manufacturer,
+    extract_model,
+    extract_software_version,
 )
 from ..models import (
     Assessment,
@@ -62,13 +81,39 @@ def assess_session(session: BidsSession, spec: LoadedSpec) -> Assessment:
 
     # ── Extract ─────────────────────────────────────────────────────────
     variables: dict[str, VariableResult] = {}
-    for extractor in (extract_pe_direction, extract_total_readout_time_present):
+    per_entity_extractors = (
+        extract_manufacturer,
+        extract_model,
+        extract_field_strength,
+        extract_software_version,
+        extract_voxel_size,
+        extract_volume_count,
+        extract_bval_count,
+        extract_bvec_count,
+        extract_pe_direction,
+        extract_total_readout_time_present,
+    )
+    for extractor in per_entity_extractors:
         vr = extractor(target)
         variables[vr.variable_id] = vr
 
     # ── Derive ──────────────────────────────────────────────────────────
+    for deriver in (derive_shell_count, derive_bvec_plausibility):
+        vr = deriver(target)
+        variables[vr.variable_id] = vr
     rev = derive_reverse_pe_availability(session, target)
     variables[rev.variable_id] = rev
+
+    # Session-level (not per-entity)
+    variables[
+        "VECTA.DWI.BIDS.VALIDATOR_ERROR_COUNT"
+    ] = extract_validator_error_count(session)
+    variables[
+        "VECTA.DWI.BIDS.VALIDATOR_WARNING_COUNT"
+    ] = extract_validator_warning_count(session)
+    variables[
+        "VECTA.DWI.BIDS.REQUIRED_SERIES_PRESENT"
+    ] = derive_required_series_present(session, spec.profile)
 
     # ── Evaluate criteria ──────────────────────────────────────────────
     _finding_counter = [0]
@@ -119,7 +164,7 @@ def assess_session(session: BidsSession, spec: LoadedSpec) -> Assessment:
             started_at=started,
             completed_at=completed,
             domains_attempted=["scanner", "acquisition", "bids"],
-            domains_completed=["acquisition"],  # first slice only touches acquisition-layer variables
+            domains_completed=["scanner", "acquisition", "bids"],
         ),
         evidence=list(session.evidence),
         variables=variables,

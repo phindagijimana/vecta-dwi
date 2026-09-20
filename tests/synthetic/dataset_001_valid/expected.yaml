@@ -1,6 +1,33 @@
 assessment_status_state: completed
 readiness_state: ready
 variables:
+  VECTA.DWI.SCANNER.MANUFACTURER:
+    value: "Siemens"
+    state: observed
+  VECTA.DWI.SCANNER.MODEL:
+    value: "Prisma"
+    state: observed
+  VECTA.DWI.SCANNER.FIELD_STRENGTH:
+    value: 3.0
+    state: observed
+  VECTA.DWI.ACQ.VOXEL_SIZE:
+    value: [2.0, 2.0, 2.0]
+    state: observed
+  VECTA.DWI.ACQ.VOLUME_COUNT:
+    value: 7
+    state: observed
+  VECTA.DWI.ACQ.BVAL_COUNT:
+    value: 7
+    state: observed
+  VECTA.DWI.ACQ.SHELL_COUNT:
+    value: 1
+    state: derived
+  VECTA.DWI.ACQ.BVEC_COUNT:
+    value: 7
+    state: observed
+  VECTA.DWI.ACQ.BVEC_PLAUSIBILITY:
+    value: true
+    state: derived
   VECTA.DWI.ACQ.PE_DIRECTION:
     value: "j-"
     state: observed
@@ -15,5 +42,6 @@ criteria:
   VECTA-DWI-014: satisfied
   VECTA-DWI-021: satisfied
 findings_present:
-  VECTA-DWI-014: false
   VECTA-DWI-001: false
+  VECTA-DWI-014: false
+  VECTA-DWI-021: false

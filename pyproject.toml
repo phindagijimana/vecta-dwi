@@ -15,6 +15,9 @@ dependencies = [
     "PyYAML>=6.0",
     "jsonschema>=4.20",
     "referencing>=0.30",
+    "nibabel>=5.0",
+    "pydicom>=2.4",
+    "numpy>=1.24",
 ]
 
 [project.optional-dependencies]
