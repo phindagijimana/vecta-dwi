@@ -24,13 +24,45 @@ def _now():
 
 
 def _validator_output(root: Path) -> dict | None:
+    """Read a validator output JSON if present, normalizing legacy /
+    v1 (flat) and v2 (issues-wrapped) shapes to a common form.
+
+    Returns a dict with keys `errors` (list) and `warnings` (list),
+    or None if no file is present or parsing fails.
+
+    Supported shapes:
+      - Flat:  {"errors": [...], "warnings": [...]}
+      - Wrapped: {"issues": {"errors": [...], "warnings": [...]}, ...}
+        (bids-validator v2 / deno CLI)
+
+    Some tooling prepends stderr warnings to the JSON output; we scan
+    each line for the first `{` and try to parse from there.
+    """
     candidate = root / ".bids-validator-output.json"
     if not candidate.is_file():
         return None
-    try:
-        return json.loads(candidate.read_text())
-    except Exception:
-        return None
+    text = candidate.read_text()
+    payload = None
+    for start_line in text.splitlines():
+        stripped = start_line.strip()
+        if stripped.startswith("{"):
+            try:
+                payload = json.loads(stripped)
+                break
+            except Exception:
+                continue
+    if payload is None:
+        try:
+            payload = json.loads(text)
+        except Exception:
+            return None
+    if "issues" in payload and isinstance(payload["issues"], dict):
+        issues = payload["issues"]
+        return {
+            "errors": issues.get("errors", []),
+            "warnings": issues.get("warnings", []),
+        }
+    return payload
 
 
 def extract_validator_error_count(session: BidsSession) -> VariableResult:

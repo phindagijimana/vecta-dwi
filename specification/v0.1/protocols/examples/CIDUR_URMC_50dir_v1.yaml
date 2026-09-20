@@ -1,0 +1,56 @@
+# CIDUR URMC — 50-direction AP DWI protocol reference (v1).
+#
+# Derived from observed sidecars in ~/Documents/CIDUR_BIDS/data_bids
+# (34 DWI sessions, September 2026 snapshot). ProtocolName variants:
+# "Ax DTI 50directions" and "Ax DTI 50 DIRECTIONS". Predominantly GE
+# (SIGNA Premier + Artist); also Siemens Vida Fit for one subset.
+#
+# This is a REFERENCE, not a rewrite.
+
+protocol_id: CIDUR_URMC_50dir_v1
+site_id: URMC
+effective_start: null
+effective_end: null
+
+expected_protocol_name_pattern: '(?i)Ax\s+DTI\s*50\s*directions?'
+
+required_acquisitions:
+  dwi:
+    required: true
+    expected_directions: 50
+    expected_shells: [1000]
+    volume_count_range: [51, 54]    # bvals observed: 53 (b0s + 50 directions + b0 refs)
+    phase_encoding: j-
+    voxel_size_mm: [2.0, 2.0, 2.0]
+    voxel_size_tolerance_ref: voxel_size_mm
+  reverse_pe:
+    required: true
+    expected_direction: j
+    representation: fmap_epi
+  anatomical_t1:
+    required: true
+
+expected_scanner:
+  manufacturers:
+    - GE
+    - Siemens
+  models:
+    - SIGNA Premier
+    - SIGNA Artist
+    - MAGNETOM Vida Fit
+
+expected_timing:
+  repetition_time:
+    # Distribution observed: 6.5s (GE Premier), 4.2-4.4s (Siemens Vida), 5.5s (Signa Artist)
+    # No single expected value; report protocol variant instead.
+    accepted_range: [4.0, 12.0]
+  echo_time:
+    accepted_range: [0.055, 0.100]
+  total_readout_time:
+    accepted_range: [0.040, 0.120]
+
+notes: |
+  Substantially more scanner-parameter variance than the 64-direction
+  Siemens protocol because this protocol runs on three vendor/model
+  combinations. Per-vendor sub-profiles may be created before freeze
+  if tighter conformance is needed for analysis.

@@ -1,0 +1,10 @@
+{
+  "PhaseEncodingDirection": "j",
+  "TotalReadoutTime": 0.0384197,
+  "MagneticFieldStrength": 3.0,
+  "Manufacturer": "Siemens",
+  "ManufacturersModelName": "Skyra",
+  "IntendedFor": [
+    "ses-01/dwi/sub-001_ses-01_dir-ap_dwi.nii.gz"
+  ]
+}

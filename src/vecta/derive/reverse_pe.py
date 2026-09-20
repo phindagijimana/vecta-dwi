@@ -4,13 +4,17 @@ Follows the algorithm declared in specification/v0.1/variables/acquisition.yaml
 for VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE (formula reverse_pe_availability_v1):
 
   1. Determine target PE direction.
-  2. Identify candidate reference acquisitions in the same subject/session.
-  3. Determine PE direction for each candidate.
-  4. Apply the profile's complementary-PE pairing rule (opposite polarity
-     along the same axis).
-  5. Return true if any qualifying complementary acquisition exists;
+  2. Identify candidate reference acquisitions in the same subject/session:
+     (a) other DWI entities with the complementary PE, OR
+     (b) fmap EPI entities whose IntendedFor list points at the target
+         AND whose PhaseEncodingDirection is complementary.
+  3. Return true if any qualifying complementary acquisition exists;
      false if inventory + PE metadata are sufficient to establish absence;
      unknown otherwise.
+
+The fmap path (b) is required by the BIDS layout used in CIDUR and most
+prospective studies: the reverse-PE reference typically lives under
+`fmap/*_dir-<X>_epi.{json,nii.gz}` and links to the DWI via IntendedFor.
 
 Complementary-PE rule for BIDS PE strings: 'j' complements 'j-', 'i'
 complements 'i-', 'k' complements 'k-'. Empty polarity means the AXES
@@ -84,7 +88,7 @@ def derive_reverse_pe_availability(
             computed_at=_now(),
         )
 
-    # Search other DWI entities in the same session for a candidate with PE == wanted
+    # Search other DWI entities in the same session
     complementary_found = False
     inventory_complete = True
     for other in session.dwi_entities:
@@ -97,6 +101,27 @@ def derive_reverse_pe_availability(
         if other_pe == wanted:
             complementary_found = True
             break
+
+    # Also search fmap EPI entities (reverse-PE via IntendedFor)
+    if not complementary_found:
+        target_name = target.json_path.stem  # e.g. sub-001_ses-1_acq-64dirax_dir-ap_dwi
+        for fmap in session.fmap_epi_entities:
+            fmap_pe = fmap.sidecar.get("PhaseEncodingDirection")
+            if fmap_pe is None:
+                inventory_complete = False
+                continue
+            if fmap_pe != wanted:
+                continue
+            # Check IntendedFor: BIDS-relative path segments must contain
+            # the DWI target's stem. We match by containment rather than
+            # exact equality because IntendedFor may or may not carry the
+            # ses-* prefix depending on generator.
+            targeted = any(target_name in entry for entry in fmap.intended_for)
+            if targeted or not fmap.intended_for:
+                # No IntendedFor list at all → assume applies to all DWI in session
+                # (conservative but standard BIDS-Legacy behavior).
+                complementary_found = True
+                break
 
     if complementary_found:
         return VariableResult(

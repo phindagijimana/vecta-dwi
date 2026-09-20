@@ -1,0 +1,13 @@
+assessment_status_state: completed_with_unknowns
+readiness_state: ready
+variables:
+  VECTA.DWI.ACQ.PE_DIRECTION:
+    value: "j-"
+    state: observed
+  VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE:
+    value: true                         # discovered via fmap IntendedFor
+    state: observed
+criteria:
+  VECTA-DWI-014: satisfied
+findings_present:
+  VECTA-DWI-014: false

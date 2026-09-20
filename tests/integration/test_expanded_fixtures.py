@@ -40,6 +40,7 @@ def spec():
         "dataset_003_bval_volume_mismatch",
         "dataset_005_missing_readout",
         "dataset_011_dicom_bids_conflict",
+        "dataset_030_fmap_reverse_pe",
     ],
 )
 def test_expanded_fixture(spec, fixture_name):

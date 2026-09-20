@@ -1,0 +1,56 @@
+# CIDUR URMC — 64-direction AP DWI protocol reference (v1).
+#
+# Derived from observed sidecars in ~/Documents/CIDUR_BIDS/data_bids
+# (28 DWI sessions, September 2026 snapshot). ProtocolName pattern:
+# "AX DTI AP-64 DIRECTIONS". Predominantly Siemens (Skyra + Vida Fit).
+#
+# This is a REFERENCE, not a rewrite. Vecta compares observed
+# acquisition parameters against these expectations and reports
+# protocol-conformance findings when they diverge beyond tolerance.
+
+protocol_id: CIDUR_URMC_64dir_v1
+site_id: URMC
+effective_start: null    # actual acquisition dates not in scope for this reference
+effective_end: null
+
+expected_protocol_name_pattern: '(?i)AX\s+DTI\s+AP.*64\s*DIRECTIONS'
+
+required_acquisitions:
+  dwi:
+    required: true
+    expected_directions: 64
+    expected_shells: [1000]         # sample sidecar reports single-shell b=1000
+    volume_count_range: [65, 70]    # bvals observed: 67 (b0s + 64 directions + ~2 extra)
+    phase_encoding: j-              # AP → j-
+    voxel_size_mm: [2.0, 2.0, 2.0]
+    voxel_size_tolerance_ref: voxel_size_mm
+  reverse_pe:
+    required: true
+    expected_direction: j           # PA → j
+    representation: fmap_epi        # BIDS layout: fmap/*_dir-pa_epi.{json,nii.gz}
+  anatomical_t1:
+    required: true
+
+expected_scanner:
+  manufacturers:
+    - Siemens
+  models:
+    - Skyra
+    - MAGNETOM Vida Fit
+  # GE is served by CIDUR_URMC_50dir_v1 instead
+
+expected_timing:
+  repetition_time:
+    expected: 4.7
+    tolerance_ref: te_or_tr        # (placeholder — expand tolerances registry)
+  echo_time:
+    expected: 0.071
+    tolerance_ref: te
+  total_readout_time:
+    expected: 0.0384197
+    tolerance_ref: te              # tight — vendor-computed value
+
+notes: |
+  Snapshot of observed CIDUR patterns; verify against the URMC MR
+  protocol library before freeze. TE/TR/TotalReadoutTime values are
+  medians across observed sidecars.

@@ -41,11 +41,22 @@ class DwiEntity:
 
 
 @dataclass
+class FmapEpiEntity:
+    """One fmap EPI acquisition (typically the reverse-PE reference)."""
+
+    json_path: Path
+    sidecar: dict
+    intended_for: list[str] = field(default_factory=list)   # BIDS session-relative paths
+    evidence: list[EvidenceRecord] = field(default_factory=list)
+
+
+@dataclass
 class BidsSession:
     root: Path
     subject_id: str
     session_id: str
     dwi_entities: list[DwiEntity] = field(default_factory=list)
+    fmap_epi_entities: list[FmapEpiEntity] = field(default_factory=list)
     evidence: list[EvidenceRecord] = field(default_factory=list)
 
 
@@ -100,6 +111,7 @@ def collect(root: Path, subject_id: str, session_id: str) -> BidsSession:
         ev_counter += 1
         return f"ev-{ev_counter:05d}"
 
+    # ── DWI entities ───────────────────────────────────────────────────
     for json_path in sorted(ses_dir.glob("*_dwi.json")):
         sidecar = json.loads(json_path.read_text())
         entity = DwiEntity(
@@ -154,5 +166,32 @@ def collect(root: Path, subject_id: str, session_id: str) -> BidsSession:
                 session.evidence.append(ev)
 
         session.dwi_entities.append(entity)
+
+    # ── fmap EPI entities (reverse-PE candidates via IntendedFor) ─────
+    fmap_dir = root / f"sub-{subject_id}" / f"ses-{session_id}" / "fmap"
+    if fmap_dir.is_dir():
+        for json_path in sorted(fmap_dir.glob("*_epi.json")):
+            sidecar = json.loads(json_path.read_text())
+            intended = sidecar.get("IntendedFor", [])
+            if isinstance(intended, str):
+                intended = [intended]
+            fmap = FmapEpiEntity(
+                json_path=json_path,
+                sidecar=sidecar,
+                intended_for=list(intended),
+            )
+            # Evidence for the fmap sidecar itself (for the PE-related fields)
+            for field_name in ("PhaseEncodingDirection", "TotalReadoutTime", "IntendedFor"):
+                if field_name in sidecar:
+                    ev = _make_evidence(
+                        evidence_id=next_ev_id(),
+                        source_type=SourceType.BIDS_JSON,
+                        path=json_path,
+                        source_field=field_name,
+                        raw_value=sidecar[field_name],
+                    )
+                    fmap.evidence.append(ev)
+                    session.evidence.append(ev)
+            session.fmap_epi_entities.append(fmap)
 
     return session
