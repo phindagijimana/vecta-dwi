@@ -35,6 +35,9 @@ import nibabel as nib
 OUTCOME_PROTOCOL_VERSION = "0.1.0"
 LABELING_METHOD_ID = "cidur_derivative_qc_v1"
 
+# QSIPrep version confirmed from dataset_description.json (2026-09-20)
+QSIPREP_VERSION_CIDUR = "0.23.1.dev0+g634483f.d20240830"
+
 
 # ── Required-derivative sanity ───────────────────────────────────────────
 

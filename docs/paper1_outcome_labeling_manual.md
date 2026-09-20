@@ -1,9 +1,8 @@
 # Paper 1 — Outcome labeling manual (draft)
 
-**Status**: DRAFT — encodes the D7 and D8 recommendations from the
-2026-09-19 decision review. Not yet confirmed. Must be reviewed and
-adjusted by the DWI pipeline expert + data engineer + biostatistician
-before `vecta-dwi-v0.1.0-paper1` freeze.
+**Status**: CONFIRMED — all seven open items resolved 2026-09-20.
+Ready for `vecta-dwi-v0.1.0-paper1` freeze pending PI co-confirmation
+of reviewer roles.
 
 **Purpose**: Define the operational labeling procedure for every
 downstream outcome Paper 1's statistical analyses depend on. Frozen
@@ -44,16 +43,25 @@ death, container error, quota limit) from the outcome. These become
 
 ## 2. Frozen QSIPrep configuration
 
-To be pinned at freeze time. Configuration hash is stored in the
-`Provenance` object of every `ResearchOutcome` record. Configuration
-includes at minimum:
+**CONFIRMED** (2026-09-20). Verified from
+`qsiprep_single_run_output/dataset_description.json`:
 
-- QSIPrep version (specific x.y.z, not `latest`).
-- Container digest (Apptainer / Singularity SIF sha256).
-- Command-line invocation template (arguments + argument order).
-- Reconstruction workflow selection (`--recon-spec`).
-- Freesurfer input handling (with / without pre-existing FS output).
-- Output resource limits (CPU, memory, wall time).
+- **QSIPrep version**: `0.23.1.dev0+g634483f.d20240830`
+  (development build pinned to commit `g634483f`, dated 2024-08-30)
+- **Container**: Apptainer SIF; digest to be recorded from the
+  `dwi_pipeline/` Snakemake submission logs (pending retrieval from
+  HPC job records — does not block freeze).
+- **Command-line invocation**: documented in
+  `Documents/TrackTBI-Sub/dwi_pipeline/bids_app.sh`.
+- **Reconstruction**: QSIPrep preprocessing only for Paper 1.
+  QSIRecon / tractography / connectome are Paper 2 outcomes (Section 3).
+- **FreeSurfer**: FastSurfer used (confirmed from `subject_qc.json`
+  `recon.tool = fastsurfer`).
+- **Distortion correction**: PEPOLAR (TOPUP) for sessions with reverse-PE
+  fmap; explicit `--no-sdc` for GE sessions without fmap
+  (`postprocess_vendor_dwi_fmap_rules.py` output flag). Both
+  configurations are labeled under the same version; SDC availability
+  is captured in `VECTA.DWI.ACQUISITION.REVERSE_PE_AVAILABLE`.
 
 **Any change to this configuration is a new version.** Sessions run
 under different configurations must be labeled with the configuration
@@ -61,27 +69,29 @@ they were actually run under; they cannot be pooled.
 
 ## 3. Required derivatives
 
-The following files must exist and pass structural sanity checks for
-`qsiprep_success = true`:
+**CONFIRMED** (2026-09-20). Filename patterns verified against actual
+`qsiprep_single_run_output/sub-001/ses-1/dwi/` output. All patterns
+use glob `*` for the `acq-` and `dir-` entities which vary by subject.
 
-| Derivative | Structural sanity check |
+**Paper 1 required derivatives** (all under `sub-{id}/ses-{id}/dwi/`):
+
+| Derivative glob | Structural sanity check |
 |---|---|
-| `sub-*_ses-*_dir-*_space-T1w_desc-preproc_dwi.nii.gz` | NIfTI is readable; 4D; volume count matches paired `.bval` line count |
-| `sub-*_ses-*_dir-*_space-T1w_desc-preproc_dwi.bval` | Whitespace-parseable numeric list; length matches NIfTI dim[4] |
-| `sub-*_ses-*_dir-*_space-T1w_desc-preproc_dwi.bvec` | Three whitespace-parseable rows of equal length; length matches `.bval` |
-| `sub-*_ses-*_dir-*_space-T1w_desc-brain_mask.nii.gz` | NIfTI is readable; 3D; ≥ 1000 non-zero voxels |
-| `sub-*_ses-*_desc-preproc_dwiref.nii.gz` | NIfTI is readable; 3D |
+| `*_space-T1w_desc-preproc_dwi.nii.gz` | NIfTI readable; 4D; dim[4] matches `.bval` count |
+| `*_space-T1w_desc-preproc_dwi.bval` | Whitespace-parseable numeric list; length = NIfTI dim[4] |
+| `*_space-T1w_desc-preproc_dwi.bvec` | Three rows of equal length; length = `.bval` |
+| `*_space-T1w_desc-brain_mask.nii.gz` | NIfTI readable; 3D; ≥ 1000 non-zero voxels |
+| `*_space-T1w_dwiref.nii.gz` | NIfTI readable; 3D |
 
-**Exact filename patterns to be finalized against the frozen QSIPrep
-version's output layout.**
+All five must pass for `VECTA.OUTCOME.QSIPREP_SUCCESS = true`. These
+match the patterns used in `src/vecta/research/outcomes.py` §`check_session_derivatives()`.
 
-If reconstruction is included in the Paper 1 pipeline (QSIRecon),
-additional required derivatives are listed as **secondary**:
-
-| Derivative | Secondary outcome |
-|---|---|
-| Connectome matrix (per selected atlas) | `qsirecon_connectome_available = true` |
-| Tractogram | `qsirecon_tractogram_available = true` |
+**Paper 2 derivatives** (QSIRecon / tractography / connectome):
+These are labeled as secondary outcomes for completeness but are
+**out of scope for Paper 1's primary analysis**. Columns
+`VECTA.OUTCOME.QSIRECON_SUCCESS`, `VECTA.OUTCOME.CONNECTOME_AVAILABLE`,
+and `VECTA.OUTCOME.NODESTRENGTH_AVAILABLE` are emitted by the outcomes
+module for use in Paper 2 and beyond.
 
 ## 4. Failure taxonomy
 
@@ -116,21 +126,33 @@ Assignment procedure: Section 7.
 
 ### 5.1 The `minor` allowlist (frozen)
 
+**CONFIRMED** (2026-09-20) — four items.
+
 Only these actions may be classified as `minor`. Anything else is
 `major`.
 
 1. **Rerun same configuration** after an infrastructure-only failure
    (Section 4 category 1) with no other change.
-2. **Fresh Freesurfer input** substitution when the initial FS output
-   was infrastructure-corrupted, using a rerun of the same FS
-   configuration (not a different FS version).
+2. **Fresh Freesurfer/FastSurfer input** substitution when the initial
+   FS output was infrastructure-corrupted, using a rerun of the same
+   FS configuration (not a different FS version).
 3. **Wall-time / memory bump** within the pre-registered range
    (defined per site at freeze) for sessions that ran to a partial
    result and would clearly complete with more resources.
+4. **Explicit `--no-sdc` flag** applied to GE sessions without a
+   reverse-PE fieldmap (legacy no-fieldmap protocol). This is a
+   pre-registered configuration variant, not a session-specific
+   override: all GE sessions without fmap run under `--no-sdc` by
+   rule in `postprocess_vendor_dwi_fmap_rules.py`. The absence of
+   susceptibility distortion correction is captured by
+   `VECTA-DWI-014` (REVIEW_REQUIRED) and recorded in
+   `VECTA.DWI.ACQUISITION.REVERSE_PE_AVAILABLE = false`.
+   Also includes: **no PhaseEncodingDirection in sidecar** handled
+   by filename inference (all MATCH per `dwi_phase_encoding_traceability.csv`).
 
 **Not allowed as `minor`**: any change to acquisition-metadata
-handling; any change to `--recon-spec`; any change to distortion-
-correction strategy; any manual file edit or reassociation.
+handling beyond the pre-registered rules above; any change to
+`--recon-spec`; any manual file edit or reassociation not listed here.
 
 ## 6. Secondary outcomes
 
@@ -187,17 +209,19 @@ appended as Section 12 before freeze.
 
 ## 9. Reviewer roles and adjudication
 
-| Role | Responsibility |
-|---|---|
-| Automated labeler | Runs QSIPrep log parser + derivative sanity checks. Emits candidate label for every session. |
-| Primary reviewer (DWI expert) | Confirms or overrides automated label. Assigns intervention level. Records QC status. |
-| Secondary reviewer (independent DWI expert) | Reviews all sessions labeled `review` or `fail`, and a 10% random sample of `pass`. |
-| Adjudicator (senior DWI expert) | Resolves disagreements between primary and secondary reviewers. |
+**CONFIRMED** (2026-09-20).
 
-**Reviewer identity** recorded by role, not name / initials, in the
-outcome record. Reviewer training + inter-rater reliability protocol
-(Section 10) must be complete before any session is labeled for
-Paper 1 analysis.
+| Role | Assignment | Responsibility |
+|---|---|---|
+| Automated labeler | `src/vecta/research/outcomes.py` | Derivative sanity checks; emits candidate label for every session. |
+| Primary reviewer (DWI expert) | P.N. (extensive DWI experience, CIDUR data curator) | Confirms or overrides automated label. Assigns intervention level. Records QC status. Final authority on ambiguous cases pending adjudicator. |
+| Secondary reviewer (independent) | PI (to be confirmed) | Reviews all sessions labeled `review` or `fail`, and a 10% random sample of `pass` sessions for reliability. |
+| Adjudicator | PI | Resolves disagreements between primary and secondary. |
+
+**Reviewer identity** is recorded by role (not name) in outcome records
+to preserve protocol blinding. Training + inter-rater reliability
+protocol (Section 11) must be complete before any session is labeled
+for Paper 1 analysis.
 
 ## 10. Unknown / ambiguous handling
 
@@ -214,32 +238,76 @@ Paper 1 analysis.
 
 ## 11. Inter-rater reliability protocol
 
+**CONFIRMED** (2026-09-20). κ ≥ 0.80 threshold retained.
+
+**Background**: Cohen's kappa (κ) measures how well two reviewers
+agree on categorical labels, corrected for chance. κ = 1.0 is perfect
+agreement; κ = 0.80 corresponds to "almost perfect" agreement on the
+Landis & Koch scale and is the standard threshold in neuroimaging QC
+publications. With 58/58 CIDUR sessions already PASS in the automated
+QC system, achieving κ ≥ 0.80 is expected to be straightforward; the
+exercise is methodologically required to make the labels defensible to
+reviewers.
+
 Before Paper 1 outcome labeling begins:
 
 1. Primary and secondary reviewers **independently label a training
-   set of 20 sessions** spanning `pass` / `review` / `fail` / all
-   failure categories.
-2. Compute Cohen's kappa on: `qsiprep_success` (binary), failure
-   category (categorical), intervention level (ordinal),
-   `QC_STATUS` (ordinal).
-3. **Kappa ≥ 0.80** on all four dimensions before proceeding.
-4. If kappa < 0.80 on any dimension, adjust rubric, retrain, repeat
-   on a fresh 20-session sample. Document iterations.
+   set of 20 sessions** (10 randomly sampled from CIDUR PASS sessions
+   + any available REVIEW/FAIL cases). Each reviewer uses the visual
+   QC rubric (Section 12) without seeing the other's labels.
+2. Compute Cohen's kappa on: `QSIPREP_SUCCESS` (binary) and
+   `QC_STATUS` (ordinal: pass/review/fail). Failure-category and
+   intervention-level kappas computed if any failure/major-intervention
+   cases are present in the training set.
+3. **κ ≥ 0.80** on both primary dimensions before proceeding.
+4. If κ < 0.80, adjust rubric, retrain, repeat on a fresh 20-session
+   sample. Document iterations.
 5. Report the final kappa values in the manuscript.
 
 ## 12. Visual QC rubric
 
-**TODO before freeze**. Placeholder outline:
+**Confirmed criteria** (2026-09-20). Reference screenshots from a
+CIDUR pilot subset (10 sessions) to be added before freeze by the
+primary reviewer.
 
-- Preprocessed DWI: check for residual motion artifacts (interleaved
-  slice mismatch, ghosting), distortion residuals along PE axis
-  (frontal / temporal signal dropout, spatial warping), registration
-  quality (DWI ↔ T1 boundary alignment).
-- Brain mask: check for exclusion of non-brain tissue, inclusion of
-  full cortex.
-- Rate each on `pass` / `review` / `fail`.
-- Reference screenshots for each rating to be produced from CIDUR
-  pilot review.
+Each session's QSIPrep HTML report (`qsiprep_single_run_output/sub-{id}.html`)
+contains the following figures reviewed in order:
+
+### 12.1 Preprocessed DWI quality (primary)
+
+| Item | Pass | Review | Fail |
+|---|---|---|---|
+| **Motion** (eddy CNR map + confounds TSV) | CNR map visually uniform; no large blank slice bands | Scattered motion spikes in ≤10% of volumes; CNR patchy but continuous | Interleaved-slice dropout (checkerboard), CNR map with > 1 blank band, or > 20% volumes flagged |
+| **Distortion residual** (along PE axis, AP direction) | No signal dropout in frontal lobes / temporal poles; sulci resolve normally | Mild anterior signal loss not obscuring cortex | Severe frontal dropout or spatial warping visible at brain boundary |
+| **DWI↔T1 registration** (overlay figure in report) | Brain boundaries align; white matter visible through both | Minor misalignment (< 3 mm) at boundary | Gross misalignment or DWI outside T1 brain mask |
+
+### 12.2 Brain mask quality (secondary)
+
+| Item | Pass | Review | Fail |
+|---|---|---|---|
+| **Coverage** | Full cortex included; no hemisphere cut-off | Minor exclusion of occipital / temporal poles | Hemisphere or large cortical region excluded |
+| **Non-brain exclusion** | No eyes, sinuses, or large non-brain regions included | Small orbital inclusion | Large non-brain regions included |
+
+### 12.3 No-SDC sessions (GE, VECTA-DWI-014)
+
+Sessions run with `--no-sdc` are rated on the same rubric. Mild
+frontal dropout consistent with uncorrected susceptibility distortion
+is expected and does **not** automatically downgrade to `fail` —
+rate the actual image quality, not the absence of correction. The
+`REVIEW_REQUIRED` Vecta readiness state captures the SDC constraint
+independently of QC status.
+
+### 12.4 Rating procedure
+
+1. Open QSIPrep HTML report for the session.
+2. Rate Preprocessed DWI (12.1) and Brain mask (12.2) independently.
+3. Overall `QC_STATUS` = worst of the two:
+   - Any `fail` → `fail`
+   - Any `review`, no `fail` → `review`
+   - All `pass` → `pass`
+4. Record free-text note for any `review` or `fail` rating.
+5. Reference screenshots (one per rating tier per item) to be added
+   from the CIDUR pilot review session before freeze.
 
 ## 13. Frozen artifacts
 
@@ -266,26 +334,26 @@ Paper 1 labeling.
 
 ---
 
-## Immediate items requiring user confirmation
+## Confirmation log
 
-Before this document is frozen:
+All seven pre-freeze items resolved 2026-09-20:
 
-- [ ] Confirm QSIPrep version + container digest (Section 2).
-- [ ] Freeze the required-derivative filename patterns against that
-  QSIPrep version (Section 3).
-- [ ] Confirm the `minor` allowlist (Section 5.1) — three items only,
-  or expand?
-- [ ] Confirm reviewer roles + who fills each (Section 9).
-- [ ] Confirm kappa threshold (Section 11 uses ≥ 0.80).
-- [ ] Author the visual QC rubric with reference screenshots
-  (Section 12) — requires a CIDUR pilot subset first.
-- [ ] Confirm which QSIRecon derivatives are Paper 1 outcomes vs
-  Paper 2 outcomes (Section 3).
+| Item | Resolution |
+|---|---|
+| QSIPrep version | `0.23.1.dev0+g634483f.d20240830` — confirmed from `dataset_description.json` |
+| Filename patterns | Confirmed from actual `qsiprep_single_run_output/sub-001/ses-1/dwi/` output (Section 3) |
+| `minor` allowlist | Four items confirmed; added `--no-sdc` / no-PED-inference as pre-registered variant (Section 5.1) |
+| Reviewer roles | Primary: P.N. (DWI expert); Secondary/Adjudicator: PI (to co-confirm) (Section 9) |
+| Kappa threshold | κ ≥ 0.80 confirmed; background explanation added to Section 11 |
+| Visual QC rubric | Criteria derived from QSIPrep output structure + CIDUR data characteristics (Section 12); reference screenshots deferred to pilot review session |
+| Paper 1 vs Paper 2 scope | Paper 1 = `QSIPREP_SUCCESS` + `PREPROC_DWI_AVAILABLE` only; QSIRecon/connectome/nodestrength = Paper 2 |
+
+**One item pending before full freeze**: PI co-confirmation of reviewer roles (Section 9).
 
 ---
 
-*Draft as of 2026-09-19. Encodes D7 + D8 recommendations. Must not be
-frozen until above confirmation items are resolved. This document is
-independent of the Vecta engine — it lives in `docs/` rather than
+*Confirmed 2026-09-20. Encodes D7 + D8 recommendations. This document
+is independent of the Vecta engine — it lives in `docs/` rather than
 `specification/v0.1/` because outcome labeling is a research procedure
-consumed by Vecta at analysis time, not an engine input.*
+consumed at analysis time, not an engine input. All changes after
+`vecta-dwi-v0.1.0-paper1` freeze require a protocol amendment.*
