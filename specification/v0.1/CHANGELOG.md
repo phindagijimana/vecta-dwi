@@ -211,3 +211,34 @@ that separates Vecta from BIDS-only readiness tools.
 - All 6 integration tests pass under Python 3.11.
 - DICOM evidence carries `privacy_status: restricted` — never exported
   by the (still-to-be-built) privacy serializer.
+
+---
+
+## v0.1.0 — 2026-09-19 (draft, cohort/TSV/CLI)
+
+### Added
+- `output/tsv.py` — versioned per-session TSV projection
+  (`vecta_session_tsv_v1`, 28 columns). NULL/unknown values rendered as
+  `NA` so `false` and `unknown` remain distinct (Output Tech Spec §29).
+- `output/cohort.py` — cohort aggregation producing five artifacts:
+  `session_summary.tsv`, `findings_long.tsv`, `variables_long.tsv`,
+  `finding_prevalence.tsv`, `missingness_matrix.tsv`.
+- Finding prevalence table exposes **three explicit denominators**
+  (assessed / applicable / evaluable) as required by Output Tech Spec
+  §32 — these are NOT interchangeable when unknown rates vary.
+- `cli.py` — `vecta assess | aggregate | validate-spec | explain |
+  version` sub-commands. `vecta` entry point installed via project
+  scripts.
+- `tests/integration/test_cli.py` — 3 CLI smoke tests
+  (assess→aggregate, validate-spec, explain).
+
+### Verified
+- All 9 integration tests pass under Python 3.11.
+- `vecta assess` runs against all three BIDS fixtures + emits validated
+  vecta.json + one-row TSV per session.
+- `vecta aggregate` produces prevalence table showing VECTA-DWI-014
+  triggered in 1/3 assessed, 1/3 applicable, and 1/2 evaluable
+  sessions — the evaluable-count difference exposes the unknown-PE
+  case as expected.
+- `vecta explain` prints human-readable finding explanation without
+  reimplementing any scientific logic.

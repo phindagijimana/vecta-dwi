@@ -23,6 +23,9 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest>=7.0"]
 
+[project.scripts]
+vecta = "vecta.cli:main"
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/vecta"]
 
