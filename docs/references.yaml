@@ -1,0 +1,364 @@
+# Structured bibliography for Vecta-DWI Paper 1.
+#
+# Source of truth for citations in docs/paper1_methods_software.md,
+# docs/paper1_prior_art_comparison.md, and the eventual manuscript.
+# Cross-checked against the identifiers in
+# vecta_paper/Vecta_Paper1_Detailed_Literature_Reference_Guide.docx
+# Table 17.
+#
+# Each entry has a short stable key. When cited in-text use `[[key]]`
+# per docs convention; bibliographic entries are generated from this
+# file at manuscript-assembly time.
+
+version: 0.1.0
+
+references:
+
+  # ── Tier A: essential conceptual anchors ───────────────────────────
+
+  fair_wilkinson_2016:
+    tier: A
+    ordinal: A1
+    authors: [Wilkinson MD, et al.]
+    year: 2016
+    title: "The FAIR Guiding Principles for scientific data management and stewardship"
+    venue: "Scientific Data"
+    doi: "10.1038/sdata.2016.18"
+    url: "https://doi.org/10.1038/sdata.2016.18"
+    role_in_paper1: |
+      Foundational stewardship comparison. Vecta must state that FAIRness
+      is valuable but does not itself establish acquisition/source integrity,
+      preservation across conversion, or intended-use processing readiness.
+    cite_in: [introduction, discussion]
+
+  bridge2ai_readiness:
+    tier: A
+    ordinal: A2
+    authors: [Clark T, et al., Bridge2AI Standards Working Group]
+    year: 2024
+    title: "AI-readiness criteria for biomedical data"
+    venue: "Bridge2AI / PubMed record"
+    pmid: "39484409"
+    url: "https://pubmed.ncbi.nlm.nih.gov/39484409/"
+    role_in_paper1: |
+      Closest broad conceptual neighbor. Extends beyond FAIR into
+      provenance, characterization, ethics, pre-model explainability,
+      sustainability, computability. Vecta must define why DBI is a
+      narrower but deeper lifecycle construct for modality-specific
+      integrity + intended-use consequences (not universal AI-readiness).
+    cite_in: [introduction, discussion]
+    novelty_risk: high
+
+  fairscape:
+    tier: A
+    ordinal: A3
+    authors: [Levinson MA, et al., FAIRSCAPE collaborators]
+    year: 2024
+    title: "FAIRSCAPE AI-readiness framework for biomedical research"
+    venue: "Bridge2AI / FAIRSCAPE publication record"
+    role_in_paper1: |
+      Closest implementation neighbor — machine-actionable readiness with
+      provenance/metadata emphasis. Compare vs Vecta's source-to-
+      representation evidence, criterion engine, and empirical linkage
+      to downstream outcomes.
+    cite_in: [introduction, discussion, software_architecture]
+    novelty_risk: high
+
+  bids_gorgolewski_2016:
+    tier: A
+    ordinal: A4
+    authors: [Gorgolewski KJ, et al.]
+    year: 2016
+    title: "The brain imaging data structure, a format for organizing and describing outputs of neuroimaging experiments"
+    venue: "Scientific Data"
+    doi: "10.1038/sdata.2016.44"
+    url: "https://doi.org/10.1038/sdata.2016.44"
+    role_in_paper1: |
+      Core neuroimaging standard. Treat BIDS conformance as one evidence
+      layer / comparator, not as equivalent to analysis readiness.
+    cite_in: [introduction, methods, results_ablation]
+
+  qsiprep_cieslak_2021:
+    tier: A
+    ordinal: A5
+    authors: [Cieslak M, et al.]
+    year: 2021
+    title: "QSIPrep: an integrative platform for the preprocessing and reconstruction of diffusion MRI data"
+    venue: "Nature Methods"
+    doi: "10.1038/s41592-021-01185-5"
+    url: "https://doi.org/10.1038/s41592-021-01185-5"
+    role_in_paper1: |
+      Central downstream workflow. Defines heterogeneous DWI preprocessing/
+      reconstruction context; primary source for pipeline_requirement
+      evidence-basis entries.
+    cite_in: [methods, discussion]
+
+  eddy_qc_bastiani_2019:
+    tier: A
+    ordinal: A6
+    authors: [Bastiani M, et al.]
+    year: 2019
+    title: "Automated quality control for within and between studies diffusion MRI data using a non-parametric framework for movement and distortion correction"
+    venue: "NeuroImage"
+    doi: "10.1016/j.neuroimage.2018.09.073"
+    url: "https://doi.org/10.1016/j.neuroimage.2018.09.073"
+    role_in_paper1: |
+      Core DWI QC comparator (QUAD/SQUAD). Vecta ablations must include
+      it as a downstream-QC baseline; null results (Vecta subsumed by QC
+      for some outcomes) are informative and reportable.
+    cite_in: [introduction, methods_comparator, results_ablation, discussion]
+
+  mriqc_esteban_2017:
+    tier: A
+    ordinal: A7
+    authors: [Esteban O, et al.]
+    year: 2017
+    title: "MRIQC: Advancing the automatic prediction of image quality in MRI from unseen sites"
+    venue: "PLOS ONE"
+    doi: "10.1371/journal.pone.0184661"
+    url: "https://doi.org/10.1371/journal.pone.0184661"
+    role_in_paper1: |
+      Precedent for automated MRI QC and cross-site generalization.
+      Framing anchor for TBI transport design and site-effect discussion.
+    cite_in: [introduction, tbi_transport_design, discussion]
+
+  fortin_multisite_dti_2017:
+    tier: A
+    ordinal: A8
+    authors: [Fortin JP, et al.]
+    year: 2017
+    title: "Harmonization of multi-site diffusion tensor imaging data"
+    venue: "NeuroImage"
+    doi: "10.1016/j.neuroimage.2017.08.047"
+    url: "https://doi.org/10.1016/j.neuroimage.2017.08.047"
+    role_in_paper1: |
+      Anchor for scanner/site effects in DTI. Guardrail: site/vendor/
+      protocol differences are context, not automatically defects.
+    cite_in: [methods_covariates, discussion]
+
+  cobidas_nichols_2017:
+    tier: A
+    ordinal: A9
+    authors: [Nichols TE, et al.]
+    year: 2017
+    title: "Best practices in data analysis and sharing in neuroimaging using MRI"
+    venue: "Nature Neuroscience"
+    doi: "10.1038/nn.4500"
+    url: "https://doi.org/10.1038/nn.4500"
+    role_in_paper1: |
+      Broad reproducibility/best-practice anchor. Places Vecta in the
+      transparent-acquisition/analysis/reporting/sharing movement.
+    cite_in: [introduction, discussion]
+
+  fmriprep_esteban_2019:
+    tier: A
+    ordinal: A10
+    authors: [Esteban O, et al.]
+    year: 2019
+    title: "fMRIPrep: a robust preprocessing pipeline for functional MRI"
+    venue: "Nature Methods"
+    doi: "10.1038/s41592-018-0235-4"
+    url: "https://doi.org/10.1038/s41592-018-0235-4"
+    role_in_paper1: |
+      Not DWI-specific but a methodological precedent for analysis-agnostic,
+      robust, transparent preprocessing and diverse-dataset validation.
+    cite_in: [methods_software_design, discussion]
+
+  # ── Tier B: standards + processing + QC + provenance ───────────────
+
+  bids_poldrack_2024:
+    tier: B
+    authors: [Poldrack RA, et al.]
+    year: 2024
+    title: "The past, present, and future of BIDS"
+    venue: "Imaging Neuroscience"
+    doi: "10.1162/imag_a_00103"
+    url: "https://doi.org/10.1162/imag_a_00103"
+    role_in_paper1: Frames Vecta as complementary to a mature/extensible standard.
+    cite_in: [introduction, discussion]
+
+  qmri_bids_karakuzu_2022:
+    tier: B
+    authors: [Karakuzu A, et al.]
+    year: 2022
+    title: "qMRI-BIDS: an extension to the brain imaging data structure for quantitative magnetic resonance imaging data"
+    venue: "Scientific Data"
+    doi: "10.1038/s41597-022-01571-4"
+    url: "https://doi.org/10.1038/s41597-022-01571-4"
+    role_in_paper1: |
+      Precedent for modality-specific BIDS extension. Models how a
+      specialized specification is motivated and community-documented.
+    cite_in: [methods, discussion]
+
+  eddy_andersson_2016:
+    tier: B
+    authors: [Andersson JLR, Sotiropoulos SN]
+    year: 2016
+    title: "An integrated approach to correction for off-resonance effects and subject movement in diffusion MR imaging"
+    venue: "NeuroImage"
+    doi: "10.1016/j.neuroimage.2015.10.019"
+    url: "https://doi.org/10.1016/j.neuroimage.2015.10.019"
+    role_in_paper1: |
+      Core EDDY framework. Grounds the distinction between upstream
+      deficiencies and correctable artifacts, and the requirement for
+      PhaseEncodingDirection / TotalReadoutTime metadata.
+    cite_in: [methods, evidence_registry]
+
+  datalad_halchenko_2021:
+    tier: B
+    authors: [Halchenko YO, et al.]
+    year: 2021
+    title: "DataLad: distributed system for joint management of code, data, and their relationship"
+    venue: "Journal of Open Source Software"
+    doi: "10.21105/joss.03262"
+    url: "https://doi.org/10.21105/joss.03262"
+    role_in_paper1: |
+      Provenance/reproducibility comparator. Positions provenance as an
+      evidence layer in DBI rather than the complete construct.
+    cite_in: [related_work, reproducibility]
+
+  # ── Tier C: dataset documentation + ML validation reporting ────────
+
+  datasheets_gebru_2021:
+    tier: C
+    authors: [Gebru T, Morgenstern J, Vecchione B, et al.]
+    year: 2021
+    title: "Datasheets for Datasets"
+    venue: "Communications of the ACM"
+    role_in_paper1: |
+      Structured dataset documentation. Vecta operationalizes parts of
+      this as executable, evidence-backed assessment.
+    cite_in: [related_work, discussion]
+
+  data_cards_pushkarna_2022:
+    tier: C
+    authors: [Pushkarna M, Zaldivar A, Kjartansson O]
+    year: 2022
+    title: "Data Cards: Purposeful and Transparent Dataset Documentation for Responsible AI"
+    venue: "ACM FAccT"
+    role_in_paper1: User-centered lifecycle documentation. Supports intended-use framing.
+    cite_in: [related_work]
+
+  dome_walsh_2021:
+    tier: C
+    authors: [Walsh I, et al.]
+    year: 2021
+    title: "DOME: recommendations for supervised machine learning validation in biology"
+    venue: "Nature Methods"
+    doi: "10.1038/s41592-021-01205-4"
+    url: "https://doi.org/10.1038/s41592-021-01205-4"
+    role_in_paper1: |
+      If Paper 1 includes a predictive model, cite for leakage-free
+      development/validation discipline.
+    cite_in: [methods_prediction_optional]
+
+  claim_mongan_2020:
+    tier: C
+    authors: [Mongan J, Moy L, Kahn CE]
+    year: 2020
+    title: "Checklist for Artificial Intelligence in Medical Imaging (CLAIM)"
+    venue: "Radiology: Artificial Intelligence"
+    doi: "10.1148/ryai.2020200029"
+    url: "https://doi.org/10.1148/ryai.2020200029"
+    role_in_paper1: |
+      Reporting checklist for AI in medical imaging. Reinforces
+      external-validation and reproducibility discipline.
+    cite_in: [methods_prediction_optional, discussion]
+
+  # ── Reference families (specific citations to be pinned before freeze) ──
+
+  dcm2niix_family:
+    tier: B
+    kind: reference_family
+    representative: "Li X, Morgan PS, Ashburner J, Smith J, Rorden C. The first step for neuroimaging data analysis: DICOM to NIfTI conversion. J Neurosci Methods 2016."
+    role_in_paper1: DICOM→NIfTI conversion behavior and provenance.
+    cite_in: [methods_conversion, evidence_registry]
+
+  heudiconv_family:
+    tier: B
+    kind: reference_family
+    representative: "Halchenko YO, et al. HeuDiConv: flexible DICOM converter for organizing brain imaging data into structured directory layouts."
+    role_in_paper1: DICOM-to-BIDS heuristic tooling; related work only, Vecta is not a converter.
+    cite_in: [related_work]
+
+  topup_family:
+    tier: B
+    kind: reference_family
+    representative: "Andersson JLR, Skare S, Ashburner J. How to correct susceptibility distortions in spin-echo echo-planar images: application to diffusion tensor imaging. NeuroImage 2003."
+    role_in_paper1: |
+      Motivates why complementary-PE evidence matters (VECTA-DWI-014
+      and VECTA-DWI-021 evidence chain). Cite representative TOPUP
+      paper alongside EDDY.
+    cite_in: [methods, evidence_registry]
+
+  dicom_standard:
+    tier: B
+    kind: normative_standard
+    title: "DICOM PS3 — Digital Imaging and Communications in Medicine"
+    url: "https://www.dicomstandard.org/"
+    role_in_paper1: |
+      Source of truth for every DICOM tag Vecta reads. Version pinned
+      at freeze; cite the version used.
+    cite_in: [methods_source_mapping, specification]
+
+  bids_specification:
+    tier: B
+    kind: normative_standard
+    title: "Brain Imaging Data Structure specification"
+    url: "https://bids-specification.readthedocs.io/"
+    role_in_paper1: |
+      Source of truth for BIDS field names/patterns Vecta consumes.
+      Version pinned at freeze.
+    cite_in: [methods_source_mapping, specification]
+
+  bids_validator:
+    tier: B
+    kind: software
+    title: "bids-validator"
+    url: "https://github.com/bids-standard/bids-validator"
+    role_in_paper1: |
+      External validator whose error/warning counts feed
+      VECTA.DWI.BIDS.VALIDATOR_*_COUNT. Version pinned in provenance.
+    cite_in: [methods_bids_validation]
+
+  enigma_dti_thompson_2020:
+    tier: C
+    authors: [Thompson PM, et al.]
+    year: 2020
+    title: "ENIGMA: enhancing neuro imaging genetics through meta-analysis"
+    role_in_paper1: |
+      Consortium protocol reference for community-standards naming
+      conventions in the evidence registry.
+    cite_in: [evidence_registry]
+
+  adni_jack_2008:
+    tier: C
+    authors: [Jack CR Jr, et al.]
+    year: 2008
+    title: "The Alzheimer's Disease Neuroimaging Initiative (ADNI): MRI methods"
+    role_in_paper1: |
+      Consortium MRI-procedure reference for community-standards naming
+      conventions in the evidence registry.
+    cite_in: [evidence_registry]
+
+  hidden_stratification_oakden_rayner:
+    tier: C
+    authors: [Oakden-Rayner L, Dunnmon J, Carneiro G, Ré C]
+    year: 2020
+    title: "Hidden Stratification Causes Clinically Meaningful Failures in Machine Learning for Medical Imaging"
+    venue: "ACM CHIL"
+    role_in_paper1: |
+      Supports site/protocol/integrity-stratified analyses; future AI
+      reliability work (Paper 3).
+    cite_in: [discussion]
+
+  data_readiness_survey_hiniduma:
+    tier: C
+    authors: [Hiniduma S, Byna S, Bez W]
+    year: 2024
+    title: "Data Readiness for AI: A 360-Degree Survey"
+    role_in_paper1: |
+      Broad prior-art map across structured and unstructured data.
+      Cite to avoid overstating DBI novelty; positions Vecta as
+      imaging-specific.
+    cite_in: [related_work]

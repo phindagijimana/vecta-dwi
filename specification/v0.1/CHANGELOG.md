@@ -274,6 +274,50 @@ that separates Vecta from BIDS-only readiness tools.
 
 ---
 
+## v0.1.0 — 2026-09-19 (draft, literature integration)
+
+Aligning the manuscript draft with `vecta_paper/Vecta_Paper1_Detailed_Literature_Reference_Guide.docx`.
+
+### Added
+- `docs/references.yaml` — structured single-source bibliography keyed
+  by short ID, containing all Tier A anchors (FAIR, Bridge2AI,
+  FAIRSCAPE, BIDS, QSIPrep, EDDY QC, MRIQC, Fortin multisite DTI,
+  Nichols COBIDAS, fMRIPrep), Tier B standards + processing + QC +
+  provenance, and Tier C dataset-documentation / ML-validation
+  references. All with DOIs where available.
+- `docs/paper1_prior_art_comparison.md` — feature-by-feature comparison
+  of Vecta vs Bridge2AI vs FAIRSCAPE vs FAIR vs BIDS Validator vs
+  MRIQC vs EDDY QC vs DTIPrep vs DataLad vs Datasheets/Data Cards.
+  Table split into 6 dimensions (scope, unit + evidence, output shape,
+  missingness, spec + software engineering, validation methodology).
+  Explicit "defensible / not defensible" summary. Fulfills Guide §25
+  action item.
+
+### Changed
+- `docs/paper1_methods_software.md` rewritten:
+  - Introduction paragraph reframed per Guide §17 novelty threat
+    matrix — names Bridge2AI + FAIRSCAPE as "closest conceptual and
+    implementation neighbors" rather than implying first-of-kind.
+  - Deliberate non-claims section extended to include
+    "not first-of-kind AI-readiness framework", "does not replace QC",
+    "BIDS-valid data are not scientifically invalid", "TBI transport
+    does not prove universal generalization".
+  - New "Comparator analyses" section describing the 4-way ablation
+    (BIDS-only / basic metadata / Vecta / QC) per Guide §25.
+  - All `[CITE_*]` stubs replaced with `[[key]]` references resolving
+    to `docs/references.yaml`.
+  - Added missing Tier A anchors: FAIR, Bridge2AI, FAIRSCAPE, Fortin,
+    Nichols/COBIDAS, fMRIPrep, Poldrack 2024 BIDS evolution,
+    Karakuzu qMRI-BIDS.
+
+### Still requires user
+- Run the 12 systematic prior-art search queries (Guide §18) to
+  identify any framework the comparison table misses.
+- Read + annotate the 15-paper core set (Guide §21).
+- Cross-check the DTIPrep row against the actual DTIPrep publication.
+
+---
+
 ## v0.1.0 — 2026-09-19 (draft, expanded fixtures + golden regression)
 
 ### Added

@@ -7,25 +7,46 @@ methodology, and the technical validation strategy. Empirical results
 (CIDUR internal, TBI transport) are excluded — they will be filled in
 after the analyses run.
 
-**Status**: prose-ready draft; citation stubs `[CITE_*]` marked for
-insertion. All numeric claims about the software (variable counts,
-schema counts, test counts) reflect `vecta-dwi` commit `7529290`.
+**Status**: prose-ready draft. All in-text citations use `[[key]]`
+notation resolving to `docs/references.yaml`. All numeric claims about
+the software (variable counts, schema counts, test counts) reflect
+`vecta-dwi` commit `7529290`. Novelty framing has been adjusted
+per the Detailed Literature Reference Guide §17 threat matrix.
 
 ---
 
 ## Data Birth Integrity as a machine-actionable construct
 
-Reliability of diffusion-MRI processing pipelines depends on data
-properties present or absent long before preprocessing runs. Existing
-frameworks address complementary but distinct parts of the lifecycle:
-the Brain Imaging Data Structure (BIDS) [CITE_BIDS] standardizes file
-organization and metadata representation, image-quality control tools
-such as MRIQC [CITE_MRIQC] and EDDY QC [CITE_EDDYQC] characterize
-post-acquisition image properties, and preprocessing workflows such as
-QSIPrep [CITE_QSIPREP] enforce implicit requirements on the inputs they
-accept. None of these individually operationalize the question of
-whether a dataset carries the acquisition- and representation-level
-evidence a specified downstream analysis actually needs.
+Reliability of diffusion-MRI processing pipelines depends on properties
+of the data present or absent well before any preprocessing runs.
+Several existing frameworks address complementary parts of this problem
+without individually operationalizing it end-to-end. Broad stewardship
+principles [[fair_wilkinson_2016]] establish findability, accessibility,
+interoperability, and reusability as universal properties but do not
+themselves specify what evidence a particular downstream analysis
+requires or whether that evidence survived acquisition and conversion.
+Biomedical AI-readiness frameworks [[bridge2ai_readiness]] and their
+machine-actionable implementations [[fairscape]] extend beyond FAIR
+into provenance, characterization, ethics, and pre-model
+explainability, and are the closest conceptual and implementation
+neighbors of this work. Neuroimaging standards [[bids_gorgolewski_2016;
+bids_poldrack_2024]] standardize file organization and metadata
+representation; image-quality control tools [[mriqc_esteban_2017;
+eddy_qc_bastiani_2019]] characterize post-acquisition image and
+processing properties; and preprocessing workflows
+[[qsiprep_cieslak_2021; fmriprep_esteban_2019]] enforce implicit
+requirements on the inputs they accept. Multisite harmonization work
+[[fortin_multisite_dti_2017]] and broad neuroimaging best-practice
+recommendations [[cobidas_nichols_2017]] characterize how site and
+scanner variation propagate through analysis pipelines.
+
+Vecta-DWI is not proposed as a replacement for any of these. Its
+question is narrower: within the diffusion-MRI processing lifecycle,
+can measurable properties of acquisition-, source-, metadata-, and
+representation-layer evidence be operationalized as an intended-use-
+conditional, evidence-traceable assessment, and can those assessments
+be empirically related to downstream processing outcomes across
+heterogeneous sites?
 
 We define **Data Birth Integrity (DBI)** as the degree to which the
 information, structure, provenance, acquisition characteristics, and
@@ -37,19 +58,23 @@ can be sufficient for one analysis and insufficient for another. This
 paper operationalizes DBI for diffusion-MRI preprocessing and
 structural-connectomics readiness (`dwi_connectomics` profile).
 
-DBI is distinct from BIDS conformance (BIDS is one evidence layer,
-not a definition of readiness), from image quality (image-quality
-metrics are complementary downstream evidence, not upstream integrity),
-from diagnostic adequacy (out of scope for this study), and from
-biological or model-performance validity (both are downstream
-consequences whose relationship to DBI is testable but not assumed).
+DBI is distinct from BIDS conformance (BIDS is one evidence layer, not
+a definition of readiness), from image quality (image-quality metrics
+are complementary downstream evidence, not upstream integrity), from
+diagnostic adequacy (out of scope for this study), and from biological
+or model-performance validity (both are downstream consequences whose
+relationship to DBI is testable but not assumed). Where Vecta overlaps
+with adjacent frameworks — for example, the provenance emphasis shared
+with [[fairscape]] and [[datalad_halchenko_2021]], or the automated-
+assessment posture shared with [[mriqc_esteban_2017]] — we describe the
+specific unique aspects of Vecta explicitly rather than asserting
+categorical novelty.
 
 We formalize DBI as a versioned, machine-readable **specification**
-executed by an open **engine** rather than as an informal checklist.
-This distinction is central to Paper 1's methodological contribution:
-the specification is a scientific contract that could in principle be
-reimplemented independently, and the engine is a reproducible execution
-of that contract. Both are frozen for the paper (release tag
+executed by an open **engine**. This distinction is deliberate: the
+specification is a scientific contract that could in principle be
+reimplemented independently, and the engine is a reproducible
+execution of that contract. Both are frozen for the paper (release tag
 `vecta-dwi-v0.1.0-paper1`) so results remain regeneratable.
 
 ## Lifecycle ontology
@@ -74,17 +99,22 @@ layers L1–L6.
 Every Vecta variable carries a `lifecycle_layer` field so findings can
 be classified by where the evidence originated, distinguishing (for
 example) an acquisition-origin limitation from a
-conversion-representation limitation.
+conversion-representation limitation. This ontology positions Vecta
+between the broad AI-readiness dimensions of [[bridge2ai_readiness]]
+and [[fairscape]] on the upstream side and the image-quality and
+preprocessing-output focus of [[mriqc_esteban_2017;
+eddy_qc_bastiani_2019; qsiprep_cieslak_2021]] on the downstream side.
 
 ## Specification structure
 
-The Vecta-DWI v0.1 specification lives under
-`specification/v0.1/` and consists of nine components, each versioned
-independently and referenced by a top-level `manifest.yaml`:
+The Vecta-DWI v0.1 specification lives under `specification/v0.1/` and
+consists of nine components, each versioned independently and
+referenced by a top-level `manifest.yaml`:
 
   - **`variables/`** — machine-readable variable contracts (16 in the
     v0.1 release, across five domains: scanner, acquisition, DICOM
-    source, BIDS, provenance).
+    source, BIDS, provenance). Exact source mappings cite the
+    normative [[dicom_standard]] and [[bids_specification]].
   - **`criteria/`** — declarative rules that evaluate one or more
     variables under a profile and emit a finding when triggered.
   - **`profiles/`** — intended-use declarations
@@ -96,7 +126,9 @@ independently and referenced by a top-level `manifest.yaml`:
     independently by any criterion that uses them. Distinguishes six
     evidence classes: formal standard, pipeline requirement, peer-
     reviewed literature, expert consensus, empirical internal,
-    empirical external.
+    empirical external. Pipeline requirements are anchored primarily
+    to [[qsiprep_cieslak_2021]], [[eddy_andersson_2016]], and TOPUP
+    [[topup_family]].
   - **`tolerances/`** — numeric comparison tolerances (voxel size, TE,
     b-shell grouping, vector norm), each carrying a justification
     basis.
@@ -109,6 +141,11 @@ independently and referenced by a top-level `manifest.yaml`:
     finding categories).
   - **`CHANGELOG.md`** — every scientific or technical change with its
     versioning consequence.
+
+The overall structure follows precedents from mature modality-specific
+extensions [[qmri_bids_karakuzu_2022]] in exposing scientific choices
+as versioned, community-reviewable configuration rather than opaque
+code.
 
 Each variable object declares a stable ID (`VECTA.DWI.<DOMAIN>.<NAME>`),
 definition version, lifecycle layer, allowed value states, source
@@ -141,13 +178,19 @@ than incidental property of the specification: because criteria
 distinguish state-based predicates from value-based predicates, a
 criterion evaluated over an `unknown` variable returns
 `criterion_status: unknown` and emits no finding, rather than a false
-negative or a spurious triggered finding.
+negative or a spurious triggered finding. Dataset-documentation
+frameworks [[datasheets_gebru_2021; data_cards_pushkarna_2022]] make a
+related point at the manual-documentation level; Vecta operationalizes
+the distinction inside the automated pipeline.
 
 ## Software architecture
 
 The Vecta-DWI engine is deliberately generic and interprets the
-specification rather than embedding scientific meaning in code. The
-package layout is:
+specification rather than embedding scientific meaning in code. Where
+possible, the software-engineering posture (transparent, robust,
+version-pinned, diverse-dataset-validated) follows the precedent set
+by [[fmriprep_esteban_2019; qsiprep_cieslak_2021]]. The package layout
+is:
 
 ```
 src/vecta/
@@ -177,9 +220,9 @@ src/vecta/
 Every extractor returns a typed `VariableResult` with explicit state,
 evidence references, extractor version, and computation timestamp. The
 criteria engine consumes these results and emits typed
-`CriterionResult` and `Finding` objects. The output assembler
-composes all objects into a top-level `Assessment`, serializes it to
-canonical JSON, validates the JSON against
+`CriterionResult` and `Finding` objects. The output assembler composes
+all objects into a top-level `Assessment`, serializes it to canonical
+JSON, validates the JSON against
 `schemas/output/vecta_output.schema.json`, and runs referential
 integrity checks (every evidence reference resolves; every finding's
 criterion exists; readiness references only valid finding IDs; software
@@ -214,13 +257,14 @@ separation is enforced by the schema, the engine, or both:
      population.
 
 We deliberately do not emit an aggregate 0–1 or 0–100 Vecta score in
-v0.1. This departs from earlier approaches (e.g., a scalar
-composite over metadata / naming / gradient / spatial / naming-
-compliance components that we and others have previously explored). An
-aggregate score requires a defensible calibration strategy tied to a
-specified outcome; without that, the number is uninterpretable. Paper 1
-therefore reports variables, findings, and profile-relative readiness,
-not a Vecta score.
+v0.1. This departs from earlier scalar-composite approaches that we and
+others have previously explored. An aggregate score requires a
+defensible calibration strategy tied to a specified outcome; without
+that, the number is uninterpretable. Where the paper compares against
+predictive analyses, we follow reporting recommendations from
+[[dome_walsh_2021; claim_mongan_2020]] to keep development and
+validation cleanly separated. Paper 1 therefore reports variables,
+findings, and profile-relative readiness, not a Vecta score.
 
 ## Cohort A: CIDUR development
 
@@ -228,9 +272,10 @@ The CIDUR cohort at URMC provides original DICOM alongside standardized
 BIDS representation and QSIPrep/QSIRecon processing outcomes. This
 combination lets us evaluate the full L1→L6 lifecycle within one
 cohort, including transformation-fidelity checks that require both the
-source DICOM and the derived BIDS representation. CIDUR is used as the
-development cohort: variables, criteria, and tolerances may be revised
-before freeze based on internal evidence.
+source DICOM and the derived BIDS representation
+[[dcm2niix_family]]. CIDUR is used as the development cohort:
+variables, criteria, and tolerances may be revised before freeze based
+on internal evidence.
 
 ## Freeze: `vecta-dwi-v0.1.0-paper1`
 
@@ -241,31 +286,41 @@ analysis projection are frozen in a single immutable git tag,
 `vecta-dwi-v0.1.0-paper1`. Any subsequent change requires either a
 patch-level release (documentation or non-behavior-changing bug fix
 with regression test) or a new version. Changes that affect a
-criterion's scientific behavior are reserved for `v0.2.0`, informed
-by Paper 1 results and not folded back into `v0.1`. This freeze
-boundary is the single most important methodological property of the
-study design: it converts the CIDUR-to-TBI evaluation from a
-tune-and-report exercise into an independent transportability test.
+criterion's scientific behavior are reserved for `v0.2.0`, informed by
+Paper 1 results and not folded back into `v0.1`. This freeze boundary
+is the single most important methodological property of the study
+design: it converts the CIDUR-to-TBI evaluation from a tune-and-report
+exercise into an independent transportability test. This posture
+follows precedents from cross-site QC evaluation
+[[mriqc_esteban_2017]] and the broader neuroimaging reproducibility
+literature [[cobidas_nichols_2017]].
 
 ## Cohort B: multisite TBI validation
 
 The multisite TBI cohort (approximately 600 subjects across multiple
 sites, two timepoints per subject; final N to be verified before
 analysis) provides heterogeneous scanner, protocol, and site
-distributions but does not (initially) include original DICOM. The
-frozen specification is applied to TBI using only the Core module
-variables evaluable from BIDS-standardized evidence. DICOM-only
-variables (Source module) remain `unknown` for TBI sessions and are
-never coerced to `false`. The primary transport analysis is therefore
-scoped to the frozen Core subset evaluable in both cohorts; Source
-module results remain a CIDUR-only lifecycle contribution.
+distributions [[fortin_multisite_dti_2017]] but does not (initially)
+include original DICOM. The frozen specification is applied to TBI
+using only the Core module variables evaluable from BIDS-standardized
+evidence. DICOM-only variables (Source module) remain `unknown` for
+TBI sessions and are never coerced to `false`. The primary transport
+analysis is therefore scoped to the frozen Core subset evaluable in
+both cohorts; Source module results remain a CIDUR-only lifecycle
+contribution.
+
+Where the transport analysis exposes site-dependent variation, we
+follow [[fortin_multisite_dti_2017]] in treating site/vendor/protocol
+differences as context to characterize rather than defects to remove,
+and consider the stratification/subgroup implications raised by
+[[hidden_stratification_oakden_rayner]].
 
 ## Technical validation
 
 The engine is validated in three layers before empirical analysis:
 
-  1. **Meta-schema validation** confirms every JSON Schema is a
-     valid Draft 2020-12 schema.
+  1. **Meta-schema validation** confirms every JSON Schema is a valid
+     Draft 2020-12 schema.
   2. **Specification validation** loads each variable, criterion, and
      profile YAML at engine start and validates it against the
      corresponding input schema. Referential integrity is checked:
@@ -282,9 +337,30 @@ Additional behavior tests exercise the full pipeline on 7 synthetic
 BIDS fixtures (some with matching DICOM), covering the reference case,
 missing complementary phase encoding, unknown PE direction (the
 Output Tech Spec §55 prohibited case, verified via an explicit
-regression), missing gradient files, bval/volume count mismatch,
-missing readout metadata, and DICOM/BIDS field-strength conflict. All
-20 integration tests pass on the frozen release.
+regression against `reverse_pe_available = false`), missing gradient
+files, bval/volume count mismatch, missing readout metadata, and
+DICOM/BIDS field-strength conflict. All 20 integration tests pass on
+the frozen release.
+
+## Comparator analyses
+
+Following the ablation strategy suggested by the Detailed Literature
+Reference Guide (§25) and precedent from cross-site QC evaluation
+[[mriqc_esteban_2017]], the primary results section reports four
+information-set comparisons:
+
+  1. BIDS Validator errors + warnings only [[bids_gorgolewski_2016;
+     bids_validator]].
+  2. Basic acquisition/BIDS metadata (scanner, field strength, voxel,
+     shells, directions, PE) without Vecta criteria.
+  3. Vecta Core variables + criteria (v0.1 frozen).
+  4. Established downstream QC [[eddy_qc_bastiani_2019]] where
+     available, either alone or added to Vecta.
+
+The goal is to characterize where Vecta adds information beyond BIDS
+conformance and where it duplicates or complements downstream QC.
+Ablations where Vecta is subsumed by QC for a particular outcome are
+informative results, not failures, and are reported transparently.
 
 ## Reproducibility
 
@@ -292,7 +368,8 @@ The Paper 1 reproducibility package includes:
 
   - The frozen software tag `vecta-dwi-v0.1.0-paper1`.
   - A container / environment lock (pending — to be produced at freeze
-    time).
+    time), following practices consistent with
+    [[datalad_halchenko_2021]].
   - All specification YAMLs, JSON schemas, and evidence registry.
   - The complete synthetic fixture set with golden expected outputs.
   - The versioned per-session TSV projection map and cohort
@@ -314,29 +391,28 @@ paper does not claim:
   - that Vecta certifies clinical or diagnostic adequacy;
   - that a `ready` readiness state guarantees valid biological
     measurement or downstream analytic correctness;
+  - that Vecta is a first-of-its-kind AI-readiness or data-integrity
+    framework — adjacent stewardship, readiness, standards, and QC
+    work exists [[fair_wilkinson_2016; bridge2ai_readiness; fairscape;
+    data_readiness_survey_hiniduma; bids_gorgolewski_2016;
+    mriqc_esteban_2017; eddy_qc_bastiani_2019]];
+  - that Vecta replaces downstream QC — QC is treated as
+    complementary, not superseded;
+  - that BIDS-valid data are scientifically invalid — BIDS conformance
+    is one evidence layer;
   - that a triggered finding causally predicts pipeline failure —
     observed effects reported in Results should be interpreted as
     associations subject to the study's site, scanner, and protocol
     confounding structure;
-  - that BIDS conformance is equivalent to processing readiness;
+  - that TBI transport results prove universal generalization —
+    transport is characterized in the specific study's site/protocol
+    space, not asserted broadly;
   - that processing success (Paper 1) implies measurement validity
     (Paper 2).
-
-## Citation stubs to insert
-
-  - `[CITE_BIDS]` — Gorgolewski et al., 2016 (BIDS)
-  - `[CITE_MRIQC]` — Esteban et al., 2017 (MRIQC)
-  - `[CITE_EDDYQC]` — Bastiani et al., 2019 (EDDY QC)
-  - `[CITE_QSIPREP]` — Cieslak et al., 2021 (QSIPrep)
-  - `[CITE_DCM2NIIX]` — Li et al., 2016 (dcm2niix)
-  - `[CITE_FSL_TOPUP]` — Andersson et al., 2003 (topup)
-  - `[CITE_BIDSVALIDATOR]` — bids-validator
-  - `[CITE_ENIGMA_DTI]` — Thompson et al., 2020 (ENIGMA-DTI)
-  - `[CITE_ADNI]` — Jack et al., 2008 (ADNI MRI procedures)
-  - `[CITE_DATALAD]` — Halchenko et al., 2021 (DataLad)
 
 ---
 
 *Draft as of 2026-09-19. Empirical results (CIDUR internal, TBI
 transport, ablation vs BIDS/QC baselines) are excluded and will be
-inserted after the analyses run.*
+inserted after the analyses run. Bibliographic entries resolve from
+`docs/references.yaml`.*
