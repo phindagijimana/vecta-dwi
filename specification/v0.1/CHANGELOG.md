@@ -274,6 +274,52 @@ that separates Vecta from BIDS-only readiness tools.
 
 ---
 
+## v0.1.0 — 2026-09-19 (draft, D2/D4 encoded + VECTA-DWI-030 added)
+
+Encoding the D2 (localizer exclusion) and D4 (tolerance justification)
+recommendations from the recent decision review, and adding
+`VECTA-DWI-030` to close the gap surfaced by CIDUR's manual
+"DWI missing .bval/.bvec" exclusions.
+
+### Added
+- `VECTA-DWI-030` — critical/provisional criterion firing when a DWI
+  entity is present but the `.bval` and/or `.bvec` companion file is
+  absent. Distinct from the plausibility check
+  (`BVEC_PLAUSIBILITY`, which assumes both files exist).
+- `EV-DWI-GRAD-001` — pipeline-requirement evidence entry supporting
+  the above (BIDS DWI companion-file requirement + gradient-aware
+  preprocessing requirement).
+- `tests/synthetic/dataset_040_missing_gradient_files/` — DWI NIfTI +
+  sidecar, no .bval or .bvec. Verifies the new criterion + severity.
+- `dwi_connectomics` profile: `exclusions.classes: [localizer]` — D2
+  decision encoded. Localizer series remain in per-session evidence
+  but are excluded from cohort denominators / profile readiness math.
+- `input/profile.schema.json`: new optional `exclusions` object with
+  `classes: [string]`.
+
+### Changed
+- `tolerances/default_tolerances.yaml`: all four v0.1 tolerances
+  promoted from `provisional` to `expert_consensus` or
+  `pipeline_requirement` with justified sources (D4 decision).
+- `dataset_040_missing_gradient_files` also triggers `VECTA-DWI-014`
+  (missing reverse-PE) — inventory of PE-known DWI entities is
+  complete with one entity, so the derivation returns
+  `reverse_pe_available=false`.
+
+### Verified against CIDUR
+- The 3 CIDUR "DWI missing .bval/.bvec" cases were caught upstream by
+  the conversion team (all 3 are fMRI mis-routed as DWI, routed to
+  `for_review/corrupt_scans/`, never appearing in `data_bids/`). So
+  `VECTA-DWI-030` correctly does not fire against the current CIDUR
+  BIDS export. The criterion remains valuable for less-careful
+  conversion pipelines that emit malformed DWI to BIDS.
+
+### Verified
+- All 22 integration tests pass (was 21). Goldens regenerated for the
+  5 fixtures to reflect `VECTA-DWI-030` in the criteria list.
+
+---
+
 ## v0.1.0 — 2026-09-19 (draft, CIDUR integration + first live run)
 
 Prompted by inspecting `~/Documents/CIDUR_BIDS/data_bids` (76 subjects,

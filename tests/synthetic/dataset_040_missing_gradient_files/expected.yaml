@@ -1,0 +1,23 @@
+assessment_status_state: completed_with_unknowns
+readiness_state: ready_with_limitations
+variables:
+  VECTA.DWI.ACQ.BVAL_COUNT:
+    value: null
+    state: unknown
+  VECTA.DWI.ACQ.BVEC_COUNT:
+    value: null
+    state: unknown
+  VECTA.DWI.ACQ.PE_DIRECTION:
+    value: "j-"
+    state: observed
+criteria:
+  VECTA-DWI-014: finding
+  VECTA-DWI-030: finding
+findings_present:
+  VECTA-DWI-014: true
+  VECTA-DWI-030: true
+finding_details:
+  VECTA-DWI-030:
+    severity: critical
+    severity_status: provisional
+    category: representation_integrity

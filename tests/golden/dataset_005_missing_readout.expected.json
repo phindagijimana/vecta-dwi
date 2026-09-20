@@ -72,6 +72,25 @@
       "status": "finding"
     },
     {
+      "criterion_id": "VECTA-DWI-030",
+      "criterion_version": "0.1.0",
+      "evaluated_at": "<TIMESTAMP>",
+      "evaluation_engine_version": "0.1.0",
+      "finding_refs": [],
+      "input_snapshot": {
+        "VECTA.DWI.ACQ.BVAL_COUNT": {
+          "state": "observed",
+          "value": 7
+        },
+        "VECTA.DWI.ACQ.BVEC_COUNT": {
+          "state": "observed",
+          "value": 7
+        }
+      },
+      "profile_id": "dwi_connectomics",
+      "status": "satisfied"
+    },
+    {
       "criterion_id": "VECTA-DWI-050",
       "criterion_version": "0.1.0",
       "evaluated_at": "<TIMESTAMP>",
@@ -363,7 +382,7 @@
       "assessment_completeness": {
         "applicable_variables": 16,
         "calculation_id": "assessment_completeness_v1",
-        "evaluable_criteria": 3,
+        "evaluable_criteria": 4,
         "extraction_failed": 0,
         "invalid": 0,
         "not_collected": 0,

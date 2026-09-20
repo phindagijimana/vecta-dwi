@@ -70,6 +70,27 @@
       "status": "satisfied"
     },
     {
+      "criterion_id": "VECTA-DWI-030",
+      "criterion_version": "0.1.0",
+      "evaluated_at": "<TIMESTAMP>",
+      "evaluation_engine_version": "0.1.0",
+      "finding_refs": [
+        "finding-0002"
+      ],
+      "input_snapshot": {
+        "VECTA.DWI.ACQ.BVAL_COUNT": {
+          "state": "observed",
+          "value": 7
+        },
+        "VECTA.DWI.ACQ.BVEC_COUNT": {
+          "state": "unknown",
+          "value": null
+        }
+      },
+      "profile_id": "dwi_connectomics",
+      "status": "finding"
+    },
+    {
       "criterion_id": "VECTA-DWI-050",
       "criterion_version": "0.1.0",
       "evaluated_at": "<TIMESTAMP>",
@@ -285,6 +306,72 @@
       "variable_refs": [
         "VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE"
       ]
+    },
+    {
+      "affected_profile": "dwi_connectomics",
+      "category": "representation_integrity",
+      "confidence": "high",
+      "criterion_id": "VECTA-DWI-030",
+      "criterion_version": "0.1.0",
+      "empirical_status": {
+        "state": "not_tested"
+      },
+      "evidence_refs": [
+        "EV-DWI-GRAD-001"
+      ],
+      "finding_id": "finding-0002",
+      "label": "DWI gradient file (.bval and/or .bvec) missing",
+      "lifecycle_origin": "L4_REPRESENTATION",
+      "metric_refs": [],
+      "observed_condition": {
+        "bval_or_bvec_absent": true
+      },
+      "potential_effects": [
+        {
+          "causal_claim": false,
+          "effect_id": "gradient_aware_preprocessing_impossible",
+          "evidence_refs": [
+            "EV-DWI-GRAD-001"
+          ],
+          "relation": "plausible",
+          "wording": "Without both .bval and .bvec, gradient-aware preprocessing\n(QSIPrep gradient checks, EDDY, tractography) cannot run.\nSome pipelines may reconstruct a nominal table from DICOM\nif available, but this fallback is neither guaranteed nor\nvalid for all vendors.\n"
+        }
+      ],
+      "recommended_actions": [
+        {
+          "action_class": "re_export",
+          "action_id": "recover_gradients_from_dicom",
+          "automated": false,
+          "changes_source_data": false,
+          "requires_human_approval": true,
+          "text": "Attempt to reconstruct .bval and .bvec from original DICOM\n(dcm2niix -b y) or from the acquisition protocol\ndocumentation. Then rerun BIDS conversion.\n"
+        },
+        {
+          "action_class": "exclude",
+          "action_id": "exclude_from_analysis_if_unrecoverable",
+          "automated": false,
+          "changes_source_data": false,
+          "requires_human_approval": true,
+          "text": "If gradient tables cannot be recovered, exclude this DWI\nsession from analyses requiring gradient information. Document\nthe exclusion.\n"
+        }
+      ],
+      "reference_condition": {
+        "profile": "dwi_connectomics",
+        "required_files": [
+          ".bval",
+          ".bvec"
+        ]
+      },
+      "severity": "critical",
+      "severity_basis": [
+        "pipeline_requirement"
+      ],
+      "severity_status": "provisional",
+      "spec_version": "0.1.0",
+      "variable_refs": [
+        "VECTA.DWI.ACQ.BVAL_COUNT",
+        "VECTA.DWI.ACQ.BVEC_COUNT"
+      ]
     }
   ],
   "profile": {
@@ -304,7 +391,7 @@
       "assessment_completeness": {
         "applicable_variables": 16,
         "calculation_id": "assessment_completeness_v1",
-        "evaluable_criteria": 3,
+        "evaluable_criteria": 4,
         "extraction_failed": 0,
         "invalid": 0,
         "not_collected": 0,

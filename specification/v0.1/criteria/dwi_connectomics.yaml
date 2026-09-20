@@ -267,6 +267,87 @@ criteria:
       - TEST-METASUFF-001
 
   # ─────────────────────────────────────────────────────────────────────────
+  # VECTA-DWI-030 — DWI gradient files (bval / bvec) missing
+  # Surfaced by CIDUR's "DWI missing .bval/.bvec" manual exclusion cases;
+  # QSIPrep and any gradient-aware pipeline require both files.
+  # ─────────────────────────────────────────────────────────────────────────
+  - criterion_id: VECTA-DWI-030
+    version: 0.1.0
+    name: dwi_gradient_files_missing
+    lifecycle_origin: L4_REPRESENTATION
+    status: active
+
+    requires:
+      - VECTA.DWI.ACQ.BVAL_COUNT
+      - VECTA.DWI.ACQ.BVEC_COUNT
+
+    applies_to:
+      - dwi_connectomics
+
+    condition:
+      any:
+        - variable: VECTA.DWI.ACQ.BVAL_COUNT
+          state: unknown
+        - variable: VECTA.DWI.ACQ.BVEC_COUNT
+          state: unknown
+
+    finding:
+      label: DWI gradient file (.bval and/or .bvec) missing
+      category: representation_integrity
+      observed_condition:
+        bval_or_bvec_absent: true
+      reference_condition:
+        profile: dwi_connectomics
+        required_files:
+          - .bval
+          - .bvec
+      severity:
+        level: critical
+        status: provisional
+        basis:
+          - evidence_type: pipeline_requirement
+            evidence_ref: EV-DWI-GRAD-001
+      confidence:
+        default: high
+      potential_effects:
+        - effect_id: gradient_aware_preprocessing_impossible
+          relation: plausible
+          evidence_refs: [EV-DWI-GRAD-001]
+          wording: |
+            Without both .bval and .bvec, gradient-aware preprocessing
+            (QSIPrep gradient checks, EDDY, tractography) cannot run.
+            Some pipelines may reconstruct a nominal table from DICOM
+            if available, but this fallback is neither guaranteed nor
+            valid for all vendors.
+          causal_claim: false
+      recommended_actions:
+        - action_id: recover_gradients_from_dicom
+          action_class: re_export
+          text: |
+            Attempt to reconstruct .bval and .bvec from original DICOM
+            (dcm2niix -b y) or from the acquisition protocol
+            documentation. Then rerun BIDS conversion.
+          automated: false
+          changes_source_data: false
+          requires_human_approval: true
+        - action_id: exclude_from_analysis_if_unrecoverable
+          action_class: exclude
+          text: |
+            If gradient tables cannot be recovered, exclude this DWI
+            session from analyses requiring gradient information. Document
+            the exclusion.
+          automated: false
+          changes_source_data: false
+          requires_human_approval: true
+      empirical_status:
+        state: not_tested
+
+    evidence_refs:
+      - EV-DWI-GRAD-001
+    tests:
+      - TEST-GRADMISS-001
+
+  # ─────────────────────────────────────────────────────────────────────────
   # VECTA-DWI-050 — DWI DICOM series geometry inconsistent
   # (Source module — only evaluable when DICOM inventory is available)
   # ─────────────────────────────────────────────────────────────────────────

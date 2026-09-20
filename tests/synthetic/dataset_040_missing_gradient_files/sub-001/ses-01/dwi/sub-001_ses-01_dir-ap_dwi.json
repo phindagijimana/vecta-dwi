@@ -1,0 +1,9 @@
+{
+  "PhaseEncodingDirection": "j-",
+  "TotalReadoutTime": 0.089,
+  "RepetitionTime": 4.7,
+  "EchoTime": 0.071,
+  "MagneticFieldStrength": 3.0,
+  "Manufacturer": "Siemens",
+  "ManufacturersModelName": "Prisma"
+}

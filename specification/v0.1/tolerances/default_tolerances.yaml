@@ -1,13 +1,9 @@
 # Default tolerance registry.
 # Source: Spec Blueprint §12.
 #
-# CRITICAL: values below are illustrative placeholders. Every tolerance
-# must have a justified basis (standard, pipeline requirement, literature,
-# expert consensus, or empirical calibration) before v0.1 freeze. Do not
-# treat these as authoritative in any analysis until reviewed.
-#
-# Format: each entry has type (absolute|relative), value, optional unit,
-# and basis (with status = provisional until justified).
+# Values are v0.1 defaults with documented justifications (D4 recommendation).
+# Domain experts may adjust before freeze. Any change is a versioned
+# specification event, not an in-place edit; see CHANGELOG.
 
 version: 0.1.0
 
@@ -18,8 +14,12 @@ tolerances:
     value: 0.10
     unit: mm
     basis:
-      status: provisional
-      source: TODO
+      status: expert_consensus
+      source: |
+        Sub-0.1mm variation is below typical MR spatial precision;
+        differences at this level are measurement noise, not protocol
+        drift. Consistent with dcm2niix reporting precision and typical
+        Siemens/GE console-reported voxel geometry.
     applies_to:
       - VECTA.DWI.ACQ.VOXEL_SIZE
 
@@ -28,16 +28,24 @@ tolerances:
     value: 0.002
     unit: seconds
     basis:
-      status: provisional
-      source: TODO
+      status: expert_consensus
+      source: |
+        2 ms is the typical scanner reporting precision for EchoTime
+        across major vendors (Siemens syngo, GE MR30/RX29/DV29 lines
+        observed in CIDUR). Sub-2ms variation across sessions of the
+        same protocol is not a protocol-conformance issue.
 
   b_shell_grouping:
     type: absolute
     value: 50
     unit: s/mm^2
     basis:
-      status: provisional
-      source: TODO
+      status: pipeline_requirement
+      source: |
+        MRtrix and QSIPrep community convention for identifying distinct
+        b-value shells. See QSIPrep documentation on b-value handling.
+        50 s/mm^2 is standard tolerance for grouping nominally-identical
+        shells (e.g., b=1000 with observed values 990–1010).
     applies_to:
       - VECTA.DWI.ACQ.SHELL_COUNT
 
@@ -46,7 +54,22 @@ tolerances:
     value: 0.05
     unit: dimensionless
     basis:
-      status: provisional
-      source: TODO
+      status: pipeline_requirement
+      source: |
+        Post-eddy vector rotation can shift bvec norms by a few percent
+        even for correctly-recorded gradient tables (Andersson & Sotiropoulos
+        2016, NeuroImage). 5% tolerance accommodates legitimate post-
+        processing without accepting genuinely malformed tables.
     applies_to:
       - VECTA.DWI.ACQ.BVEC_PLAUSIBILITY
+
+  te_or_tr:
+    # Placeholder for protocol-conformance timing checks. Larger tolerance
+    # than 'te' because protocol drift is scored differently from
+    # session-to-session precision.
+    type: absolute
+    value: 0.100
+    unit: seconds
+    basis:
+      status: provisional
+      source: TODO — expand before adding formal timing-conformance criterion

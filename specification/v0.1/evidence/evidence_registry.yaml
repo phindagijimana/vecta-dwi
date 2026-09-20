@@ -41,6 +41,25 @@ evidence:
       Absence in metadata does not by itself indicate a corrupt
       acquisition — it is an evidence-insufficiency condition.
 
+  - evidence_id: EV-DWI-GRAD-001
+    type: pipeline_requirement
+    title: BIDS DWI requires companion .bval and .bvec files
+    source: BIDS specification (dwi entity); QSIPrep / dcm2niix documentation
+    version_scope: specified_version
+    status: active
+    supports:
+      - VECTA-DWI-030
+    strength:
+      category: operational_requirement
+    notes: |
+      Every DWI NIfTI in BIDS must be accompanied by a matching .bval
+      and .bvec file. Absence prevents gradient-aware preprocessing
+      (QSIPrep gradient sanity checks, EDDY, tractography) from running
+      at all. This is distinct from the plausibility check
+      (VECTA.DWI.ACQ.BVEC_PLAUSIBILITY, which assumes both files are
+      present) — this criterion catches the presence-vs-absence case
+      surfaced by CIDUR's "DWI missing .bval/.bvec" manual exclusions.
+
   - evidence_id: EV-DWI-DCM-GEO-001
     type: pipeline_requirement
     title: Intra-series DICOM geometry consistency required for DWI reconstruction

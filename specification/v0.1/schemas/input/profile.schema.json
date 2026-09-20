@@ -35,6 +35,16 @@
       "type": "array",
       "items": { "type": "string" }
     },
+    "exclusions": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "classes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
     "criteria": {
       "type": "array",
       "items": { "$ref": "../_defs.schema.json#/$defs/CriterionID" }

@@ -41,6 +41,7 @@ def spec():
         "dataset_005_missing_readout",
         "dataset_011_dicom_bids_conflict",
         "dataset_030_fmap_reverse_pe",
+        "dataset_040_missing_gradient_files",
     ],
 )
 def test_expanded_fixture(spec, fixture_name):

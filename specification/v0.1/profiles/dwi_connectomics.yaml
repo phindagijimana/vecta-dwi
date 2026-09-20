@@ -24,10 +24,19 @@ essential_metadata:
   - phase_encoding_direction
   - total_readout_time_or_equivalent
 
+# Series classes excluded from cohort denominators and from profile-
+# level readiness aggregation. Sessions are still assessed and per-series
+# evidence is retained; these classes simply do not contribute to the
+# profile's readiness or prevalence math (D2 decision).
+exclusions:
+  classes:
+    - localizer
+
 criteria:
   - VECTA-DWI-001         # PE direction unknown (evidence insufficiency)
   - VECTA-DWI-014         # complementary PE reference unavailable
   - VECTA-DWI-021         # essential metadata insufficient
+  - VECTA-DWI-030         # DWI gradient files missing (bval or bvec)
   - VECTA-DWI-050         # DWI DICOM geometry inconsistent (Source module)
   - VECTA-DWI-060         # DICOM/BIDS field-strength disagreement (Source module)
 
