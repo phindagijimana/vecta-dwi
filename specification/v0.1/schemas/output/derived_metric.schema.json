@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/output/derived_metric.schema.json",
+  "title": "Vecta-DWI DerivedMetric",
+  "description": "Calculated non-interpretive metric from variables/other metrics. Source: Output Tech Spec §10.",
+
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["metric_id", "definition_version", "value", "state", "formula_id", "formula_version", "confidence", "evidence_refs"],
+  "properties": {
+    "metric_id": { "$ref": "../_defs.schema.json#/$defs/DerivedMetricID" },
+    "definition_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "value": {
+      "description": "Number, string, boolean, array, or null (unknown/not_applicable/etc.)."
+    },
+    "state": { "$ref": "../_defs.schema.json#/$defs/value_state" },
+    "canonical_unit": { "type": ["string", "null"] },
+    "dependency_refs": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "$ref": "../_defs.schema.json#/$defs/VariableID" },
+          { "$ref": "../_defs.schema.json#/$defs/DerivedMetricID" }
+        ]
+      }
+    },
+    "formula_id": { "type": "string", "minLength": 1 },
+    "formula_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "reference_id": { "type": ["string", "null"] },
+    "confidence": { "$ref": "../_defs.schema.json#/$defs/confidence_level" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "$ref": "../_defs.schema.json#/$defs/EvidenceRef" }
+    },
+    "details": {
+      "type": "object",
+      "description": "For ratios and similar metrics, MUST retain numerator, denominator, applicable elements, and missing elements. A scalar ratio alone is insufficient (Output Tech Spec §10)."
+    }
+  }
+}

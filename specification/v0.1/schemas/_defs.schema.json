@@ -1,0 +1,357 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/_defs.schema.json",
+  "title": "Vecta-DWI v0.1 shared definitions",
+  "description": "Enums, ID patterns, and reusable object types referenced by every other schema. Mirrors specification/v0.1/registries/enums.yaml and Output Tech Spec §14-18.",
+
+  "$defs": {
+
+    "SemVer": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$"
+    },
+
+    "ISO8601DateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+
+    "VariableID": {
+      "type": "string",
+      "pattern": "^VECTA\\.DWI\\.[A-Z_]+\\.[A-Z0-9_]+$"
+    },
+
+    "DerivedMetricID": {
+      "type": "string",
+      "pattern": "^VECTA\\.DWI\\.METRIC\\.[A-Z0-9_]+$"
+    },
+
+    "CriterionID": {
+      "type": "string",
+      "pattern": "^VECTA-DWI-[0-9]{3}$"
+    },
+
+    "FindingID": {
+      "type": "string",
+      "pattern": "^finding-[0-9]{4,}$"
+    },
+
+    "EvidenceRef": {
+      "type": "string",
+      "pattern": "^(ev-[A-Za-z0-9._-]+|EV-[A-Z0-9._-]+)$"
+    },
+
+    "AssessmentID": {
+      "type": "string",
+      "pattern": "^va-[A-Za-z0-9._-]+$"
+    },
+
+    "ProfileID": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+
+    "ProtocolReferenceID": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "OutcomeID": {
+      "type": "string",
+      "pattern": "^VECTA\\.OUTCOME\\.[A-Z0-9_]+$"
+    },
+
+    "LifecycleLayer": {
+      "type": "string",
+      "enum": [
+        "L0_DESIGN",
+        "L1_ACQUISITION",
+        "L2_SOURCE",
+        "L3_METADATA",
+        "L4_REPRESENTATION",
+        "L5_CONFORMANCE",
+        "L6_PROCESSING",
+        "L7_MEASUREMENT",
+        "L8_MODEL",
+        "L9_INFERENCE"
+      ]
+    },
+
+    "value_state": {
+      "type": "string",
+      "enum": [
+        "observed",
+        "derived",
+        "unknown",
+        "not_collected",
+        "not_applicable",
+        "invalid",
+        "extraction_failed",
+        "conflict"
+      ]
+    },
+
+    "criterion_status": {
+      "type": "string",
+      "enum": ["satisfied", "finding", "unknown", "not_applicable", "error"]
+    },
+
+    "assessment_status_state": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "completed_with_unknowns",
+        "partial",
+        "failed",
+        "specification_error"
+      ]
+    },
+
+    "confidence_level": {
+      "type": "string",
+      "enum": ["high", "moderate", "low", "unknown"]
+    },
+
+    "severity_level": {
+      "type": "string",
+      "enum": ["critical", "major", "moderate", "informational"]
+    },
+
+    "severity_status": {
+      "type": "string",
+      "enum": ["provisional", "calibrated"]
+    },
+
+    "readiness_state": {
+      "type": "string",
+      "enum": [
+        "ready",
+        "ready_with_limitations",
+        "review_required",
+        "not_ready",
+        "not_assessed"
+      ]
+    },
+
+    "evidence_basis": {
+      "type": "string",
+      "enum": [
+        "formal_standard",
+        "pipeline_requirement",
+        "peer_reviewed_literature",
+        "expert_consensus",
+        "empirical_internal",
+        "empirical_external"
+      ]
+    },
+
+    "review_status": {
+      "type": "string",
+      "enum": [
+        "not_requested",
+        "pending",
+        "confirmed",
+        "rejected",
+        "modified",
+        "resolved"
+      ]
+    },
+
+    "privacy_status": {
+      "type": "string",
+      "enum": ["safe", "restricted"]
+    },
+
+    "action_class": {
+      "type": "string",
+      "enum": [
+        "review",
+        "document",
+        "re_export",
+        "repair_representation",
+        "alternative_processing",
+        "exclude",
+        "prospective_change"
+      ]
+    },
+
+    "empirical_relation": {
+      "type": "string",
+      "enum": ["plausible", "empirically_associated", "externally_replicated"]
+    },
+
+    "finding_category": {
+      "type": "string",
+      "enum": [
+        "acquisition_integrity",
+        "source_integrity",
+        "metadata_integrity",
+        "conversion_integrity",
+        "representation_integrity",
+        "protocol_conformance",
+        "cohort_integrity",
+        "provenance_integrity",
+        "evidence_insufficiency"
+      ]
+    },
+
+    "SeverityRecord": {
+      "type": "object",
+      "description": "Provisional interpretation for the intended use. NOT a probability. See Output Tech Spec §14.",
+      "additionalProperties": false,
+      "required": ["level", "status", "basis"],
+      "properties": {
+        "level": { "$ref": "#/$defs/severity_level" },
+        "status": { "$ref": "#/$defs/severity_status" },
+        "basis": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["evidence_type", "evidence_ref"],
+            "properties": {
+              "evidence_type": { "$ref": "#/$defs/evidence_basis" },
+              "evidence_ref": { "$ref": "#/$defs/EvidenceRef" }
+            }
+          }
+        },
+        "profile_id": { "$ref": "#/$defs/ProfileID" },
+        "calibration_ref": {
+          "type": ["string", "null"]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "calibrated" } } },
+          "then": {
+            "required": ["calibration_ref"],
+            "properties": {
+              "calibration_ref": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      ]
+    },
+
+    "ConfidenceRecord": {
+      "type": "object",
+      "description": "Certainty that the observation/finding is correct. See Output Tech Spec §15.",
+      "additionalProperties": false,
+      "required": ["level"],
+      "properties": {
+        "level": { "$ref": "#/$defs/confidence_level" },
+        "components": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/confidence_level" }
+        },
+        "method_id": { "type": "string" }
+      }
+    },
+
+    "PotentialEffect": {
+      "type": "object",
+      "description": "Plausible downstream pathway. Worded as possibility unless empirically demonstrated. See Output Tech Spec §16.",
+      "additionalProperties": false,
+      "required": ["effect_id", "relation", "wording", "causal_claim"],
+      "properties": {
+        "effect_id": { "type": "string", "minLength": 1 },
+        "relation": { "$ref": "#/$defs/empirical_relation" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/EvidenceRef" }
+        },
+        "wording": { "type": "string", "minLength": 1 },
+        "causal_claim": { "type": "boolean", "const": false }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "relation": { "const": "externally_replicated" } } },
+          "then": {
+            "properties": {
+              "evidence_refs": {
+                "type": "array",
+                "minItems": 1
+              }
+            },
+            "required": ["evidence_refs"]
+          }
+        }
+      ]
+    },
+
+    "RecommendedAction": {
+      "type": "object",
+      "description": "Advisory action. Never mutates source data. See Output Tech Spec §17.",
+      "additionalProperties": false,
+      "required": ["action_id", "action_class", "text", "automated", "changes_source_data", "requires_human_approval"],
+      "properties": {
+        "action_id": { "type": "string", "minLength": 1 },
+        "action_class": { "$ref": "#/$defs/action_class" },
+        "text": { "type": "string", "minLength": 1 },
+        "automated": { "type": "boolean" },
+        "changes_source_data": { "type": "boolean", "const": false },
+        "requires_human_approval": { "type": "boolean" }
+      }
+    },
+
+    "EmpiricalStatus": {
+      "type": "object",
+      "description": "Empirical validation state for a finding-to-outcome link. Populated by Paper 1+ analyses, not by the deterministic engine. See Output Tech Spec §18.",
+      "additionalProperties": false,
+      "required": ["state"],
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": [
+            "not_tested",
+            "exploratory_association",
+            "internally_validated",
+            "externally_replicated",
+            "not_supported"
+          ]
+        },
+        "study_ref": { "type": ["string", "null"] },
+        "outcome_ref": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/OutcomeID" }
+          ]
+        },
+        "effect_ref": { "type": ["string", "null"] },
+        "evidence_version": { "type": ["string", "null"] }
+      }
+    },
+
+    "ErrorRecord": {
+      "type": "object",
+      "description": "Typed software/spec/serialization/input-access error. Never a data finding. See Output Tech Spec §25.",
+      "additionalProperties": false,
+      "required": ["error_code", "error_class", "message", "recoverable"],
+      "properties": {
+        "error_code": {
+          "type": "string",
+          "pattern": "^VECTA-E-[A-Z0-9_-]+$"
+        },
+        "error_class": {
+          "type": "string",
+          "enum": ["software", "input_access", "specification", "serialization"]
+        },
+        "message": { "type": "string" },
+        "recoverable": { "type": "boolean" },
+        "context": { "type": "object" }
+      }
+    },
+
+    "WarningRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "context": { "type": "object" }
+      }
+    }
+  }
+}

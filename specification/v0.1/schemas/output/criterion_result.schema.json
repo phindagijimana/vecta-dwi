@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/output/criterion_result.schema.json",
+  "title": "Vecta-DWI CriterionResult",
+  "description": "Result of evaluating one criterion under a profile. Source: Output Tech Spec §11.",
+
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["criterion_id", "criterion_version", "status", "profile_id", "evaluation_engine_version", "evaluated_at"],
+  "properties": {
+    "criterion_id": { "$ref": "../_defs.schema.json#/$defs/CriterionID" },
+    "criterion_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "status": { "$ref": "../_defs.schema.json#/$defs/criterion_status" },
+    "profile_id": { "$ref": "../_defs.schema.json#/$defs/ProfileID" },
+    "input_snapshot": {
+      "type": "object",
+      "description": "Values/states of required variables at evaluation time."
+    },
+    "reference_snapshot": {
+      "type": ["object", "null"]
+    },
+    "finding_refs": {
+      "type": "array",
+      "items": { "$ref": "../_defs.schema.json#/$defs/FindingID" }
+    },
+    "evaluation_engine_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "evaluated_at": { "$ref": "../_defs.schema.json#/$defs/ISO8601DateTime" },
+    "error": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "../_defs.schema.json#/$defs/ErrorRecord" }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "description": "status=finding requires at least one finding_ref.",
+      "if": { "properties": { "status": { "const": "finding" } } },
+      "then": {
+        "required": ["finding_refs"],
+        "properties": { "finding_refs": { "minItems": 1 } }
+      }
+    },
+    {
+      "description": "status=error requires a non-null error record.",
+      "if": { "properties": { "status": { "const": "error" } } },
+      "then": {
+        "required": ["error"],
+        "properties": {
+          "error": { "$ref": "../_defs.schema.json#/$defs/ErrorRecord" }
+        }
+      }
+    },
+    {
+      "description": "status=satisfied|unknown|not_applicable must not carry finding_refs.",
+      "if": {
+        "properties": {
+          "status": { "enum": ["satisfied", "unknown", "not_applicable"] }
+        }
+      },
+      "then": {
+        "properties": {
+          "finding_refs": { "maxItems": 0 }
+        }
+      }
+    }
+  ]
+}

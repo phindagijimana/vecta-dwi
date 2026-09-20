@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/output/assessment_status.schema.json",
+  "title": "Vecta-DWI AssessmentStatus",
+  "description": "Whether Vecta itself completed successfully. Distinguished from data findings. Source: Output Tech Spec §25.",
+
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["state", "started_at", "domains_attempted"],
+  "properties": {
+    "state": { "$ref": "../_defs.schema.json#/$defs/assessment_status_state" },
+    "started_at": { "$ref": "../_defs.schema.json#/$defs/ISO8601DateTime" },
+    "completed_at": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "../_defs.schema.json#/$defs/ISO8601DateTime" }
+      ]
+    },
+    "domains_attempted": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "domains_completed": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "errors": {
+      "type": "array",
+      "items": { "$ref": "../_defs.schema.json#/$defs/ErrorRecord" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": { "$ref": "../_defs.schema.json#/$defs/WarningRecord" }
+    }
+  }
+}

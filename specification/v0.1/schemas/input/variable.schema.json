@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/input/variable.schema.json",
+  "title": "Vecta-DWI variable specification file",
+  "description": "Validates one variables/*.yaml file. Source: Spec Blueprint §6, §7, Table 1.",
+
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "variables"],
+  "properties": {
+    "version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "variables": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/Variable" }
+    }
+  },
+
+  "$defs": {
+
+    "Variable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "variable_id",
+        "version",
+        "name",
+        "lifecycle_layer",
+        "domain",
+        "type",
+        "allowed_states"
+      ],
+      "properties": {
+        "variable_id": { "$ref": "../_defs.schema.json#/$defs/VariableID" },
+        "version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+        "name": { "type": "string", "minLength": 1 },
+        "lifecycle_layer": { "$ref": "../_defs.schema.json#/$defs/LifecycleLayer" },
+        "domain": {
+          "type": "string",
+          "enum": [
+            "scanner",
+            "acquisition",
+            "dicom_source",
+            "conversion",
+            "bids",
+            "protocol",
+            "cohort",
+            "provenance"
+          ]
+        },
+        "type": { "$ref": "#/$defs/TypeSpec" },
+        "allowed_states": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "../_defs.schema.json#/$defs/value_state" }
+        },
+        "sources": { "$ref": "#/$defs/SourceMap" },
+        "canonical": { "$ref": "#/$defs/CanonicalSpec" },
+        "validity": { "$ref": "#/$defs/ValiditySpec" },
+        "conflict_policy": { "$ref": "#/$defs/ConflictPolicy" },
+        "dependencies": {
+          "type": "array",
+          "items": { "$ref": "../_defs.schema.json#/$defs/VariableID" }
+        },
+        "derived": { "type": "boolean" },
+        "formula_id": { "type": "string" },
+        "formula_pseudocode": { "type": "string" },
+        "tolerance_ref": { "type": "string" },
+        "reference": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": { "type": "string", "enum": ["intended_use_profile", "study_protocol", "formal_standard"] },
+            "profile": { "$ref": "../_defs.schema.json#/$defs/ProfileID" }
+          }
+        },
+        "extraction": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "algorithm": { "type": "string" }
+          }
+        },
+        "paper1_role": {
+          "type": "string",
+          "enum": ["birth_predictor", "covariate", "outcome_link", "audit_only"]
+        },
+        "notes": { "type": "string" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "$ref": "../_defs.schema.json#/$defs/EvidenceRef" }
+        },
+        "tests": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "allOf": [
+        {
+          "description": "Derived variables must declare a formula_id.",
+          "if": {
+            "required": ["derived"],
+            "properties": { "derived": { "const": true } }
+          },
+          "then": {
+            "required": ["formula_id"]
+          }
+        }
+      ]
+    },
+
+    "TypeSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primitive"],
+      "properties": {
+        "primitive": {
+          "type": "string",
+          "enum": ["boolean", "integer", "float", "string", "array", "object"]
+        },
+        "nullable": { "type": "boolean" },
+        "enum": { "type": "array" },
+        "element_type": {
+          "type": "string",
+          "enum": ["boolean", "integer", "float", "string"]
+        },
+        "length": { "type": "integer", "minimum": 1 }
+      }
+    },
+
+    "SourceMap": {
+      "type": "object",
+      "additionalProperties": true
+    },
+
+    "CanonicalSpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": { "type": "string" },
+        "unit": { "type": "string" },
+        "normalization": { "type": "string" }
+      }
+    },
+
+    "ValiditySpec": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "min": { "type": "number" },
+        "max": { "type": "number" },
+        "max_exclusive": { "type": "number" },
+        "min_exclusive": { "type": "number" },
+        "on_out_of_range": {
+          "type": "string",
+          "enum": ["invalid", "extraction_failed"]
+        }
+      }
+    },
+
+    "ConflictPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "compare_sources": { "type": "boolean" },
+        "on_conflict": {
+          "type": "string",
+          "enum": [
+            "emit_representation_inconsistency",
+            "prefer_dicom",
+            "prefer_bids",
+            "keep_both"
+          ]
+        }
+      }
+    }
+  }
+}

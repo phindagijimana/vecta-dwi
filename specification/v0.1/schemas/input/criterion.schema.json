@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/input/criterion.schema.json",
+  "title": "Vecta-DWI criterion specification file",
+  "description": "Validates one criteria/*.yaml file. Source: Spec Blueprint §16.",
+
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "criteria"],
+  "properties": {
+    "version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/Criterion" }
+    }
+  },
+
+  "$defs": {
+
+    "Criterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "criterion_id",
+        "version",
+        "name",
+        "lifecycle_origin",
+        "requires",
+        "applies_to",
+        "condition",
+        "finding"
+      ],
+      "properties": {
+        "criterion_id": { "$ref": "../_defs.schema.json#/$defs/CriterionID" },
+        "version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+        "name": { "type": "string", "minLength": 1 },
+        "lifecycle_origin": { "$ref": "../_defs.schema.json#/$defs/LifecycleLayer" },
+        "status": {
+          "type": "string",
+          "enum": ["stub", "draft", "review", "active"]
+        },
+        "requires": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "../_defs.schema.json#/$defs/VariableID" }
+        },
+        "applies_to": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "../_defs.schema.json#/$defs/ProfileID" }
+        },
+        "condition": { "$ref": "#/$defs/Condition" },
+        "finding": { "$ref": "#/$defs/CriterionFindingTemplate" },
+        "evidence_refs": {
+          "type": "array",
+          "items": { "$ref": "../_defs.schema.json#/$defs/EvidenceRef" }
+        },
+        "tests": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "Condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Boolean combinator over variable predicates. Exactly one of all/any/not.",
+      "properties": {
+        "all": { "type": "array", "items": { "$ref": "#/$defs/Predicate" } },
+        "any": { "type": "array", "items": { "$ref": "#/$defs/Predicate" } },
+        "not": { "$ref": "#/$defs/Predicate" }
+      },
+      "oneOf": [
+        { "required": ["all"] },
+        { "required": ["any"] },
+        { "required": ["not"] }
+      ]
+    },
+
+    "Predicate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["variable"],
+      "properties": {
+        "variable": { "$ref": "../_defs.schema.json#/$defs/VariableID" },
+        "operator": {
+          "type": "string",
+          "enum": ["equals", "not_equals", "greater_than", "less_than", "in", "not_in"]
+        },
+        "value": {},
+        "state": { "$ref": "../_defs.schema.json#/$defs/value_state" }
+      },
+      "anyOf": [
+        { "required": ["operator", "value"] },
+        { "required": ["state"] }
+      ]
+    },
+
+    "CriterionFindingTemplate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "category"],
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "category": { "$ref": "../_defs.schema.json#/$defs/finding_category" },
+        "observed_condition": { "type": "object" },
+        "reference_condition": { "type": "object" },
+        "severity": { "$ref": "../_defs.schema.json#/$defs/SeverityRecord" },
+        "confidence": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "default": { "$ref": "../_defs.schema.json#/$defs/confidence_level" },
+            "components": {
+              "type": "object",
+              "additionalProperties": { "$ref": "../_defs.schema.json#/$defs/confidence_level" }
+            }
+          }
+        },
+        "potential_effects": {
+          "type": "array",
+          "items": { "$ref": "../_defs.schema.json#/$defs/PotentialEffect" }
+        },
+        "recommended_actions": {
+          "type": "array",
+          "items": { "$ref": "../_defs.schema.json#/$defs/RecommendedAction" }
+        },
+        "empirical_status": { "$ref": "../_defs.schema.json#/$defs/EmpiricalStatus" }
+      }
+    }
+  }
+}

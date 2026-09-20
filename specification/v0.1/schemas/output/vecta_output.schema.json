@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/output/vecta_output.schema.json",
+  "title": "Vecta-DWI canonical session assessment (vecta.json)",
+  "description": "Top-level assessment record. Every derived serialization (TSV, HTML, cohort tables) is a projection of this. Source: Output Tech Spec §4.",
+
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "assessment_id",
+    "subject_id",
+    "session_id",
+    "profile",
+    "assessment_status",
+    "evidence",
+    "variables",
+    "criteria",
+    "findings",
+    "readiness",
+    "provenance"
+  ],
+  "properties": {
+    "schema_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+
+    "assessment_id": { "$ref": "../_defs.schema.json#/$defs/AssessmentID" },
+    "subject_id": { "type": "string", "minLength": 1 },
+    "session_id": { "type": "string", "minLength": 1 },
+
+    "profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "$ref": "../_defs.schema.json#/$defs/ProfileID" },
+        "version": { "$ref": "../_defs.schema.json#/$defs/SemVer" }
+      }
+    },
+
+    "protocol_reference": {
+      "oneOf": [
+        { "type": "null" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version"],
+          "properties": {
+            "id": { "$ref": "../_defs.schema.json#/$defs/ProtocolReferenceID" },
+            "version": { "type": "string" }
+          }
+        }
+      ]
+    },
+
+    "assessment_status": { "$ref": "./assessment_status.schema.json" },
+
+    "evidence": {
+      "type": "array",
+      "items": { "$ref": "./evidence.schema.json" }
+    },
+
+    "variables": {
+      "type": "object",
+      "description": "Keyed by variable_id.",
+      "propertyNames": { "$ref": "../_defs.schema.json#/$defs/VariableID" },
+      "additionalProperties": { "$ref": "./variable_result.schema.json" }
+    },
+
+    "derived_metrics": {
+      "type": "object",
+      "description": "Keyed by metric_id.",
+      "propertyNames": { "$ref": "../_defs.schema.json#/$defs/DerivedMetricID" },
+      "additionalProperties": { "$ref": "./derived_metric.schema.json" }
+    },
+
+    "criteria": {
+      "type": "array",
+      "items": { "$ref": "./criterion_result.schema.json" }
+    },
+
+    "findings": {
+      "type": "array",
+      "items": { "$ref": "./finding.schema.json" }
+    },
+
+    "readiness": { "$ref": "./readiness.schema.json" },
+
+    "summary": {
+      "type": "object",
+      "description": "Denormalized session summary for convenience. Must be reproducible from the fields above. See Output Tech Spec §24.",
+      "additionalProperties": true
+    },
+
+    "provenance": { "$ref": "./provenance.schema.json" },
+
+    "extensions": {
+      "type": "object",
+      "description": "Only place unknown/extra keys may live. Everything else is closed (additionalProperties: false). Source: Output Tech Spec §4.",
+      "additionalProperties": true
+    }
+  }
+}

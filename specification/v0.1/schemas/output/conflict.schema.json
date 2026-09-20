@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/output/conflict.schema.json",
+  "title": "Vecta-DWI ConflictRecord",
+  "description": "Preserved disagreement between multiple sources of the same variable. Source: Output Tech Spec §9.",
+
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["conflict_id", "source_values", "resolution"],
+  "properties": {
+    "conflict_id": { "type": "string", "minLength": 1 },
+    "source_values": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["evidence_ref"],
+        "properties": {
+          "evidence_ref": { "$ref": "../_defs.schema.json#/$defs/EvidenceRef" },
+          "normalized_value": {},
+          "raw_value": {}
+        }
+      }
+    },
+    "tolerance_ref": { "type": ["string", "null"] },
+    "resolution": {
+      "type": "string",
+      "enum": ["unresolved", "canonical_source_selected", "equivalent_after_normalization"]
+    },
+    "canonical_evidence_ref": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "../_defs.schema.json#/$defs/EvidenceRef" }
+      ]
+    },
+    "note": { "type": ["string", "null"] }
+  },
+  "allOf": [
+    {
+      "description": "If resolution selected a canonical source, canonical_evidence_ref is required.",
+      "if": { "properties": { "resolution": { "const": "canonical_source_selected" } } },
+      "then": {
+        "required": ["canonical_evidence_ref"],
+        "properties": {
+          "canonical_evidence_ref": { "$ref": "../_defs.schema.json#/$defs/EvidenceRef" }
+        }
+      }
+    }
+  ]
+}

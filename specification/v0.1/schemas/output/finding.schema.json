@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/output/finding.schema.json",
+  "title": "Vecta-DWI Finding",
+  "description": "Structured interpretation triggered by a criterion. The central interpretable output of Vecta. Source: Output Tech Spec §12.",
+
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "finding_id",
+    "criterion_id",
+    "criterion_version",
+    "label",
+    "category",
+    "lifecycle_origin",
+    "observed_condition",
+    "affected_profile",
+    "severity",
+    "severity_status",
+    "severity_basis",
+    "confidence",
+    "evidence_refs",
+    "variable_refs",
+    "potential_effects",
+    "recommended_actions",
+    "empirical_status",
+    "spec_version"
+  ],
+  "properties": {
+    "finding_id": { "$ref": "../_defs.schema.json#/$defs/FindingID" },
+    "criterion_id": { "$ref": "../_defs.schema.json#/$defs/CriterionID" },
+    "criterion_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "label": { "type": "string", "minLength": 1 },
+    "category": { "$ref": "../_defs.schema.json#/$defs/finding_category" },
+    "lifecycle_origin": { "$ref": "../_defs.schema.json#/$defs/LifecycleLayer" },
+    "observed_condition": { "type": "object" },
+    "reference_condition": { "type": ["object", "null"] },
+    "affected_profile": { "$ref": "../_defs.schema.json#/$defs/ProfileID" },
+    "severity": { "$ref": "../_defs.schema.json#/$defs/severity_level" },
+    "severity_status": { "$ref": "../_defs.schema.json#/$defs/severity_status" },
+    "severity_basis": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "../_defs.schema.json#/$defs/evidence_basis" }
+    },
+    "confidence": { "$ref": "../_defs.schema.json#/$defs/confidence_level" },
+    "confidence_basis": { "type": "object" },
+    "evidence_refs": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "../_defs.schema.json#/$defs/EvidenceRef" }
+    },
+    "variable_refs": {
+      "type": "array",
+      "items": { "$ref": "../_defs.schema.json#/$defs/VariableID" }
+    },
+    "metric_refs": {
+      "type": "array",
+      "items": { "$ref": "../_defs.schema.json#/$defs/DerivedMetricID" }
+    },
+    "potential_effects": {
+      "type": "array",
+      "items": { "$ref": "../_defs.schema.json#/$defs/PotentialEffect" }
+    },
+    "recommended_actions": {
+      "type": "array",
+      "items": { "$ref": "../_defs.schema.json#/$defs/RecommendedAction" }
+    },
+    "empirical_status": { "$ref": "../_defs.schema.json#/$defs/EmpiricalStatus" },
+    "explanation_template_id": { "type": "string" },
+    "spec_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" }
+  }
+}

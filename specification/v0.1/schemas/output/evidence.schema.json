@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/output/evidence.schema.json",
+  "title": "Vecta-DWI EvidenceRecord",
+  "description": "Source evidence supporting an observation or finding. Source: Output Tech Spec §7.",
+
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["evidence_id", "source_type", "collector_id", "collector_version", "privacy_status", "timestamp"],
+  "properties": {
+    "evidence_id": { "$ref": "../_defs.schema.json#/$defs/EvidenceRef" },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "dicom_header",
+        "dicom_dataset",
+        "bids_json",
+        "bids_filename",
+        "bids_validator",
+        "nifti_header",
+        "bval",
+        "bvec",
+        "protocol_reference",
+        "pipeline_log",
+        "converter_log",
+        "cohort_manifest"
+      ]
+    },
+    "source_locator": { "type": ["string", "null"] },
+    "source_field": { "type": ["string", "null"] },
+    "raw_value": {},
+    "raw_unit": { "type": ["string", "null"] },
+    "source_hash": { "type": ["string", "null"] },
+    "collector_id": { "type": "string", "minLength": 1 },
+    "collector_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "privacy_status": { "$ref": "../_defs.schema.json#/$defs/privacy_status" },
+    "timestamp": { "$ref": "../_defs.schema.json#/$defs/ISO8601DateTime" },
+    "metadata": { "type": "object" }
+  }
+}

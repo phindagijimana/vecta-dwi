@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/output/variable_result.schema.json",
+  "title": "Vecta-DWI VariableResult",
+  "description": "Canonical software representation of one observed/derived/unknown variable value. Source: Output Tech Spec §8.",
+
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["variable_id", "definition_version", "value", "state", "confidence", "evidence_refs", "extractor_id", "extractor_version", "computed_at"],
+  "properties": {
+    "variable_id": { "$ref": "../_defs.schema.json#/$defs/VariableID" },
+    "definition_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "value": {
+      "description": "May be null for unknown / not_collected / not_applicable / extraction_failed / invalid. observed/derived normally require a valid non-null value unless the variable definition explicitly permits a null semantic value."
+    },
+    "state": { "$ref": "../_defs.schema.json#/$defs/value_state" },
+    "canonical_unit": { "type": ["string", "null"] },
+    "confidence": { "$ref": "../_defs.schema.json#/$defs/confidence_level" },
+    "evidence_refs": {
+      "type": "array",
+      "items": { "$ref": "../_defs.schema.json#/$defs/EvidenceRef" }
+    },
+    "extractor_id": { "type": "string", "minLength": 1 },
+    "extractor_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "normalization_rule": { "type": ["string", "null"] },
+    "warnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "conflicts": {
+      "type": "array",
+      "items": { "$ref": "./conflict.schema.json" }
+    },
+    "computed_at": { "$ref": "../_defs.schema.json#/$defs/ISO8601DateTime" }
+  },
+  "allOf": [
+    {
+      "description": "State null-value consistency: unknown/not_collected/not_applicable/extraction_failed require value=null.",
+      "if": {
+        "properties": {
+          "state": {
+            "enum": ["unknown", "not_collected", "not_applicable", "extraction_failed"]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "value": { "type": "null" }
+        }
+      }
+    },
+    {
+      "description": "state=conflict requires at least one ConflictRecord.",
+      "if": { "properties": { "state": { "const": "conflict" } } },
+      "then": {
+        "required": ["conflicts"],
+        "properties": {
+          "conflicts": { "minItems": 1 }
+        }
+      }
+    }
+  ]
+}

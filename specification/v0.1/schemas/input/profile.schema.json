@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/input/profile.schema.json",
+  "title": "Vecta-DWI intended-use profile file",
+  "description": "Validates one profiles/*.yaml file. Source: Spec Blueprint §13.",
+
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile_id", "version", "purpose"],
+  "properties": {
+    "profile_id": { "$ref": "../_defs.schema.json#/$defs/ProfileID" },
+    "version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "purpose": { "type": "string", "minLength": 1 },
+    "requires": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "preferences": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "preferred": { "type": "boolean" }
+        }
+      }
+    },
+    "essential_metadata": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "criteria": {
+      "type": "array",
+      "items": { "$ref": "../_defs.schema.json#/$defs/CriterionID" }
+    },
+    "readiness_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rule_version"],
+      "properties": {
+        "rule_version": { "type": "string", "minLength": 1 },
+        "blocking_criteria": {
+          "type": "array",
+          "items": { "$ref": "../_defs.schema.json#/$defs/CriterionID" }
+        },
+        "review_criteria": {
+          "type": "array",
+          "items": { "$ref": "../_defs.schema.json#/$defs/CriterionID" }
+        }
+      }
+    }
+  }
+}

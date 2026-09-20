@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vecta.example.org/schemas/v0.1/output/provenance.schema.json",
+  "title": "Vecta-DWI Provenance",
+  "description": "Reproducibility/version information. Every Vecta value must be reproducible from evidence plus these versions. Source: Output Tech Spec §26.",
+
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "vecta_software_version",
+    "specification_version",
+    "schema_version",
+    "profile_version",
+    "executed_at"
+  ],
+  "properties": {
+    "vecta_software_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "specification_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "schema_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "profile_version": { "$ref": "../_defs.schema.json#/$defs/SemVer" },
+    "protocol_reference": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "../_defs.schema.json#/$defs/ProtocolReferenceID" }
+      ]
+    },
+    "protocol_version": { "type": ["string", "null"] },
+    "configuration_hash": { "type": ["string", "null"] },
+    "dataset_snapshot": { "type": ["string", "null"] },
+    "source_hash_manifest": { "type": ["string", "null"] },
+    "converter_version": { "type": ["string", "null"] },
+    "bids_validator_version": { "type": ["string", "null"] },
+    "container_digest": { "type": ["string", "null"] },
+    "runtime_environment": { "type": ["object", "null"] },
+    "executed_at": { "$ref": "../_defs.schema.json#/$defs/ISO8601DateTime" },
+    "software_commit": { "type": ["string", "null"] },
+    "spec_snapshot_hash": { "type": ["string", "null"] }
+  }
+}
