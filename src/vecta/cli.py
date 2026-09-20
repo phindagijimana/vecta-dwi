@@ -204,7 +204,10 @@ def _cmd_join_outcomes(args: argparse.Namespace) -> int:
     with outcomes_file.open() as fh:
         reader = csv.DictReader(fh, delimiter="\t")
         for row in reader:
-            key = (row["subject_id"], row["session_id"])
+            # outcomes may use "sub-001"/"ses-1" while session_summary uses "001"/"1"
+            subj = row["subject_id"].removeprefix("sub-")
+            ses  = row["session_id"].removeprefix("ses-")
+            key = (subj, ses)
             if key not in outcomes_wide:
                 outcomes_wide[key] = {}
             oid = row["outcome_id"]
