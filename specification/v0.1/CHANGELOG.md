@@ -274,6 +274,60 @@ that separates Vecta from BIDS-only readiness tools.
 
 ---
 
+## v0.1.0 — 2026-09-19 (draft, CIDUR integration + first live run)
+
+Prompted by inspecting `~/Documents/CIDUR_BIDS/data_bids` (76 subjects,
+82 sessions, 62 DWI sessions across Siemens Skyra/Vida Fit + GE SIGNA
+Premier/Artist).
+
+### Added
+- `collectors/bids.py`: `FmapEpiEntity` dataclass; collector now also
+  discovers `fmap/*_epi.json` and reads `IntendedFor`.
+- `derive/reverse_pe.py`: after checking sibling DWI entities, also
+  consult fmap EPI entities whose `IntendedFor` list points at the
+  target DWI (or which lack an `IntendedFor` entirely, per BIDS-Legacy
+  semantics). Without this, `VECTA-DWI-014` gave wrong results on
+  CIDUR-style layouts where the reverse-PE reference lives under
+  `fmap/` rather than as a sibling DWI acquisition.
+- `extract/bids.py::_validator_output`: handles both the flat
+  `{errors, warnings}` shape and the v2 `{issues: {errors, warnings}}`
+  shape. Also skips prepended stderr lines (some
+  `bids-validator` invocations leak node warnings into stdout ahead
+  of the JSON body — observed in
+  `CIDUR_BIDS/validation_report_data_bids.json`).
+- `tests/synthetic/dataset_030_fmap_reverse_pe/`: DWI has no sibling
+  DWI reverse; reverse-PE reference lives in fmap with IntendedFor.
+  Verifies the new code path.
+- `specification/v0.1/protocols/examples/CIDUR_URMC_64dir_v1.yaml`:
+  Siemens-dominant 64-direction protocol reference authored from
+  actual CIDUR sidecars.
+- `specification/v0.1/protocols/examples/CIDUR_URMC_50dir_v1.yaml`:
+  GE-dominant 50-direction protocol reference authored from actual
+  CIDUR sidecars.
+
+### First live CIDUR run
+- All 62 CIDUR DWI sessions assessed successfully (0 failures).
+- Output written to `~/Documents/vecta_dwi_cidur_run/` (outside the
+  repo, per PHI caution).
+- `REPORT.md` in that directory summarizes results.
+- Headline finding: **34/62 sessions (55%) triggered `VECTA-DWI-014`**
+  — the 50-direction acquisition variant (GE SIGNA Premier + MAGNETOM
+  Vida Fit + one SIGNA Artist) lacks a matching PA reverse-PE fmap
+  across the cohort, while the 64-direction Siemens Skyra protocol
+  includes reverse-PE consistently.
+- This is a real, protocol-level DBI finding of exactly the type Paper
+  1 is designed to detect and report.
+
+### Verified
+- 21 integration tests pass under Python 3.11 (was 20).
+
+### Not committed to repo
+- Any per-session CIDUR results (in `~/Documents/vecta_dwi_cidur_run/`).
+- The `.bids-validator-output.json` staging file. The source CIDUR
+  tree was not modified.
+
+---
+
 ## v0.1.0 — 2026-09-19 (draft, literature integration)
 
 Aligning the manuscript draft with `vecta_paper/Vecta_Paper1_Detailed_Literature_Reference_Guide.docx`.
