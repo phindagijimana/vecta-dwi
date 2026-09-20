@@ -242,3 +242,32 @@ that separates Vecta from BIDS-only readiness tools.
   case as expected.
 - `vecta explain` prints human-readable finding explanation without
   reimplementing any scientific logic.
+
+---
+
+## v0.1.0 — 2026-09-19 (draft, HTML report renderer)
+
+### Added
+- `output/html.py` — Jinja2-based HTML report renderer.
+- CLI: `--formats html` writes `report.html` alongside `vecta.json`.
+- `tests/integration/test_html_report.py` — 2 tests verifying
+  content preservation (readiness, findings, effects, provenance) and
+  end-to-end CLI HTML output.
+
+### Contract (per Output Tech Spec §30 + §69)
+- Renders from canonical JSON only. Every value shown in the report
+  is present verbatim in the input `vecta.json`; no scientific rule
+  is re-implemented.
+- Severity/confidence/effect wording is pulled from the finding's
+  own fields. Potential effects are shown with their relation status
+  (plausible / empirically_associated / externally_replicated).
+- Readiness is displayed with the disclaimer that it does not
+  guarantee clinical or scientific validity.
+- No PHI serialized by default (relies on the privacy filter to have
+  dropped restricted evidence before reaching the renderer).
+
+### Verified
+- All 11 integration tests pass under Python 3.11.
+
+### Dependencies
+- Added: `jinja2>=3.0`.
