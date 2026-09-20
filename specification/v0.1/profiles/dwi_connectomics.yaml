@@ -1,0 +1,39 @@
+# Intended-use profile: DWI structural connectomics.
+# Source: Spec Blueprint §13.1.
+#
+# A profile declares what a specific downstream analysis needs from the
+# data. Readiness and criteria are evaluated RELATIVE to a profile — a
+# dataset can be ready for one profile and not ready for another.
+
+profile_id: dwi_connectomics
+version: 0.1.0
+
+purpose: structural_connectomics
+
+requires:
+  dwi:
+    required: true
+  anatomical_t1:
+    required: true
+
+preferences:
+  reverse_pe:
+    preferred: true
+
+essential_metadata:
+  - phase_encoding_direction
+  - total_readout_time_or_equivalent
+
+criteria:
+  - VECTA-DWI-001         # PE direction unknown (evidence insufficiency)
+  - VECTA-DWI-014         # complementary PE reference unavailable
+  - VECTA-DWI-021         # essential metadata sufficiency (stub)
+
+# Readiness decision rules for this profile. Blocking criteria drive
+# `not_ready`; review criteria drive `review_required`. Everything else
+# with a finding contributes to `ready_with_limitations`.
+readiness_rules:
+  rule_version: readiness_dwi_v1
+  blocking_criteria: []
+  review_criteria:
+    - VECTA-DWI-001       # unknown PE is a review-required condition

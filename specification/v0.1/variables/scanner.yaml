@@ -1,0 +1,136 @@
+# Scanner-context variables.
+# Source: Spec Blueprint §43-44 (first vertical slice); Paper 1 §14.
+#
+# Every variable object carries: stable ID, definition version, lifecycle
+# layer, allowed states, source mappings, extraction algorithm reference,
+# dependencies, and evidence refs.
+
+version: 0.1.0
+
+variables:
+
+  - variable_id: VECTA.DWI.SCANNER.MANUFACTURER
+    version: 0.1.0
+    name: Scanner manufacturer
+    lifecycle_layer: L1_ACQUISITION
+    domain: scanner
+    type:
+      primitive: string
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - extraction_failed
+    sources:
+      dicom:
+        attribute: Manufacturer
+        tag: "(0008,0070)"
+      bids:
+        field: Manufacturer
+    canonical:
+      type: string
+      normalization: strip_whitespace
+    conflict_policy:
+      compare_sources: true
+      on_conflict: emit_representation_inconsistency
+    extraction:
+      algorithm: TODO   # extract_manufacturer_v1
+    paper1_role: covariate
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.SCANNER.MODEL
+    version: 0.1.0
+    name: Scanner model
+    lifecycle_layer: L1_ACQUISITION
+    domain: scanner
+    type:
+      primitive: string
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - extraction_failed
+    sources:
+      dicom:
+        attribute: ManufacturerModelName
+        tag: "(0008,1090)"
+      bids:
+        field: ManufacturersModelName
+    canonical:
+      type: string
+      normalization: strip_whitespace
+    conflict_policy:
+      compare_sources: true
+      on_conflict: emit_representation_inconsistency
+    extraction:
+      algorithm: TODO   # extract_model_v1
+    paper1_role: covariate
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.SCANNER.FIELD_STRENGTH
+    version: 0.1.0
+    name: Magnetic field strength
+    lifecycle_layer: L1_ACQUISITION
+    domain: scanner
+    type:
+      primitive: float
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - invalid
+      - extraction_failed
+    sources:
+      dicom:
+        attribute: MagneticFieldStrength
+        tag: "(0018,0087)"
+      bids:
+        field: MagneticFieldStrength
+    canonical:
+      type: float
+      unit: tesla
+      normalization: identity
+    validity:
+      min: 0.0
+      max_exclusive: 12.0    # practical MR upper bound; adjust per expert review
+      on_out_of_range: invalid
+    conflict_policy:
+      compare_sources: true
+      on_conflict: emit_representation_inconsistency
+    extraction:
+      algorithm: TODO   # extract_field_strength_v1
+    paper1_role: covariate
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.SCANNER.SOFTWARE_VERSION
+    version: 0.1.0
+    name: Scanner software version
+    lifecycle_layer: L1_ACQUISITION
+    domain: scanner
+    type:
+      primitive: string
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - extraction_failed
+    sources:
+      dicom:
+        attribute: SoftwareVersions
+        tag: "(0018,1020)"
+      bids:
+        field: SoftwareVersions
+    canonical:
+      type: string
+      normalization: strip_whitespace
+    extraction:
+      algorithm: TODO   # extract_software_version_v1
+    paper1_role: covariate
+    notes: |
+      Used later (v0.2+) as one input to session-level drift detection when
+      multiple sessions per scanner cross a software upgrade boundary.
+    evidence_refs: []
+    tests: []

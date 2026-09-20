@@ -1,0 +1,100 @@
+# Shared enum registry.
+# Source: Output Tech Spec Table 3, plus other tables where noted.
+# All Vecta output objects (JSON, TSV, HTML, Python types) draw their controlled
+# vocabularies from this file. If a value is not listed here, output validation
+# must reject it.
+
+version: 0.1.0
+
+# Value state applied to VariableResult and DerivedMetric.
+value_state:
+  - observed          # value was successfully determined from evidence
+  - derived           # value calculated from other observed/derived values
+  - unknown           # evidence insufficient to determine value
+  - not_collected     # known-by-design to not have been acquired/recorded
+  - not_applicable    # variable does not apply to this acquisition/profile
+  - invalid           # source value exists but violates validity rules
+  - extraction_failed # source may contain the info but parser failed
+  - conflict          # multiple sources disagree beyond allowed tolerance
+
+# Criterion evaluation result.
+criterion_status:
+  - satisfied
+  - finding
+  - unknown
+  - not_applicable
+  - error             # software/specification error, NOT a data finding
+
+# Top-level assessment status.
+assessment_status:
+  - completed
+  - completed_with_unknowns
+  - partial
+  - failed
+  - specification_error
+
+# Confidence in the observation/finding correctness (NOT severity).
+confidence:
+  - high
+  - moderate
+  - low
+  - unknown
+
+# Provisional severity for the intended use (NOT probability).
+severity:
+  - critical
+  - major
+  - moderate
+  - informational
+
+# Whether a severity assignment is provisional or empirically calibrated.
+severity_status:
+  - provisional
+  - calibrated
+
+# Profile-relative readiness summary state.
+readiness_state:
+  - ready
+  - ready_with_limitations
+  - review_required
+  - not_ready
+  - not_assessed
+
+# Basis for a criterion / severity assertion.
+evidence_basis:
+  - formal_standard
+  - pipeline_requirement
+  - peer_reviewed_literature
+  - expert_consensus
+  - empirical_internal
+  - empirical_external
+
+# Human adjudication state layered over automated output.
+review_status:
+  - not_requested
+  - pending
+  - confirmed
+  - rejected
+  - modified
+  - resolved
+
+# Whether evidence is safe to export.
+privacy_status:
+  - safe
+  - restricted
+
+# Recommended action classes (Output Tech Spec §17).
+action_class:
+  - review
+  - document
+  - re_export
+  - repair_representation
+  - alternative_processing
+  - exclude
+  - prospective_change
+
+# Empirical validation state for a finding link to downstream consequences.
+empirical_relation:
+  - plausible
+  - empirically_associated
+  - externally_replicated

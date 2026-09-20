@@ -1,0 +1,194 @@
+# Criteria for the dwi_connectomics profile.
+# Source: Spec Blueprint §16 (criterion contract), Paper 1 §19-20 (finding
+# structure), Output Tech Spec §12 (finding schema).
+#
+# A criterion evaluates one or more variables/metrics against a profile
+# reference and returns {satisfied | finding | unknown | not_applicable |
+# error}. A finding preserves criterion ID/version, observed condition,
+# reference condition, lifecycle origin, category, severity + basis,
+# confidence, evidence refs, potential effects, recommended actions, and
+# empirical status — all kept separate.
+
+version: 0.1.0
+
+criteria:
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # VECTA-DWI-014 — Complementary phase-encoding reference unavailable
+  # Fully worked example. Every other criterion in v0.1 should follow this
+  # shape.
+  # ─────────────────────────────────────────────────────────────────────────
+  - criterion_id: VECTA-DWI-014
+    version: 0.1.0
+    name: complementary_phase_encoding_unavailable
+    lifecycle_origin: L1_ACQUISITION
+
+    requires:
+      - VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE
+
+    applies_to:
+      - dwi_connectomics
+
+    condition:
+      all:
+        - variable: VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE
+          operator: equals
+          value: false
+      # If REVERSE_PE_AVAILABLE.state == unknown, criterion_status = unknown
+      # and NO finding is emitted (per Output Tech Spec §55 prohibited case).
+
+    finding:
+      label: Complementary phase-encoding reference unavailable
+      category: acquisition_integrity
+
+      observed_condition:
+        reverse_pe_available: false
+
+      reference_condition:
+        profile: dwi_connectomics
+        preference: reverse_pe
+
+      severity:
+        level: major
+        status: provisional
+        basis:
+          - evidence_type: pipeline_requirement
+            evidence_ref: EV-DWI-PE-001
+
+      confidence:
+        default: high
+        components:
+          source_authority: high
+          source_agreement: high
+          extraction_determinism: high
+          classification_ambiguity: low
+
+      potential_effects:
+        - effect_id: distortion_correction_strategy_constrained
+          relation: plausible
+          evidence_refs: [EV-DWI-PE-001]
+          wording: |
+            May constrain the selected distortion-correction strategy;
+            alternative approaches (fieldmap-based, synthetic) may be
+            required.
+          causal_claim: false
+        - effect_id: registration_uncertainty
+          relation: plausible
+          evidence_refs: [EV-DWI-PE-001]
+          wording: |
+            Residual EPI distortions may increase registration uncertainty
+            between DWI and anatomical reference.
+          causal_claim: false
+        - effect_id: tractography_uncertainty
+          relation: plausible
+          evidence_refs: [EV-DWI-PE-001]
+          wording: |
+            Downstream tractography may be affected by residual distortion.
+          causal_claim: false
+
+      recommended_actions:
+        - action_id: review_distortion_strategy
+          action_class: review
+          text: |
+            Review distortion-correction strategy and document the
+            acquisition limitation in analysis notes.
+          automated: false
+          changes_source_data: false
+          requires_human_approval: true
+        - action_id: consider_alternative_processing
+          action_class: alternative_processing
+          text: |
+            Consider fieldmap-based or synthetic-fieldmap distortion
+            correction if available for the selected pipeline.
+          automated: false
+          changes_source_data: false
+          requires_human_approval: true
+
+      empirical_status:
+        state: not_tested       # will be populated after Paper 1 analysis
+        study_ref: null
+        outcome_ref: null
+        effect_ref: null
+        evidence_version: null
+
+    evidence_refs:
+      - EV-DWI-PE-001
+
+    tests:
+      - TEST-REVPE-001    # DWI AP + valid PA reference → satisfied
+      - TEST-REVPE-002    # DWI AP + no reference + complete inventory → finding
+      - TEST-REVPE-003    # DWI present + PE metadata unavailable → unknown (no finding)
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # VECTA-DWI-001 — Phase-encoding direction unknown
+  # STUB — full author-out required before freeze.
+  # ─────────────────────────────────────────────────────────────────────────
+  - criterion_id: VECTA-DWI-001
+    version: 0.1.0
+    name: phase_encoding_direction_unknown
+    lifecycle_origin: L3_METADATA
+    status: stub
+
+    requires:
+      - VECTA.DWI.ACQ.PE_DIRECTION
+
+    applies_to:
+      - dwi_connectomics
+
+    condition:
+      all:
+        - variable: VECTA.DWI.ACQ.PE_DIRECTION
+          state: unknown
+
+    finding:
+      label: Phase-encoding direction cannot be determined
+      category: evidence_insufficiency
+      severity:
+        level: major
+        status: provisional
+        basis:
+          - evidence_type: pipeline_requirement
+            evidence_ref: EV-DWI-PE-002   # TODO — currently placeholder
+      # TODO: potential_effects, recommended_actions, empirical_status
+    evidence_refs:
+      - EV-DWI-PE-002
+    tests: []
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # VECTA-DWI-021 — Essential metadata sufficiency
+  # STUB — full author-out required before freeze.
+  # ─────────────────────────────────────────────────────────────────────────
+  - criterion_id: VECTA-DWI-021
+    version: 0.1.0
+    name: essential_metadata_insufficient
+    lifecycle_origin: L3_METADATA
+    status: stub
+
+    requires:
+      - VECTA.DWI.ACQ.PE_DIRECTION
+      - VECTA.DWI.ACQ.TOTAL_READOUT_TIME_PRESENT
+
+    applies_to:
+      - dwi_connectomics
+
+    condition:
+      any:
+        - variable: VECTA.DWI.ACQ.PE_DIRECTION
+          state: unknown
+        - variable: VECTA.DWI.ACQ.TOTAL_READOUT_TIME_PRESENT
+          operator: equals
+          value: false
+
+    finding:
+      label: One or more essential metadata items are missing or unknown
+      category: metadata_integrity
+      severity:
+        level: major
+        status: provisional
+        basis:
+          - evidence_type: pipeline_requirement
+            evidence_ref: EV-DWI-META-001   # TODO — currently placeholder
+      # TODO: potential_effects, recommended_actions, empirical_status
+    evidence_refs:
+      - EV-DWI-META-001
+    tests: []

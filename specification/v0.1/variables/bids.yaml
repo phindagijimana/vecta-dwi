@@ -1,0 +1,92 @@
+# BIDS representation variables.
+# Source: Paper 1 §14 (BIDS: validator errors/warnings, sidecar completeness,
+# metadata relationships, naming/structure).
+
+version: 0.1.0
+
+variables:
+
+  - variable_id: VECTA.DWI.BIDS.VALIDATOR_ERROR_COUNT
+    version: 0.1.0
+    name: BIDS Validator error count
+    lifecycle_layer: L5_CONFORMANCE
+    domain: bids
+    type:
+      primitive: integer
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - extraction_failed
+    sources:
+      bids_validator:
+        field: errors
+    canonical:
+      type: integer
+      unit: count
+    extraction:
+      algorithm: TODO   # extract_bids_validator_errors_v1
+    notes: |
+      Validator version must be pinned in provenance. A change in validator
+      version can change error counts even when the dataset is unchanged.
+    paper1_role: birth_predictor
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.BIDS.VALIDATOR_WARNING_COUNT
+    version: 0.1.0
+    name: BIDS Validator warning count
+    lifecycle_layer: L5_CONFORMANCE
+    domain: bids
+    type:
+      primitive: integer
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - extraction_failed
+    sources:
+      bids_validator:
+        field: warnings
+    canonical:
+      type: integer
+      unit: count
+    extraction:
+      algorithm: TODO   # extract_bids_validator_warnings_v1
+    paper1_role: birth_predictor
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.BIDS.REQUIRED_SERIES_PRESENT
+    version: 0.1.0
+    name: Required series present for dwi_connectomics profile
+    lifecycle_layer: L4_REPRESENTATION
+    domain: bids
+    type:
+      primitive: object
+      nullable: false
+    allowed_states:
+      - derived
+      - unknown
+      - extraction_failed
+    dependencies: []
+    derived: true
+    formula_id: required_series_present_v1
+    formula_pseudocode: |
+      required_series := profile.requires (e.g., dwi, anatomical_t1)
+      for each required entry:
+        present[entry] := any BIDS file matches expected suffix/entity pattern
+      return {present: {dwi: bool, anatomical_t1: bool, ...},
+              missing: [list of missing]}
+    reference:
+      type: intended_use_profile
+      profile: dwi_connectomics
+    extraction:
+      algorithm: TODO   # derive_required_series_present_v1
+    paper1_role: birth_predictor
+    notes: |
+      Emits structured object (not a bare boolean) so the missing list is
+      preserved. A scalar ratio alone would be insufficient per Spec
+      Blueprint §9.1.
+    evidence_refs: []
+    tests: []

@@ -1,0 +1,288 @@
+# DWI acquisition variables — the core of the first vertical slice.
+# Source: Spec Blueprint §43-44, §16.
+#
+# These describe what was acquired for the DWI series: geometry, encoding,
+# and the metadata needed to enable susceptibility-distortion correction.
+
+version: 0.1.0
+
+variables:
+
+  - variable_id: VECTA.DWI.ACQ.VOXEL_SIZE
+    version: 0.1.0
+    name: DWI voxel size (mm per axis)
+    lifecycle_layer: L1_ACQUISITION
+    domain: acquisition
+    type:
+      primitive: array
+      element_type: float
+      length: 3
+      nullable: true
+    allowed_states:
+      - observed
+      - derived
+      - unknown
+      - invalid
+      - extraction_failed
+    sources:
+      nifti:
+        field: pixdim[1..3]
+      bids:
+        field: null            # BIDS json does not standardize voxel size; use NIfTI header
+      dicom:
+        attribute: PixelSpacing + SliceThickness / SpacingBetweenSlices
+        tags:
+          - "(0028,0030)"
+          - "(0018,0050)"
+          - "(0018,0088)"
+    canonical:
+      type: array
+      unit: mm
+      normalization: identity
+    tolerance_ref: voxel_size_mm
+    extraction:
+      algorithm: TODO   # extract_voxel_size_v1
+    paper1_role: birth_predictor
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.ACQ.VOLUME_COUNT
+    version: 0.1.0
+    name: DWI NIfTI volume count
+    lifecycle_layer: L4_REPRESENTATION
+    domain: acquisition
+    type:
+      primitive: integer
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - invalid
+      - extraction_failed
+    sources:
+      nifti:
+        field: dim[4]
+    canonical:
+      type: integer
+      unit: count
+    validity:
+      min: 1
+    extraction:
+      algorithm: TODO   # extract_volume_count_v1
+    paper1_role: birth_predictor
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.ACQ.BVAL_COUNT
+    version: 0.1.0
+    name: b-value entry count
+    lifecycle_layer: L4_REPRESENTATION
+    domain: acquisition
+    type:
+      primitive: integer
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - invalid
+      - extraction_failed
+    sources:
+      bval:
+        field: whitespace_separated_values
+    canonical:
+      type: integer
+      unit: count
+    extraction:
+      algorithm: TODO   # extract_bval_count_v1
+    paper1_role: birth_predictor
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.ACQ.SHELL_COUNT
+    version: 0.1.0
+    name: Distinct nonzero b-value shell count
+    lifecycle_layer: L4_REPRESENTATION
+    domain: acquisition
+    type:
+      primitive: integer
+      nullable: true
+    allowed_states:
+      - derived
+      - unknown
+      - not_applicable
+      - extraction_failed
+    dependencies:
+      - VECTA.DWI.ACQ.BVAL_COUNT   # requires bval file to be read
+    derived: true
+    formula_id: shell_count_v1
+    formula_pseudocode: |
+      read bvals → drop b0s (b < b0_threshold) →
+      group remaining into shells within tolerance b_shell_grouping →
+      SHELL_COUNT = number of resulting groups
+    tolerance_ref: b_shell_grouping
+    extraction:
+      algorithm: TODO   # derive_shell_count_v1
+    paper1_role: birth_predictor
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.ACQ.BVEC_COUNT
+    version: 0.1.0
+    name: bvec entry count
+    lifecycle_layer: L4_REPRESENTATION
+    domain: acquisition
+    type:
+      primitive: integer
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - invalid
+      - extraction_failed
+    sources:
+      bvec:
+        field: whitespace_separated_vectors
+    canonical:
+      type: integer
+      unit: count
+    extraction:
+      algorithm: TODO   # extract_bvec_count_v1
+    paper1_role: birth_predictor
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.ACQ.BVEC_PLAUSIBILITY
+    version: 0.1.0
+    name: bvec vector plausibility
+    lifecycle_layer: L4_REPRESENTATION
+    domain: acquisition
+    type:
+      primitive: boolean
+      nullable: true
+    allowed_states:
+      - derived
+      - unknown
+      - not_applicable
+      - extraction_failed
+    dependencies:
+      - VECTA.DWI.ACQ.BVEC_COUNT
+    derived: true
+    formula_id: bvec_plausibility_v1
+    formula_pseudocode: |
+      for each non-b0 direction vector:
+        norm should be ≈ 1.0 within tolerance vector_norm
+      → true if all vectors within tolerance; false otherwise
+    tolerance_ref: vector_norm
+    extraction:
+      algorithm: TODO   # derive_bvec_plausibility_v1
+    paper1_role: birth_predictor
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.ACQ.PE_DIRECTION
+    version: 0.1.0
+    name: Phase-encoding direction
+    lifecycle_layer: L1_ACQUISITION
+    domain: acquisition
+    type:
+      primitive: string
+      enum: ["i", "i-", "j", "j-", "k", "k-"]
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - extraction_failed
+    sources:
+      bids:
+        field: PhaseEncodingDirection
+      dicom:
+        # Vendor-dependent. Requires combining
+        # (0018,1312) InPlanePhaseEncodingDirection with vendor-specific
+        # polarity encoding. Documented per vendor before freeze.
+        attribute: InPlanePhaseEncodingDirection + vendor polarity
+        tag: "(0018,1312)"
+    canonical:
+      type: string
+      normalization: bids_pe_direction_v1
+    conflict_policy:
+      compare_sources: true
+      on_conflict: emit_representation_inconsistency
+    extraction:
+      algorithm: TODO   # extract_pe_direction_v1
+    paper1_role: birth_predictor
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE
+    version: 0.1.0
+    name: Reverse phase-encoding reference availability
+    lifecycle_layer: L1_ACQUISITION
+    domain: acquisition
+    type:
+      primitive: boolean
+      nullable: true
+    allowed_states:
+      - observed        # candidate acquisition found in inventory
+      - derived         # inferred from PE + inventory logic
+      - unknown         # PE metadata insufficient to determine
+      - not_applicable
+    sources:
+      primary:
+        - bids_inventory
+      fallback:
+        - dicom_inventory
+    dependencies:
+      - VECTA.DWI.ACQ.PE_DIRECTION
+    derived: true
+    formula_id: reverse_pe_availability_v1
+    formula_pseudocode: |
+      1. Determine target PE direction from VECTA.DWI.ACQ.PE_DIRECTION.
+      2. Identify candidate reference acquisitions in the same subject/session.
+      3. Determine PE direction for each candidate.
+      4. Apply the dwi_connectomics profile's complementary-PE pairing rule.
+      5. Verify each candidate is eligible for the intended correction strategy.
+      6. If >=1 qualifying complementary acquisition exists:
+           return value=true, state=observed
+      7. Else if inventory + PE metadata sufficient to establish absence:
+           return value=false, state=observed
+      8. Else:
+           return value=null, state=unknown
+    reference:
+      type: intended_use_profile
+      profile: dwi_connectomics
+    extraction:
+      algorithm: TODO   # derive_reverse_pe_availability_v1
+    paper1_role: birth_predictor
+    evidence_refs:
+      - EV-DWI-PE-001
+    tests:
+      - TEST-REVPE-001
+      - TEST-REVPE-002
+      - TEST-REVPE-003
+
+  - variable_id: VECTA.DWI.ACQ.TOTAL_READOUT_TIME_PRESENT
+    version: 0.1.0
+    name: TotalReadoutTime present in BIDS sidecar
+    lifecycle_layer: L4_REPRESENTATION
+    domain: acquisition
+    type:
+      primitive: boolean
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - not_applicable
+      - extraction_failed
+    sources:
+      bids:
+        field: TotalReadoutTime
+    extraction:
+      algorithm: TODO   # extract_total_readout_time_present_v1
+    notes: |
+      Presence-only in v0.1 slice. A future variable
+      VECTA.DWI.ACQ.TOTAL_READOUT_TIME (float, seconds) will hold the
+      value; this boolean is sufficient to feed criteria that require the
+      value to exist.
+    paper1_role: birth_predictor
+    evidence_refs: []
+    tests: []

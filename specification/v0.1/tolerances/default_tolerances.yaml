@@ -1,0 +1,52 @@
+# Default tolerance registry.
+# Source: Spec Blueprint §12.
+#
+# CRITICAL: values below are illustrative placeholders. Every tolerance
+# must have a justified basis (standard, pipeline requirement, literature,
+# expert consensus, or empirical calibration) before v0.1 freeze. Do not
+# treat these as authoritative in any analysis until reviewed.
+#
+# Format: each entry has type (absolute|relative), value, optional unit,
+# and basis (with status = provisional until justified).
+
+version: 0.1.0
+
+tolerances:
+
+  voxel_size_mm:
+    type: absolute
+    value: 0.10
+    unit: mm
+    basis:
+      status: provisional
+      source: TODO
+    applies_to:
+      - VECTA.DWI.ACQ.VOXEL_SIZE
+
+  te:
+    type: absolute
+    value: 0.002
+    unit: seconds
+    basis:
+      status: provisional
+      source: TODO
+
+  b_shell_grouping:
+    type: absolute
+    value: 50
+    unit: s/mm^2
+    basis:
+      status: provisional
+      source: TODO
+    applies_to:
+      - VECTA.DWI.ACQ.SHELL_COUNT
+
+  vector_norm:
+    type: absolute
+    value: 0.05
+    unit: dimensionless
+    basis:
+      status: provisional
+      source: TODO
+    applies_to:
+      - VECTA.DWI.ACQ.BVEC_PLAUSIBILITY

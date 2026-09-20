@@ -1,0 +1,40 @@
+# Evidence registry.
+# Source: Spec Blueprint §18.
+#
+# Every criterion cites at least one evidence entry that justifies its
+# existence. Evidence is stored separately from criteria so that multiple
+# criteria can share the same source, and so that domain reviewers can
+# audit the scientific basis of the framework without reading rule code.
+
+version: 0.1.0
+
+evidence:
+
+  - evidence_id: EV-DWI-PE-001
+    type: pipeline_requirement
+    title: Complementary phase-encoding support for susceptibility-distortion correction
+    source: QSIPrep documented processing requirement
+    version_scope: specified_version    # tied to the pinned QSIPrep version at freeze
+    status: active
+    supports:
+      - VECTA-DWI-014
+    strength:
+      category: operational_requirement
+    notes: |
+      Absence of a complementary phase-encoded reference constrains the
+      distortion-correction strategy available to QSIPrep. Does not imply
+      universal diagnostic inadequacy when absent.
+
+  # ── Placeholders for other criteria referenced in the dwi_connectomics
+  # profile. Author before freeze. ──
+  - evidence_id: EV-DWI-PE-002
+    type: TODO
+    title: TODO — supports VECTA-DWI-001 (PE direction unknown)
+    source: TODO
+    status: draft
+
+  - evidence_id: EV-DWI-META-001
+    type: TODO
+    title: TODO — supports VECTA-DWI-021 (essential metadata sufficiency)
+    source: TODO
+    status: draft

@@ -1,0 +1,34 @@
+# Vecta-DWI v0.1 specification manifest.
+# Source: Spec Blueprint §5.
+# Identifies the components that make up this specification release.
+# A specification release must not accidentally mix variables/criteria/schemas
+# from different versions — the loader validates all sub-versions against this
+# manifest before executing.
+
+specification_id: vecta-dwi
+version: 0.1.0
+status: draft
+
+profile_default: dwi_connectomics
+
+variables_version: 0.1.0
+criteria_version: 0.1.0
+profiles_version: 0.1.0
+protocols_version: 0.1.0
+evidence_registry_version: 0.1.0
+tolerances_version: 0.1.0
+schema_version: 0.1.0
+registries_version: 0.1.0
+
+created: 2026-09-19
+paper_release: false        # true only when tagged vecta-dwi-v0.1.0-paper1
+
+# Evidence sources this specification is designed to consume.
+supported_inputs:
+  - dicom
+  - bids
+  - nifti
+  - bval
+  - bvec
+  - protocol_reference
+  - processing_provenance
