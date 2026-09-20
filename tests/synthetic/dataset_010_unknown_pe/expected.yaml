@@ -1,0 +1,20 @@
+assessment_status_state: completed_with_unknowns
+readiness_state: review_required
+variables:
+  VECTA.DWI.ACQ.PE_DIRECTION:
+    value: null
+    state: unknown
+  VECTA.DWI.ACQ.TOTAL_READOUT_TIME_PRESENT:
+    value: false
+    state: observed
+  VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE:
+    value: null
+    state: unknown
+criteria:
+  VECTA-DWI-001: finding
+  VECTA-DWI-014: unknown
+  VECTA-DWI-021: finding
+findings_present:
+  VECTA-DWI-001: true
+  VECTA-DWI-014: false
+  VECTA-DWI-021: true

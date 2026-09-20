@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "vecta-dwi"
+version = "0.1.0.dev0"  # PEP 440 for packaging; runtime __version__ uses SemVer 0.1.0-dev0
+description = "Vecta-DWI: a Data Birth Integrity framework for DWI processing readiness"
+readme = "VECTA_DWI_v0.1_BUILD_PLAN.md"
+requires-python = ">=3.10"
+license = { text = "Proprietary — not yet released" }
+authors = [{ name = "pndagiji" }]
+dependencies = [
+    "pydantic>=2.0",
+    "PyYAML>=6.0",
+    "jsonschema>=4.20",
+    "referencing>=0.30",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/vecta"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"

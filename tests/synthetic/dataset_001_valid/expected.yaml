@@ -1,0 +1,19 @@
+assessment_status_state: completed
+readiness_state: ready
+variables:
+  VECTA.DWI.ACQ.PE_DIRECTION:
+    value: "j-"
+    state: observed
+  VECTA.DWI.ACQ.TOTAL_READOUT_TIME_PRESENT:
+    value: true
+    state: observed
+  VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE:
+    value: true
+    state: observed
+criteria:
+  VECTA-DWI-001: satisfied
+  VECTA-DWI-014: satisfied
+  VECTA-DWI-021: satisfied
+findings_present:
+  VECTA-DWI-014: false
+  VECTA-DWI-001: false

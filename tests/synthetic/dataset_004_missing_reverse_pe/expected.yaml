@@ -1,0 +1,25 @@
+assessment_status_state: completed
+readiness_state: ready_with_limitations
+variables:
+  VECTA.DWI.ACQ.PE_DIRECTION:
+    value: "j-"
+    state: observed
+  VECTA.DWI.ACQ.TOTAL_READOUT_TIME_PRESENT:
+    value: true
+    state: observed
+  VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE:
+    value: false
+    state: observed
+criteria:
+  VECTA-DWI-001: satisfied
+  VECTA-DWI-014: finding
+  VECTA-DWI-021: satisfied
+findings_present:
+  VECTA-DWI-014: true
+  VECTA-DWI-001: false
+finding_details:
+  VECTA-DWI-014:
+    severity: major
+    severity_status: provisional
+    category: acquisition_integrity
+    causal_claim_flags: [false, false, false]

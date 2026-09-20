@@ -59,3 +59,69 @@ Added JSON Schema layer under `schemas/`.
 - `output/adjudication.schema.json` — no human adjudication in first vertical slice.
 - `output/cohort_summary.schema.json` — cohort aggregation is later phase.
 - `output/research_outcome.schema.json` — outcome labeling manual not yet drafted (D7, D8).
+
+---
+
+## v0.1.0 — 2026-09-19 (draft, first Python vertical slice)
+
+First executable end-to-end path. Runs `VECTA-DWI-014` against synthetic
+BIDS input and emits schema-validated `vecta.json`.
+
+### Added
+- Python package `vecta` under `src/vecta/`:
+  - `enums.py` — runtime mirror of `registries/enums.yaml`.
+  - `models.py` — Pydantic v2 models mirroring the output schemas.
+  - `spec/loader.py` — reads and validates variable/criterion/profile YAMLs
+    against input schemas at engine start; performs referential integrity
+    checks before any data is assessed (Spec Blueprint §23).
+  - `collectors/bids.py` — minimal BIDS collector; discovers DWI entities
+    and reads sidecar JSONs; emits `EvidenceRecord` per source field.
+  - `extract/pe.py` — extractors for `PE_DIRECTION` and
+    `TOTAL_READOUT_TIME_PRESENT`.
+  - `derive/reverse_pe.py` — reverse-PE availability derivation per
+    `reverse_pe_availability_v1` formula.
+  - `criteria/engine.py` — declarative condition evaluator
+    (all/any/not + equals/not_equals/state predicates); Finding assembly
+    from criterion finding-templates.
+  - `output/assemble.py` — full assessment assembler + JSON Schema
+    validation + referential integrity check (Output Tech Spec §46).
+- `pyproject.toml` — hatchling build; deps: pydantic, PyYAML, jsonschema,
+  referencing.
+- Three synthetic BIDS fixtures under `tests/synthetic/`:
+  - `dataset_001_valid` — DWI AP + PA → `VECTA-DWI-014` satisfied, ready.
+  - `dataset_004_missing_reverse_pe` — DWI AP only, complete inventory →
+    `VECTA-DWI-014` finding, ready_with_limitations.
+  - `dataset_010_unknown_pe` — DWI with no `PhaseEncodingDirection` →
+    `VECTA-DWI-014` status=unknown (no finding — Output Tech Spec §55
+    prohibited case regression); `VECTA-DWI-001` and `VECTA-DWI-021` fire;
+    readiness=review_required.
+- `tests/integration/test_first_vertical_slice.py` — parametrized
+  end-to-end test: pipeline → schema validation → referential integrity
+  → per-fixture behavior assertions, plus explicit prohibited-behavior
+  regression on `dataset_010`.
+
+### Verified
+- 4 integration tests pass under Python 3.11.
+- Emitted `vecta.json` validates against `vecta_output.schema.json` for
+  all three fixtures.
+- Referential integrity check passes.
+
+### Fixed (bugs found by the test)
+- `to_dict`: blanket `exclude_none=True` was dropping schema-required
+  `VariableResult.value` and `DerivedMetric.value` when null (state=unknown).
+  Now reinserts them explicitly.
+- Runtime `__version__` changed from PEP 440 `0.1.0.dev0` to SemVer
+  `0.1.0-dev0` so it matches the schema's SemVer pattern. Package
+  version in `pyproject.toml` stays PEP 440 for packaging tooling.
+- Input `variable.schema.json` conditional (fixed in previous commit)
+  now confirmed correct against real YAML loading.
+
+### Not yet built
+- DICOM collector (`collectors/dicom.py`).
+- Extractors for scanner/voxel/volume/bval/bvec variables.
+- CLI (`cli.py`).
+- HTML report renderer.
+- TSV projection.
+- Cohort aggregator.
+- Golden JSON fixtures with normalized-placeholder diffing (currently
+  using structured expected.yaml assertions instead).
