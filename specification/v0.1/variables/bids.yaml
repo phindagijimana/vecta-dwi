@@ -57,6 +57,36 @@ variables:
     evidence_refs: []
     tests: []
 
+  - variable_id: VECTA.DWI.BIDS.DWI_PRESENT
+    version: 0.1.0
+    name: Session contains at least one DWI acquisition
+    lifecycle_layer: L4_REPRESENTATION
+    domain: bids
+    type:
+      primitive: boolean
+      nullable: false
+    allowed_states:
+      - derived
+    dependencies: []
+    derived: true
+    formula_id: derive_dwi_present_v1
+    formula_pseudocode: |
+      DWI_PRESENT := len(session.dwi_entities) > 0
+    reference:
+      type: intended_use_profile
+      profile: dwi_connectomics
+    extraction:
+      algorithm: derive_dwi_present_v1
+    paper1_role: birth_predictor
+    notes: |
+      Boolean shortcut used by VECTA-DWI-040. The structured object
+      variable REQUIRED_SERIES_PRESENT retains the full missing/present
+      map; this dedicated boolean exists so declarative criterion
+      predicates can use a simple `equals false` check.
+    evidence_refs:
+      - EV-DWI-COHORT-001
+    tests: []
+
   - variable_id: VECTA.DWI.BIDS.REQUIRED_SERIES_PRESENT
     version: 0.1.0
     name: Required series present for dwi_connectomics profile

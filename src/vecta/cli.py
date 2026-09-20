@@ -171,6 +171,83 @@ def _cmd_label_outcomes(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_join_outcomes(args: argparse.Namespace) -> int:
+    """Join Vecta session_summary.tsv with outcomes_long.tsv into a cross-tab.
+
+    The join key is (subject_id, session_id). Outcome rows are pivoted so each
+    outcome_id becomes a column. The result is written as vecta_x_outcomes.tsv
+    in the output directory.
+    """
+    import csv
+
+    cohort_dir = Path(args.cohort)
+    outcomes_file = Path(args.outcomes)
+    out = Path(args.output)
+    out.mkdir(parents=True, exist_ok=True)
+
+    # Load session summary
+    summary_path = cohort_dir / "session_summary.tsv"
+    if not summary_path.is_file():
+        print(f"session_summary.tsv not found in {cohort_dir}", file=sys.stderr)
+        return 1
+    with summary_path.open() as fh:
+        reader = csv.DictReader(fh, delimiter="\t")
+        sessions = list(reader)
+        summary_fields = reader.fieldnames or []
+
+    # Load outcomes long → pivot to wide per session
+    if not outcomes_file.is_file():
+        print(f"Outcomes file not found: {outcomes_file}", file=sys.stderr)
+        return 1
+    outcome_ids: list[str] = []
+    outcomes_wide: dict[tuple[str, str], dict[str, str]] = {}
+    with outcomes_file.open() as fh:
+        reader = csv.DictReader(fh, delimiter="\t")
+        for row in reader:
+            key = (row["subject_id"], row["session_id"])
+            if key not in outcomes_wide:
+                outcomes_wide[key] = {}
+            oid = row["outcome_id"]
+            outcomes_wide[key][oid] = row.get("value", "")
+            if oid not in outcome_ids:
+                outcome_ids.append(oid)
+
+    # Build output rows
+    joined_fields = list(summary_fields) + outcome_ids
+    joined_rows = []
+    matched = unmatched_vecta = unmatched_outcomes = 0
+    for s in sessions:
+        key = (s.get("subject_id", ""), s.get("session_id", ""))
+        o = outcomes_wide.get(key)
+        row = dict(s)
+        if o is not None:
+            matched += 1
+            for oid in outcome_ids:
+                row[oid] = o.get(oid, "NA")
+        else:
+            unmatched_vecta += 1
+            for oid in outcome_ids:
+                row[oid] = "NA"
+        joined_rows.append(row)
+
+    outcome_sessions = set(outcomes_wide.keys())
+    vecta_sessions = {(s.get("subject_id", ""), s.get("session_id", "")) for s in sessions}
+    unmatched_outcomes = len(outcome_sessions - vecta_sessions)
+
+    out_path = out / "vecta_x_outcomes.tsv"
+    with out_path.open("w", newline="") as fh:
+        writer = csv.DictWriter(fh, fieldnames=joined_fields, delimiter="\t", extrasaction="ignore")
+        writer.writeheader()
+        writer.writerows(joined_rows)
+
+    print(
+        f"Joined {matched} matched, {unmatched_vecta} vecta-only, "
+        f"{unmatched_outcomes} outcome-only → {out_path}",
+        file=sys.stderr,
+    )
+    return 0
+
+
 def _cmd_version(args: argparse.Namespace) -> int:
     print(f"vecta-dwi software: {VECTA_VERSION}")
     print(f"specification:      {SPEC_VERSION}")
@@ -218,6 +295,24 @@ def build_parser() -> argparse.ArgumentParser:
     lo.add_argument("--pipeline-version", default=None,
                     help="Pipeline version identifier to record in every outcome record")
     lo.set_defaults(func=_cmd_label_outcomes)
+
+    jo = sub.add_parser(
+        "join-outcomes",
+        help="Join vecta session_summary.tsv with outcomes_long.tsv into a cross-tab",
+    )
+    jo.add_argument(
+        "--cohort", required=True,
+        help="Directory containing session_summary.tsv (output of 'vecta aggregate')",
+    )
+    jo.add_argument(
+        "--outcomes", required=True,
+        help="Path to outcomes_long.tsv (output of 'vecta label-outcomes')",
+    )
+    jo.add_argument(
+        "--output", required=True,
+        help="Directory to write vecta_x_outcomes.tsv",
+    )
+    jo.set_defaults(func=_cmd_join_outcomes)
 
     ver = sub.add_parser("version", help="Print software + spec versions")
     ver.set_defaults(func=_cmd_version)

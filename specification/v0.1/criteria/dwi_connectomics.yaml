@@ -267,6 +267,74 @@ criteria:
       - TEST-METASUFF-001
 
   # ─────────────────────────────────────────────────────────────────────────
+  # VECTA-DWI-040 — Session lacks a DWI acquisition entirely
+  # Surfaced by CIDUR sessions (sub-002/ses-1, sub-044/ses-2) where the
+  # BIDS session exists but has no dwi/ directory; the downstream pipeline
+  # created output dirs but produced no derivatives.
+  # This is a cohort-integrity signal that should fire BEFORE any pipeline
+  # runs, so triage happens before compute is wasted.
+  # ─────────────────────────────────────────────────────────────────────────
+  - criterion_id: VECTA-DWI-040
+    version: 0.1.0
+    name: session_has_no_dwi
+    lifecycle_origin: L4_REPRESENTATION
+    status: active
+
+    requires:
+      - VECTA.DWI.BIDS.DWI_PRESENT
+
+    applies_to:
+      - dwi_connectomics
+
+    condition:
+      all:
+        - variable: VECTA.DWI.BIDS.DWI_PRESENT
+          operator: equals
+          value: false
+
+    finding:
+      label: Session has no DWI acquisition
+      category: cohort_integrity
+      observed_condition:
+        session_has_dwi: false
+      reference_condition:
+        profile: dwi_connectomics
+        requires: [dwi]
+      severity:
+        level: critical
+        status: provisional
+        basis:
+          - evidence_type: pipeline_requirement
+            evidence_ref: EV-DWI-COHORT-001
+      confidence:
+        default: high
+      potential_effects:
+        - effect_id: pipeline_will_produce_no_derivatives
+          relation: plausible
+          evidence_refs: [EV-DWI-COHORT-001]
+          wording: |
+            Any DWI processing workflow will either refuse to run or
+            create an empty output tree with no derivatives.
+          causal_claim: false
+      recommended_actions:
+        - action_id: exclude_from_dwi_analysis
+          action_class: exclude
+          text: |
+            Exclude this session from DWI-dependent analyses. Recover
+            the DWI acquisition from source if it was accidentally
+            dropped during conversion; otherwise document the exclusion.
+          automated: false
+          changes_source_data: false
+          requires_human_approval: true
+      empirical_status:
+        state: not_tested
+
+    evidence_refs:
+      - EV-DWI-COHORT-001
+    tests:
+      - TEST-COHORT-NODWI-001
+
+  # ─────────────────────────────────────────────────────────────────────────
   # VECTA-DWI-030 — DWI gradient files (bval / bvec) missing
   # Surfaced by CIDUR's "DWI missing .bval/.bvec" manual exclusion cases;
   # QSIPrep and any gradient-aware pipeline require both files.

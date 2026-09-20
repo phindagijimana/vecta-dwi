@@ -37,6 +37,7 @@ criteria:
   - VECTA-DWI-014         # complementary PE reference unavailable
   - VECTA-DWI-021         # essential metadata insufficient
   - VECTA-DWI-030         # DWI gradient files missing (bval or bvec)
+  - VECTA-DWI-040         # session has no DWI acquisition at all (cohort integrity)
   - VECTA-DWI-050         # DWI DICOM geometry inconsistent (Source module)
   - VECTA-DWI-060         # DICOM/BIDS field-strength disagreement (Source module)
 

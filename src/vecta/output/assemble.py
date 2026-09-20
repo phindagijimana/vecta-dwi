@@ -40,6 +40,7 @@ from ..extract.dicom_source import (
     extract_series_count,
 )
 from ..extract.bids import (
+    derive_dwi_present,
     derive_required_series_present,
     extract_validator_error_count,
     extract_validator_warning_count,
@@ -130,6 +131,7 @@ def assess_session(
     variables[
         "VECTA.DWI.BIDS.REQUIRED_SERIES_PRESENT"
     ] = derive_required_series_present(session, spec.profile)
+    variables["VECTA.DWI.BIDS.DWI_PRESENT"] = derive_dwi_present(session)
 
     # ── DICOM Source module (optional, only if inventory supplied) ────
     dcm_evidence = []

@@ -41,6 +41,24 @@ evidence:
       Absence in metadata does not by itself indicate a corrupt
       acquisition — it is an evidence-insufficiency condition.
 
+  - evidence_id: EV-DWI-COHORT-001
+    type: pipeline_requirement
+    title: A session under the dwi_connectomics profile requires at least one DWI entity
+    source: BIDS specification (dwi entity); QSIPrep required inputs
+    version_scope: specified_version
+    status: active
+    supports:
+      - VECTA-DWI-040
+    strength:
+      category: operational_requirement
+    notes: |
+      A subject/session that lacks a dwi/ directory in BIDS cannot be
+      processed by any DWI pipeline. Surfaced empirically by CIDUR
+      sub-002/ses-1 and sub-044/ses-2 where QSIPrep created output
+      directories but produced no derivatives because no DWI was
+      supplied. Vecta should emit this finding BEFORE the pipeline
+      attempts to run.
+
   - evidence_id: EV-DWI-GRAD-001
     type: pipeline_requirement
     title: BIDS DWI requires companion .bval and .bvec files

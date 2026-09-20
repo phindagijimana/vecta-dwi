@@ -87,6 +87,21 @@
       "status": "satisfied"
     },
     {
+      "criterion_id": "VECTA-DWI-040",
+      "criterion_version": "0.1.0",
+      "evaluated_at": "<TIMESTAMP>",
+      "evaluation_engine_version": "0.1.0",
+      "finding_refs": [],
+      "input_snapshot": {
+        "VECTA.DWI.BIDS.DWI_PRESENT": {
+          "state": "derived",
+          "value": true
+        }
+      },
+      "profile_id": "dwi_connectomics",
+      "status": "satisfied"
+    },
+    {
       "criterion_id": "VECTA-DWI-050",
       "criterion_version": "0.1.0",
       "evaluated_at": "<TIMESTAMP>",
@@ -360,14 +375,14 @@
     "blocking_finding_refs": [],
     "dimensions": {
       "assessment_completeness": {
-        "applicable_variables": 16,
+        "applicable_variables": 17,
         "calculation_id": "assessment_completeness_v1",
-        "evaluable_criteria": 4,
+        "evaluable_criteria": 5,
         "extraction_failed": 0,
         "invalid": 0,
         "not_collected": 0,
-        "observed_or_derived": 13,
-        "ratio": 0.8125,
+        "observed_or_derived": 14,
+        "ratio": 0.8235,
         "unknown": 3,
         "unknown_criteria": 2
       },
@@ -532,6 +547,19 @@
         2.0
       ],
       "variable_id": "VECTA.DWI.ACQ.VOXEL_SIZE",
+      "warnings": []
+    },
+    "VECTA.DWI.BIDS.DWI_PRESENT": {
+      "computed_at": "<TIMESTAMP>",
+      "confidence": "high",
+      "conflicts": [],
+      "definition_version": "0.1.0",
+      "evidence_refs": [],
+      "extractor_id": "derive_dwi_present_v1",
+      "extractor_version": "0.1.0",
+      "state": "derived",
+      "value": true,
+      "variable_id": "VECTA.DWI.BIDS.DWI_PRESENT",
       "warnings": []
     },
     "VECTA.DWI.BIDS.REQUIRED_SERIES_PRESENT": {

@@ -64,6 +64,48 @@ def test_cli_validate_spec(capsys):
     assert "Specification 0.1.0 valid" in err
 
 
+def test_cli_join_outcomes(tmp_path: Path):
+    # Produce a cohort session_summary.tsv
+    per_session = tmp_path / "assessments"
+    for fname in ("dataset_001_valid", "dataset_004_missing_reverse_pe"):
+        cli_main([
+            "assess",
+            "--dataset", str(FIXTURE_ROOT / fname),
+            "--subject", "001", "--session", "01",
+            "--spec", str(SPEC_ROOT),
+            "--output", str(per_session / fname),
+        ])
+    cohort_dir = tmp_path / "cohort"
+    cli_main(["aggregate", str(per_session), "--output", str(cohort_dir)])
+
+    # Write a minimal outcomes_long.tsv
+    outcomes_tsv = tmp_path / "outcomes_long.tsv"
+    outcomes_tsv.write_text(
+        "subject_id\tsession_id\toutcome_id\tvalue\tstate\n"
+        "001\t01\tVECTA.OUTCOME.QSIPREP_SUCCESS\ttrue\tobserved\n"
+        "001\t01\tVECTA.OUTCOME.PREPROC_DWI_AVAILABLE\ttrue\tobserved\n"
+    )
+
+    out = tmp_path / "joined"
+    rc = cli_main([
+        "join-outcomes",
+        "--cohort", str(cohort_dir),
+        "--outcomes", str(outcomes_tsv),
+        "--output", str(out),
+    ])
+    assert rc == 0
+    joined = out / "vecta_x_outcomes.tsv"
+    assert joined.is_file()
+
+    import csv
+    rows = list(csv.DictReader(joined.open(), delimiter="\t"))
+    # Both datasets have same subject/session — they should merge into matched rows
+    assert any("VECTA.OUTCOME.QSIPREP_SUCCESS" in r for r in rows)
+    # At least one row should have the outcome value
+    outcome_vals = [r.get("VECTA.OUTCOME.QSIPREP_SUCCESS", "NA") for r in rows]
+    assert "true" in outcome_vals
+
+
 def test_cli_explain(tmp_path: Path, capsys):
     # Produce a vecta.json with a known finding
     out = tmp_path / "assess"

@@ -16,6 +16,22 @@ from ..collectors.bids import BidsSession
 from ..enums import Confidence, ValueState
 from ..models import VariableResult
 
+
+def derive_dwi_present(session: BidsSession) -> VariableResult:
+    """VECTA.DWI.BIDS.DWI_PRESENT — boolean flag for declarative predicates."""
+    present = len(session.dwi_entities) > 0
+    return VariableResult(
+        variable_id="VECTA.DWI.BIDS.DWI_PRESENT",
+        definition_version="0.1.0",
+        value=present,
+        state=ValueState.DERIVED,
+        confidence=Confidence.HIGH,
+        evidence_refs=[],
+        extractor_id="derive_dwi_present_v1",
+        extractor_version="0.1.0",
+        computed_at=_now(),
+    )
+
 EXTRACTOR_VERSION = "0.1.0"
 
 
