@@ -14,6 +14,7 @@ from referencing.jsonschema import DRAFT202012
 
 from .. import SCHEMA_VERSION, SPEC_VERSION, __version__ as VECTA_VERSION
 from ..collectors.bids import BidsSession
+from ..collectors.dicom import DicomInventory
 from ..criteria.engine import evaluate as evaluate_criterion
 from ..derive.reverse_pe import derive_reverse_pe_availability
 from ..enums import (
@@ -29,6 +30,14 @@ from ..extract.acquisition import (
     extract_bvec_count,
     extract_volume_count,
     extract_voxel_size,
+)
+from ..extract.dicom_source import (
+    derive_dwi_geometry_consistent,
+    derive_dwi_series_count,
+    derive_field_strength_agrees_with_bids,
+    extract_duplicate_instance_count,
+    extract_instance_count,
+    extract_series_count,
 )
 from ..extract.bids import (
     derive_required_series_present,
@@ -64,8 +73,15 @@ class OutputValidationError(Exception):
     pass
 
 
-def assess_session(session: BidsSession, spec: LoadedSpec) -> Assessment:
-    """Run the full first-vertical-slice pipeline for one BIDS session."""
+def assess_session(
+    session: BidsSession,
+    spec: LoadedSpec,
+    dicom_inventory: DicomInventory | None = None,
+) -> Assessment:
+    """Run the pipeline for one BIDS session, optionally augmented with a
+    DICOM inventory. Source-module variables are emitted only when
+    dicom_inventory is provided; otherwise the corresponding criteria
+    return `unknown` status."""
 
     started = datetime.now(timezone.utc)
     profile_id = spec.profile["profile_id"]
@@ -114,6 +130,26 @@ def assess_session(session: BidsSession, spec: LoadedSpec) -> Assessment:
     variables[
         "VECTA.DWI.BIDS.REQUIRED_SERIES_PRESENT"
     ] = derive_required_series_present(session, spec.profile)
+
+    # ── DICOM Source module (optional, only if inventory supplied) ────
+    dcm_evidence = []
+    if dicom_inventory is not None:
+        for extractor in (
+            extract_series_count,
+            derive_dwi_series_count,
+            extract_instance_count,
+            extract_duplicate_instance_count,
+            derive_dwi_geometry_consistent,
+        ):
+            vr = extractor(dicom_inventory)
+            variables[vr.variable_id] = vr
+        variables[
+            "VECTA.DWI.DICOM.FIELD_STRENGTH_AGREES_WITH_BIDS"
+        ] = derive_field_strength_agrees_with_bids(
+            dicom_inventory, variables["VECTA.DWI.SCANNER.FIELD_STRENGTH"]
+        )
+        # Preserve Source-module evidence records
+        dcm_evidence = list(dicom_inventory.evidence)
 
     # ── Evaluate criteria ──────────────────────────────────────────────
     _finding_counter = [0]
@@ -166,7 +202,7 @@ def assess_session(session: BidsSession, spec: LoadedSpec) -> Assessment:
             domains_attempted=["scanner", "acquisition", "bids"],
             domains_completed=["scanner", "acquisition", "bids"],
         ),
-        evidence=list(session.evidence),
+        evidence=list(session.evidence) + dcm_evidence,
         variables=variables,
         criteria=criteria_results,
         findings=findings,

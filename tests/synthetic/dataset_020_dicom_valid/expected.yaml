@@ -1,0 +1,39 @@
+assessment_status_state: completed
+readiness_state: ready
+variables:
+  VECTA.DWI.DICOM.SERIES_COUNT:
+    value: 2
+    state: observed
+  VECTA.DWI.DICOM.DWI_SERIES_COUNT:
+    value: 1
+    state: derived
+  VECTA.DWI.DICOM.INSTANCE_COUNT:
+    value: 10
+    state: observed
+  VECTA.DWI.DICOM.DUPLICATE_INSTANCE_COUNT:
+    value: 0
+    state: observed
+  VECTA.DWI.DICOM.SERIES_GEOMETRY_CONSISTENT:
+    value: true
+    state: derived
+  VECTA.DWI.DICOM.FIELD_STRENGTH_AGREES_WITH_BIDS:
+    value: true
+    state: derived
+  VECTA.DWI.ACQ.PE_DIRECTION:
+    value: "j-"
+    state: observed
+  VECTA.DWI.ACQ.REVERSE_PE_AVAILABLE:
+    value: true
+    state: observed
+criteria:
+  VECTA-DWI-001: satisfied
+  VECTA-DWI-014: satisfied
+  VECTA-DWI-021: satisfied
+  VECTA-DWI-050: satisfied
+  VECTA-DWI-060: satisfied
+findings_present:
+  VECTA-DWI-001: false
+  VECTA-DWI-014: false
+  VECTA-DWI-021: false
+  VECTA-DWI-050: false
+  VECTA-DWI-060: false

@@ -265,3 +265,126 @@ criteria:
       - EV-DWI-META-001
     tests:
       - TEST-METASUFF-001
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # VECTA-DWI-050 — DWI DICOM series geometry inconsistent
+  # (Source module — only evaluable when DICOM inventory is available)
+  # ─────────────────────────────────────────────────────────────────────────
+  - criterion_id: VECTA-DWI-050
+    version: 0.1.0
+    name: dwi_dicom_geometry_inconsistent
+    lifecycle_origin: L2_SOURCE
+    status: active
+
+    requires:
+      - VECTA.DWI.DICOM.SERIES_GEOMETRY_CONSISTENT
+
+    applies_to:
+      - dwi_connectomics
+
+    condition:
+      all:
+        - variable: VECTA.DWI.DICOM.SERIES_GEOMETRY_CONSISTENT
+          operator: equals
+          value: false
+
+    finding:
+      label: DWI DICOM series has internally inconsistent geometry
+      category: source_integrity
+      observed_condition:
+        dwi_series_geometry_consistent: false
+      reference_condition:
+        profile: dwi_connectomics
+      severity:
+        level: major
+        status: provisional
+        basis:
+          - evidence_type: pipeline_requirement
+            evidence_ref: EV-DWI-DCM-GEO-001
+      confidence:
+        default: high
+      potential_effects:
+        - effect_id: conversion_failure_or_ambiguity
+          relation: plausible
+          evidence_refs: [EV-DWI-DCM-GEO-001]
+          wording: |
+            dcm2niix or equivalent converters typically fail or split
+            series when instance geometry is inconsistent.
+          causal_claim: false
+      recommended_actions:
+        - action_id: reexport_dicom_series
+          action_class: re_export
+          text: |
+            Re-export the affected DWI series from source PACS/XNAT and
+            verify instance-level geometry before conversion.
+          automated: false
+          changes_source_data: false
+          requires_human_approval: true
+      empirical_status:
+        state: not_tested
+
+    evidence_refs:
+      - EV-DWI-DCM-GEO-001
+    tests: []
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # VECTA-DWI-060 — DICOM/BIDS field-strength disagreement
+  # (Source module — transformation-fidelity check)
+  # ─────────────────────────────────────────────────────────────────────────
+  - criterion_id: VECTA-DWI-060
+    version: 0.1.0
+    name: dicom_bids_field_strength_disagreement
+    lifecycle_origin: L4_REPRESENTATION
+    status: active
+
+    requires:
+      - VECTA.DWI.DICOM.FIELD_STRENGTH_AGREES_WITH_BIDS
+
+    applies_to:
+      - dwi_connectomics
+
+    condition:
+      all:
+        - variable: VECTA.DWI.DICOM.FIELD_STRENGTH_AGREES_WITH_BIDS
+          operator: equals
+          value: false
+
+    finding:
+      label: MagneticFieldStrength disagrees between DICOM and BIDS sidecar
+      category: representation_integrity
+      observed_condition:
+        field_strength_agrees_dicom_bids: false
+      reference_condition:
+        profile: dwi_connectomics
+      severity:
+        level: moderate
+        status: provisional
+        basis:
+          - evidence_type: pipeline_requirement
+            evidence_ref: EV-DWI-DCM-FIDELITY-001
+      confidence:
+        default: high
+      potential_effects:
+        - effect_id: measurement_noncomparability
+          relation: plausible
+          evidence_refs: [EV-DWI-DCM-FIDELITY-001]
+          wording: |
+            Downstream analyses that assume the BIDS-recorded field
+            strength may compute incorrect scaling factors when the source
+            DICOM reports a different value.
+          causal_claim: false
+      recommended_actions:
+        - action_id: reconcile_field_strength
+          action_class: repair_representation
+          text: |
+            Reconcile the BIDS sidecar with the source DICOM value and
+            regenerate the sidecar from the authoritative source.
+          automated: false
+          changes_source_data: false
+          requires_human_approval: true
+      empirical_status:
+        state: not_tested
+
+    evidence_refs:
+      - EV-DWI-DCM-FIDELITY-001
+    tests: []

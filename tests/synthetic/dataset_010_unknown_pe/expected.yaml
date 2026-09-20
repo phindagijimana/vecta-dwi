@@ -20,7 +20,11 @@ criteria:
   VECTA-DWI-001: finding
   VECTA-DWI-014: unknown
   VECTA-DWI-021: finding
+  VECTA-DWI-050: unknown
+  VECTA-DWI-060: unknown
 findings_present:
   VECTA-DWI-001: true
   VECTA-DWI-014: false
   VECTA-DWI-021: true
+  VECTA-DWI-050: false
+  VECTA-DWI-060: false

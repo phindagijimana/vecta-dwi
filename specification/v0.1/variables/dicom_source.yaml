@@ -1,0 +1,160 @@
+# DICOM source-level variables — CIDUR-cohort-relevant source integrity.
+# Source: Paper 1 §14 (DICOM/Source input domain), §16 (DICOM source-level
+# analysis), Study Design §7 (transformation-fidelity study).
+#
+# These variables require original DICOM. They are what distinguishes
+# Vecta's Source module from purely BIDS-based readiness tools.
+
+version: 0.1.0
+
+variables:
+
+  - variable_id: VECTA.DWI.DICOM.SERIES_COUNT
+    version: 0.1.0
+    name: Total DICOM series observed in the export
+    lifecycle_layer: L2_SOURCE
+    domain: dicom_source
+    type:
+      primitive: integer
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - extraction_failed
+    sources:
+      dicom_inventory:
+        field: series_count
+    extraction:
+      algorithm: TODO   # dicom_series_count_v1
+    paper1_role: audit_only
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.DICOM.DWI_SERIES_COUNT
+    version: 0.1.0
+    name: DWI-classified DICOM series count
+    lifecycle_layer: L2_SOURCE
+    domain: dicom_source
+    type:
+      primitive: integer
+      nullable: true
+    allowed_states:
+      - derived
+      - unknown
+      - extraction_failed
+    derived: true
+    formula_id: dicom_dwi_series_count_v1
+    formula_pseudocode: |
+      classify each DICOM series via CLASS_RULES; return count where class == 'dwi'.
+    dependencies: []
+    extraction:
+      algorithm: TODO
+    paper1_role: birth_predictor
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.DICOM.INSTANCE_COUNT
+    version: 0.1.0
+    name: Total DICOM instance count across all series
+    lifecycle_layer: L2_SOURCE
+    domain: dicom_source
+    type:
+      primitive: integer
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - extraction_failed
+    sources:
+      dicom_inventory:
+        field: instance_count
+    extraction:
+      algorithm: TODO
+    paper1_role: audit_only
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.DICOM.DUPLICATE_INSTANCE_COUNT
+    version: 0.1.0
+    name: Duplicate SOPInstanceUID count (potential export duplication)
+    lifecycle_layer: L2_SOURCE
+    domain: dicom_source
+    type:
+      primitive: integer
+      nullable: true
+    allowed_states:
+      - observed
+      - unknown
+      - extraction_failed
+    sources:
+      dicom_inventory:
+        field: duplicate_sop_instances_summed
+    extraction:
+      algorithm: TODO
+    paper1_role: birth_predictor
+    evidence_refs: []
+    tests: []
+
+  - variable_id: VECTA.DWI.DICOM.SERIES_GEOMETRY_CONSISTENT
+    version: 0.1.0
+    name: All DWI series have internally consistent geometry
+    lifecycle_layer: L2_SOURCE
+    domain: dicom_source
+    type:
+      primitive: boolean
+      nullable: true
+    allowed_states:
+      - derived
+      - unknown
+      - not_applicable
+      - extraction_failed
+    derived: true
+    formula_id: dicom_dwi_geometry_consistent_v1
+    formula_pseudocode: |
+      for each DWI-classified series:
+        if PixelSpacing / SliceThickness / (Rows, Columns) differ across
+           instances → mark inconsistent
+      return true if all DWI series consistent, false otherwise;
+      not_applicable if no DWI series present.
+    dependencies:
+      - VECTA.DWI.DICOM.DWI_SERIES_COUNT
+    extraction:
+      algorithm: TODO
+    paper1_role: birth_predictor
+    evidence_refs:
+      - EV-DWI-DCM-GEO-001
+    tests: []
+
+  - variable_id: VECTA.DWI.DICOM.FIELD_STRENGTH_AGREES_WITH_BIDS
+    version: 0.1.0
+    name: MagneticFieldStrength agrees between DICOM and BIDS sidecar
+    lifecycle_layer: L4_REPRESENTATION
+    domain: dicom_source
+    type:
+      primitive: boolean
+      nullable: true
+    allowed_states:
+      - derived
+      - unknown
+      - not_applicable
+      - extraction_failed
+    derived: true
+    formula_id: dicom_bids_field_strength_agreement_v1
+    formula_pseudocode: |
+      Compare VECTA.DWI.SCANNER.FIELD_STRENGTH (from BIDS) with
+      DicomInventory's first DWI series MagneticFieldStrength.
+      Equal within tolerance → true; discrepant → false; either unknown → unknown.
+    dependencies:
+      - VECTA.DWI.SCANNER.FIELD_STRENGTH
+      - VECTA.DWI.DICOM.DWI_SERIES_COUNT
+    extraction:
+      algorithm: TODO
+    paper1_role: birth_predictor
+    notes: |
+      This is a transformation-fidelity check (Study Design §7): if the
+      source DICOM and the BIDS-standardized representation disagree, a
+      transformation/representation finding should be emitted rather than
+      silently choosing one side.
+    evidence_refs:
+      - EV-DWI-DCM-FIDELITY-001
+    tests: []

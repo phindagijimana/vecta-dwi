@@ -1,5 +1,5 @@
-assessment_status_state: completed
-readiness_state: ready
+assessment_status_state: completed_with_unknowns   # DICOM Source criteria unevaluable without DICOM
+readiness_state: ready                              # Source criteria not in review/blocking lists
 variables:
   VECTA.DWI.SCANNER.MANUFACTURER:
     value: "Siemens"
@@ -41,7 +41,11 @@ criteria:
   VECTA-DWI-001: satisfied
   VECTA-DWI-014: satisfied
   VECTA-DWI-021: satisfied
+  VECTA-DWI-050: unknown
+  VECTA-DWI-060: unknown
 findings_present:
   VECTA-DWI-001: false
   VECTA-DWI-014: false
   VECTA-DWI-021: false
+  VECTA-DWI-050: false
+  VECTA-DWI-060: false

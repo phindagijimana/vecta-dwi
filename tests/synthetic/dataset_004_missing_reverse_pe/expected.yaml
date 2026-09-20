@@ -1,4 +1,4 @@
-assessment_status_state: completed
+assessment_status_state: completed_with_unknowns   # DICOM Source criteria unevaluable
 readiness_state: ready_with_limitations
 variables:
   VECTA.DWI.SCANNER.MANUFACTURER:
@@ -32,10 +32,14 @@ criteria:
   VECTA-DWI-001: satisfied
   VECTA-DWI-014: finding
   VECTA-DWI-021: satisfied
+  VECTA-DWI-050: unknown
+  VECTA-DWI-060: unknown
 findings_present:
   VECTA-DWI-001: false
   VECTA-DWI-014: true
   VECTA-DWI-021: false
+  VECTA-DWI-050: false
+  VECTA-DWI-060: false
 finding_details:
   VECTA-DWI-014:
     severity: major

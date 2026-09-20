@@ -165,3 +165,49 @@ variables and fleshing out the previously-stub criteria.
 
 ### Dependencies
 - Added: `nibabel>=5.0`, `pydicom>=2.4`, `numpy>=1.24`.
+
+---
+
+## v0.1.0 — 2026-09-19 (draft, DICOM Source module)
+
+Added the DICOM Source module — the distinctive CIDUR-cohort capability
+that separates Vecta from BIDS-only readiness tools.
+
+### Added
+- `collectors/dicom.py` — walks a DICOM tree, groups instances by
+  SeriesInstanceUID, reads headers only (fast), tracks duplicate
+  SOPInstanceUIDs and intra-series geometry consistency. Also carries
+  the substring-based classifier (dwi/t1/fmap/etc.) lifted in spirit
+  from `dbi/` v1.0.5's `classification_rules`.
+- `extract/dicom_source.py` — extractors for
+  `VECTA.DWI.DICOM.{SERIES_COUNT, DWI_SERIES_COUNT, INSTANCE_COUNT,
+  DUPLICATE_INSTANCE_COUNT, SERIES_GEOMETRY_CONSISTENT,
+  FIELD_STRENGTH_AGREES_WITH_BIDS}`.
+- `specification/v0.1/variables/dicom_source.yaml` — 6 source-integrity
+  variables (L2_SOURCE + one L4 transformation-fidelity).
+- Two new criteria in `dwi_connectomics.yaml`:
+  - `VECTA-DWI-050` — DWI DICOM geometry inconsistent (source_integrity).
+  - `VECTA-DWI-060` — DICOM/BIDS field-strength disagreement
+    (representation_integrity, i.e. transformation-fidelity check per
+    Study Design §7).
+- Evidence entries `EV-DWI-DCM-GEO-001` and `EV-DWI-DCM-FIDELITY-001`.
+- `assess_session()` now takes an optional `dicom_inventory` argument;
+  Source variables are emitted only when supplied. Source criteria
+  return `unknown` when the inventory is absent (never `false`).
+- New fixture `dataset_020_dicom_valid` with 10 synthetic DICOM files
+  (DWI + T1 series, minimal but valid headers) alongside a matching
+  BIDS layout.
+- `tests/integration/test_source_module.py` — 2 tests covering (a) full
+  BIDS+DICOM end-to-end and (b) source-criteria-unknown-without-DICOM
+  behavior.
+
+### Changed
+- Existing BIDS-only fixtures now have `assessment_status.state =
+  completed_with_unknowns` because the added Source criteria are
+  unevaluable without DICOM. Readiness state is unchanged (Source
+  criteria are not in the profile's review or blocking lists).
+
+### Verified
+- All 6 integration tests pass under Python 3.11.
+- DICOM evidence carries `privacy_status: restricted` — never exported
+  by the (still-to-be-built) privacy serializer.

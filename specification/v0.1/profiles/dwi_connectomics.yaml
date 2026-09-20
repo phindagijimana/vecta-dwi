@@ -27,7 +27,9 @@ essential_metadata:
 criteria:
   - VECTA-DWI-001         # PE direction unknown (evidence insufficiency)
   - VECTA-DWI-014         # complementary PE reference unavailable
-  - VECTA-DWI-021         # essential metadata sufficiency (stub)
+  - VECTA-DWI-021         # essential metadata insufficient
+  - VECTA-DWI-050         # DWI DICOM geometry inconsistent (Source module)
+  - VECTA-DWI-060         # DICOM/BIDS field-strength disagreement (Source module)
 
 # Readiness decision rules for this profile. Blocking criteria drive
 # `not_ready`; review criteria drive `review_required`. Everything else
