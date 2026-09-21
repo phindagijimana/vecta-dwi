@@ -3,13 +3,26 @@
 Working draft of the empirical results sections of the Paper 1 manuscript.
 Covers the CIDUR internal-validation cohort only. TBI transport results
 will be added as a separate section once that run completes.
-Numeric claims reference `data/cidur_vecta_run/` outputs at commit `79c542b`.
+Numeric claims reference `data/cidur_vecta_run/` outputs at commit `79c542b`. Cohort denominator and notable cases corrected against `for_review/` BIDS conversion artifacts.
 
 ---
 
 ## Study cohort and assessment completeness
 
-The CIDUR dataset comprised 62 DWI sessions from 61 subjects (one subject,
+Vecta-DWI was applied to the post-conversion BIDS dataset. Prior to
+assessment, a subset of sessions was excluded during BIDS conversion
+due to source-layer quality issues: four subjects (sub-016, sub-018,
+sub-047, sub-065) had their entire DWI acquisition flagged as corrupt
+and moved out of the BIDS tree, and two additional sessions for sub-002
+(ses-1 and ses-2) were similarly removed due to DWI acquisition
+artifacts (corrupt multi-echo phase images). These exclusions occurred
+at the BIDS conversion stage and were documented in `excluded_scans.csv`
+and the `for_review/corrupt_scans/` manifest; they are not part of the
+62-session denominator reported here. Vecta's assessment scope starts at
+the BIDS representation layer (L4) and does not re-evaluate conversion-
+stage exclusion decisions.
+
+The 62 sessions assessed by Vecta comprised 61 subjects (one subject,
 sub-009, contributed two longitudinal sessions). Scanning was performed
 across three scanner models at two field strengths: Siemens Skyra (n = 16
 sessions), Siemens MAGNETOM Vida Fit (n = 12), and GE SIGNA Premier
@@ -77,9 +90,17 @@ corresponding BIDS `FieldStrength` values.
 
 QSIPrep v0.23.1 (QSIPREP_VERSION_CIDUR) outcomes were available for
 60 of the 62 Vecta-assessed sessions. The two sessions without QSIPrep
-outcomes were sub-009 ses-1 and ses-2, both rated `ready` by Vecta —
-these subjects appear to have been excluded from the pipeline run for
-reasons not recorded in the QSIPrep output tree.
+outcomes were sub-009 ses-1 and ses-2, both rated `ready` by Vecta.
+Review of the BIDS conversion record indicates that ses-2 for this subject
+had T1w scans flagged for motion artifacts (documented in
+`for_review/corrupt_scans/sub-009/ses-2/t1w_artifacts/`); the subject
+appears to have been excluded from the QSIPrep batch as a subject-level
+decision, likely due to the T1w artifact flag on ses-2 affecting both
+sessions. The DWI data for both sessions were intact in BIDS (67-direction
+Siemens Skyra acquisitions with reverse-PE fieldmaps), and Vecta correctly
+assessed the DWI layer as `ready`. The pipeline exclusion was driven by an
+anatomical (T1w) quality concern that falls outside Vecta's current
+assessment scope.
 
 **Table 2** presents the joint distribution of Vecta readiness state
 and QSIPrep success.
@@ -105,13 +126,17 @@ session failed QSIPrep processing.
 ## Notable individual cases
 
 **sub-009 (ses-1 and ses-2).** Both sessions were assessed as `ready`
-(Siemens Skyra, 3.0 T, 67 directions, reverse-PE fieldmap present). Neither
-session appears in the QSIPrep output tree, indicating the subject was
-not submitted to the pipeline despite meeting all readiness criteria.
-This case illustrates a prospective application of Vecta: sessions
-rated `ready` that were never processed represent a recoverable resource
-in the study dataset and can be identified systematically without manual
-chart review.
+(Siemens Skyra, 3.0 T, 67 directions, reverse-PE fieldmap present and
+DWI intact in BIDS). Neither session appears in the QSIPrep output tree.
+The T1w scan acquired at ses-2 was flagged for motion artifacts during
+BIDS conversion, and the subject was excluded from the QSIPrep batch as
+a subject-level decision. Vecta's DWI assessment was correct; the
+exclusion gate was a T1w quality concern outside Vecta's current scope.
+This case illustrates a prospective use of Vecta: cross-referencing
+`ready`-rated sessions against pipeline outputs can surface unprocessed
+data and expose the specific layer (DWI vs. anatomical) at which the
+block occurred, enabling targeted remediation decisions without
+full-dataset manual review.
 
 **sub-076 ses-1.** The only QSIPrep failure in the cohort. Vecta rated
 this session `ready_with_limitations` on account of VECTA-DWI-014. The
