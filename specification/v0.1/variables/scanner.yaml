@@ -34,7 +34,7 @@ variables:
       compare_sources: true
       on_conflict: emit_representation_inconsistency
     extraction:
-      algorithm: TODO   # extract_manufacturer_v1
+      algorithm: extract_manufacturer_v1
     paper1_role: covariate
     evidence_refs: []
     tests: []
@@ -64,7 +64,7 @@ variables:
       compare_sources: true
       on_conflict: emit_representation_inconsistency
     extraction:
-      algorithm: TODO   # extract_model_v1
+      algorithm: extract_model_v1
     paper1_role: covariate
     evidence_refs: []
     tests: []
@@ -100,7 +100,7 @@ variables:
       compare_sources: true
       on_conflict: emit_representation_inconsistency
     extraction:
-      algorithm: TODO   # extract_field_strength_v1
+      algorithm: extract_field_strength_v1
     paper1_role: covariate
     evidence_refs: []
     tests: []
@@ -127,7 +127,7 @@ variables:
       type: string
       normalization: strip_whitespace
     extraction:
-      algorithm: TODO   # extract_software_version_v1
+      algorithm: extract_software_version_v1
     paper1_role: covariate
     notes: |
       Used later (v0.2+) as one input to session-level drift detection when

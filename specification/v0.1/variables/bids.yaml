@@ -25,7 +25,7 @@ variables:
       type: integer
       unit: count
     extraction:
-      algorithm: TODO   # extract_bids_validator_errors_v1
+      algorithm: extract_validator_error_count_v1
     notes: |
       Validator version must be pinned in provenance. A change in validator
       version can change error counts even when the dataset is unchanged.
@@ -58,7 +58,7 @@ variables:
       type: integer
       unit: count
     extraction:
-      algorithm: TODO   # extract_bids_validator_warnings_v1
+      algorithm: extract_validator_warning_count_v1
     paper1_role: birth_predictor
     criterion_eval: deferred_v0.2
     deferred_criterion_note: |
@@ -122,7 +122,7 @@ variables:
       type: intended_use_profile
       profile: dwi_connectomics
     extraction:
-      algorithm: TODO   # derive_required_series_present_v1
+      algorithm: derive_required_series_present_v1
     paper1_role: birth_predictor
     criterion_eval: deferred_v0.2
     deferred_criterion_note: |

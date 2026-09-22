@@ -25,7 +25,7 @@ variables:
       dicom_inventory:
         field: series_count
     extraction:
-      algorithm: TODO   # dicom_series_count_v1
+      algorithm: extract_series_count_v1
     paper1_role: audit_only
     evidence_refs: []
     tests: []
@@ -48,7 +48,7 @@ variables:
       classify each DICOM series via CLASS_RULES; return count where class == 'dwi'.
     dependencies: []
     extraction:
-      algorithm: TODO
+      algorithm: derive_dwi_series_count_v1
     paper1_role: birth_predictor
     evidence_refs: []
     tests: []
@@ -69,7 +69,7 @@ variables:
       dicom_inventory:
         field: instance_count
     extraction:
-      algorithm: TODO
+      algorithm: extract_instance_count_v1
     paper1_role: audit_only
     evidence_refs: []
     tests: []
@@ -90,7 +90,7 @@ variables:
       dicom_inventory:
         field: duplicate_sop_instances_summed
     extraction:
-      algorithm: TODO
+      algorithm: extract_duplicate_instance_count_v1
     paper1_role: birth_predictor
     criterion_eval: deferred_v0.2
     deferred_criterion_note: |
@@ -125,7 +125,7 @@ variables:
     dependencies:
       - VECTA.DWI.DICOM.DWI_SERIES_COUNT
     extraction:
-      algorithm: TODO
+      algorithm: derive_dwi_geometry_consistent_v1
     paper1_role: birth_predictor
     evidence_refs:
       - EV-DWI-DCM-GEO-001
@@ -154,7 +154,7 @@ variables:
       - VECTA.DWI.SCANNER.FIELD_STRENGTH
       - VECTA.DWI.DICOM.DWI_SERIES_COUNT
     extraction:
-      algorithm: TODO
+      algorithm: derive_field_strength_agrees_with_bids_v1
     paper1_role: birth_predictor
     notes: |
       This is a transformation-fidelity check (Study Design §7): if the
