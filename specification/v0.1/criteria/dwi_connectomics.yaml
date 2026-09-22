@@ -105,11 +105,15 @@ criteria:
           requires_human_approval: true
 
       empirical_status:
-        state: not_tested       # will be populated after Paper 1 analysis
-        study_ref: null
-        outcome_ref: null
-        effect_ref: null
-        evidence_version: null
+        state: exploratory_association
+        study_ref: CIDUR_URMC_V1_paper1
+        outcome_ref: VECTA.OUTCOME.QSIPREP_DWI_SUCCESS
+        effect_ref: no_sdc_applied
+        evidence_version: "0.1.0"
+        # CIDUR cohort (n=62): triggered 34/62 (all GE sessions, 54.8%).
+        # 33/34 processed successfully by QSIPrep (no SDC applied, outputs valid).
+        # 1/34 failed QSIPrep (sub-076 ses-1; confirmed no_sdc → no preproc output).
+        # 0/28 ready sessions failed. PPV=100% for ready; 97.1% for ready_with_limitations.
 
     evidence_refs:
       - EV-DWI-PE-001

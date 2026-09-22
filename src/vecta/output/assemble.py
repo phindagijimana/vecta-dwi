@@ -191,6 +191,8 @@ def assess_session(
         else AssessmentState.COMPLETED
     )
 
+    _domains = ["scanner", "acquisition", "bids"] + (["dicom_source"] if dicom_inventory is not None else [])
+
     assessment = Assessment(
         schema_version=SCHEMA_VERSION,
         assessment_id=f"va-{uuid.uuid4()}",
@@ -201,8 +203,8 @@ def assess_session(
             state=state,
             started_at=started,
             completed_at=completed,
-            domains_attempted=["scanner", "acquisition", "bids"],
-            domains_completed=["scanner", "acquisition", "bids"],
+            domains_attempted=_domains,
+            domains_completed=_domains,
         ),
         evidence=list(session.evidence) + dcm_evidence,
         variables=variables,

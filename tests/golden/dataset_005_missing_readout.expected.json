@@ -248,7 +248,11 @@
       "criterion_id": "VECTA-DWI-014",
       "criterion_version": "0.1.0",
       "empirical_status": {
-        "state": "not_tested"
+        "effect_ref": "no_sdc_applied",
+        "evidence_version": "0.1.0",
+        "outcome_ref": "VECTA.OUTCOME.QSIPREP_DWI_SUCCESS",
+        "state": "exploratory_association",
+        "study_ref": "CIDUR_URMC_V1_paper1"
       },
       "evidence_refs": [
         "EV-DWI-PE-001"
