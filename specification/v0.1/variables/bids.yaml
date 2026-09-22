@@ -30,6 +30,12 @@ variables:
       Validator version must be pinned in provenance. A change in validator
       version can change error counts even when the dataset is unchanged.
     paper1_role: birth_predictor
+    criterion_eval: deferred_v0.2
+    deferred_criterion_note: |
+      No v0.1 criterion fires on a non-zero error count. The variable is
+      collected and reported; a threshold-based criterion (e.g., errors > 0
+      that are DWI-relevant) requires a stable filter-by-issue-code contract
+      with BIDS Validator — deferred to v0.2.
     evidence_refs: []
     tests: []
 
@@ -54,6 +60,10 @@ variables:
     extraction:
       algorithm: TODO   # extract_bids_validator_warnings_v1
     paper1_role: birth_predictor
+    criterion_eval: deferred_v0.2
+    deferred_criterion_note: |
+      Warnings are informational; no v0.1 criterion fires on warning count.
+      Deferred to v0.2 alongside the error-count criterion.
     evidence_refs: []
     tests: []
 
@@ -114,6 +124,12 @@ variables:
     extraction:
       algorithm: TODO   # derive_required_series_present_v1
     paper1_role: birth_predictor
+    criterion_eval: deferred_v0.2
+    deferred_criterion_note: |
+      Structured object variable used for reporting only in v0.1. A criterion
+      firing on `missing` entries (e.g., no T1w when one is required by the
+      profile) is deferred to v0.2 when the T1w quality assessment scope is
+      added.
     notes: |
       Emits structured object (not a bare boolean) so the missing list is
       preserved. A scalar ratio alone would be insufficient per Spec

@@ -92,6 +92,12 @@ variables:
     extraction:
       algorithm: TODO
     paper1_role: birth_predictor
+    criterion_eval: deferred_v0.2
+    deferred_criterion_note: |
+      Collected and reported for auditing. A criterion firing when
+      DUPLICATE_INSTANCE_COUNT > 0 (indicating PACS re-export duplication)
+      is deferred to v0.2 when the source-layer evidence contract is mature
+      enough to define a reliable threshold.
     evidence_refs: []
     tests: []
 

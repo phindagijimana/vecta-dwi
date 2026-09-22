@@ -416,6 +416,103 @@ criteria:
       - TEST-GRADMISS-001
 
   # ─────────────────────────────────────────────────────────────────────────
+  # VECTA-DWI-031 — bvec gradient vectors implausible (non-unit norms)
+  # Fires when BVEC_PLAUSIBILITY == false, i.e., one or more non-b0 gradient
+  # vectors deviate from unit magnitude beyond the tolerance in vector_norm.
+  # A corrupt or vendor-rescaled bvec will silently pass all BIDS checks
+  # but will misspecify the diffusion directions fed to tractography.
+  # ─────────────────────────────────────────────────────────────────────────
+  - criterion_id: VECTA-DWI-031
+    version: 0.1.0
+    name: dwi_bvec_implausible
+    lifecycle_origin: L4_REPRESENTATION
+    status: active
+
+    requires:
+      - VECTA.DWI.ACQ.BVEC_PLAUSIBILITY
+
+    applies_to:
+      - dwi_connectomics
+
+    condition:
+      all:
+        - variable: VECTA.DWI.ACQ.BVEC_PLAUSIBILITY
+          operator: equals
+          value: false
+
+    finding:
+      label: DWI gradient vectors have implausible norms
+      category: representation_integrity
+
+      observed_condition:
+        bvec_plausibility: false
+
+      reference_condition:
+        profile: dwi_connectomics
+        requirement: all non-b0 gradient vectors have unit magnitude
+
+      severity:
+        level: critical
+        status: provisional
+        basis:
+          - evidence_type: pipeline_requirement
+            evidence_ref: EV-DWI-GRAD-001
+
+      confidence:
+        default: high
+
+      potential_effects:
+        - effect_id: tractography_direction_error
+          relation: plausible
+          evidence_refs: [EV-DWI-GRAD-001]
+          wording: |
+            Non-unit gradient vectors cause diffusion-direction errors in
+            every tensor-estimation and tractography step; downstream
+            FA/MD maps and tractography streamlines will be incorrect
+            even if the pipeline completes without errors.
+          causal_claim: false
+        - effect_id: silent_pipeline_completion_masking_error
+          relation: plausible
+          evidence_refs: [EV-DWI-GRAD-001]
+          wording: |
+            Pipelines do not typically validate gradient vector norms at
+            runtime; a corrupt bvec may produce numerically plausible-
+            looking outputs while encoding a systematic error.
+          causal_claim: false
+
+      recommended_actions:
+        - action_id: recover_bvec_from_dicom
+          action_class: re_export
+          text: |
+            Re-export the bvec file from the original DICOM using
+            dcm2niix (dcm2niix -b y). Confirm all non-b0 vector
+            norms are within 0.01 of 1.0 after re-export.
+          automated: false
+          changes_source_data: false
+          requires_human_approval: true
+        - action_id: normalise_bvec_if_vendor_scaled
+          action_class: repair_representation
+          text: |
+            If the vendor stores gradients with a non-unit convention,
+            normalise each row to unit magnitude and document the
+            correction in the study's analysis notes.
+          automated: false
+          changes_source_data: false
+          requires_human_approval: true
+
+      empirical_status:
+        state: not_tested
+        study_ref: null
+        outcome_ref: null
+
+    evidence_refs:
+      - EV-DWI-GRAD-001
+
+    tests:
+      - TEST-BVECPLAUS-001   # all non-b0 vectors unit-normed → satisfied
+      - TEST-BVECPLAUS-002   # one vector rescaled to norm 0.5 → finding
+
+  # ─────────────────────────────────────────────────────────────────────────
   # VECTA-DWI-050 — DWI DICOM series geometry inconsistent
   # (Source module — only evaluable when DICOM inventory is available)
   # ─────────────────────────────────────────────────────────────────────────

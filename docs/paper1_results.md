@@ -61,7 +61,8 @@ assessed sessions.
 | VECTA-DWI-001 | Missing b=0 reference volume | 0 | 62 | 0% |
 | VECTA-DWI-014 | Reverse PE acquisition unavailable | 34 | 62 | 54.8% |
 | VECTA-DWI-021 | Field strength mismatch across sources | 0 | 62 | 0% |
-| VECTA-DWI-030 | DWI volume count below protocol minimum | 0 | 62 | 0% |
+| VECTA-DWI-030 | DWI gradient file (.bval/.bvec) missing or unparseable | 0 | 62 | 0% |
+| VECTA-DWI-031 | DWI gradient vectors have implausible norms (non-unit) | 0 | 62 | 0% |
 | VECTA-DWI-040 | No DWI acquisition present (cohort integrity) | 0 | 62 | 0% |
 | VECTA-DWI-050 | DICOM geometry inconsistency within session | 0 | 61 | 0% |
 | VECTA-DWI-060 | DICOM/BIDS field-strength disagreement | 0 | 61 | 0% |
