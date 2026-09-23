@@ -38,6 +38,35 @@ specification does not require fieldmap acquisitions. This gap between
 conformance and readiness is the central motivation for a dedicated
 readiness assessment layer.
 
+An ablation comparison across four detection approaches — BIDS Validator
+error count only (Level 0), basic metadata completeness (Level 1), Vecta
+Core (Level 2), and Vecta with DICOM source integrity (Level 3) — illustrates
+the cost of under-specification. Levels 0 and 1 both achieve sensitivity
+of 0.0, missing the single QSIPrep failure entirely because the failed
+session passed BIDS validation and had a known phase-encoding direction
+and readout time. Level 2 achieves sensitivity of 1.0 and NPV of 1.0,
+correctly identifying the failure while producing no false negatives. The
+positive predictive value (PPV) of 0.029 at Level 2 warrants careful
+interpretation. A PPV of 3% would indicate a poorly performing
+screening tool if the estimand were pipeline crash prediction. But PPV
+as a crash-predictor is the wrong estimand for a readiness framework.
+VECTA-DWI-014 makes a structural claim about data properties — specifically,
+that no reverse phase-encoding reference is available for susceptibility
+distortion correction — not a claim that the pipeline will abort. The
+33 GE sessions that Vecta flagged but QSIPrep completed without error
+did not receive susceptibility distortion correction: QSIPrep applied a
+fallback correction path and completed, but the absence of SDC is a
+methodological limitation of those outputs, not evidence that the
+finding was incorrect. The relevant performance question is whether
+VECTA-DWI-014 correctly characterizes the acquisition property it claims
+to characterize: all 34 GE sessions in CIDUR lack any reverse-PE EPI
+acquisition, a fact independently verifiable from the BIDS tree and
+confirmed by S3 manifest inspection. Level 3 results are identical to
+Level 2 in this cohort because no DICOM source-integrity findings
+(VECTA-DWI-050 or VECTA-DWI-060) triggered: all 62 sessions passed
+geometry consistency and DICOM-to-BIDS field-strength checks, indicating
+a clean BIDS conversion with no DICOM-level anomalies.
+
 The criterion-level attribution provided by Vecta adds information
 beyond a binary pass/fail by identifying the specific evidence layer
 at which the problem originated and the recommended remediation. In the
@@ -46,17 +75,14 @@ site-level protocol decision rather than a data artifact, enabling
 researchers to accurately characterize their distortion-correction
 options rather than investigate potential data transfer or conversion
 errors. Connectome output metrics were consistent with the non-blocking
-designation: total streamline count was equivalent between ready (mean
-7,811,000) and ready_with_limitations (mean 7,811,300) groups, and all
-59 subjects with connectome data passed downstream QC. An observed
-difference in mean tract-weighted FA (0.456 ready versus 0.475
-ready_with_limitations) is attributable to the in-plane resolution
-difference between vendor protocols (2 mm isotropic Siemens versus
-1 mm in-plane GE) rather than to SDC status, and should not be
-interpreted as evidence that distortion correction degrades FA. These
-findings support the interpretation that VECTA-DWI-014 correctly
-characterizes a methodological limitation without overstating its impact
-on usable output in this cohort.
+designation: the QSIRecon configuration used a fixed tractography target
+of 10 million streamlines per session, and all 58 subjects with
+available connectome data achieved this target across both groups,
+indicating equivalent tractography yield regardless of SDC status. All
+58 subjects passed downstream QC. These findings support the
+interpretation that VECTA-DWI-014 correctly characterizes a
+methodological limitation without overstating its impact on usable
+output in this cohort.
 
 Two individual cases illustrate additional uses of the framework. The
 first demonstrates a cross-layer inference capability that neither BIDS

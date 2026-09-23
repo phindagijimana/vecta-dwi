@@ -189,29 +189,20 @@ output for that session. No ready session failed QSIPrep processing.
 
 To assess whether the absence of SDC in ready_with_limitations sessions
 (all GE) was associated with degraded connectome output quality, we
-compared mean tract-weighted FA and total streamline count between
-readiness groups across the 59 subjects with available connectome data.
-Mean FA (averaged across all non-zero upper-triangle entries of the
-DKT-atlas connectome) was 0.456 ± 0.022 for the ready group (n = 26)
-and 0.475 ± 0.024 for the ready_with_limitations group (n = 33).
-Total streamline count was virtually identical between groups: 7,811,000
-± 124,900 (ready) versus 7,811,300 ± 161,400 (ready_with_limitations).
-
-The streamline count equivalence indicates that tractography yield was
-not reduced in sessions processed without SDC. The FA difference between
-groups is confounded by acquisition geometry: Siemens sessions (ready
-group) used approximately 2 mm isotropic voxels, while GE sessions
-(ready_with_limitations group) used 1 mm in-plane resolution with 2 mm
-slice thickness; higher in-plane resolution reduces partial-volume
-effects and can elevate apparent FA values independently of SDC. The FA
-difference therefore cannot be attributed to SDC status alone, and no
-inference about the isolated effect of distortion correction on FA can
-be drawn from this comparison. Both groups produced connectome outputs
-and passed downstream QC (connectome available and node-strength metrics
-available for all 59 subjects with connectome data). These results are
-consistent with VECTA-DWI-014's non-blocking severity designation: the
-criterion correctly flags a methodological limitation — absence of
-distortion correction — without predicting connectome failure.
+compared tractography yield and downstream QC status between readiness
+groups across the 58 subjects with available connectome data (26 ready,
+32 ready_with_limitations). The QSIRecon configuration used a fixed
+tractography target of 10 million streamlines per session via iFOD2
+(MRtrix3); all 58 sessions with connectivity outputs achieved this
+target, indicating equivalent tractography yield regardless of SDC
+status. The CSD reconstruction pipeline used here does not produce
+voxel-wise DTI-derived FA maps; therefore, a tract-weighted FA comparison
+between groups is not available from the current outputs. Both groups
+produced connectome outputs and passed downstream QC (connectome and
+node-strength metrics available and passing for all 58 subjects).
+These results are consistent with VECTA-DWI-014's non-blocking severity
+designation: the criterion correctly flags a methodological limitation —
+absence of distortion correction — without predicting connectome failure.
 
 ## Notable individual cases
 
