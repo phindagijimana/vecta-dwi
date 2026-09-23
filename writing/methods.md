@@ -78,8 +78,8 @@ CriterionResult and Finding objects. The output assembler composes these
 into a top-level Assessment object, serializes it to a canonical JSON
 document, validates the JSON against 14 JSON Schema Draft 2020-12
 contracts, and performs referential integrity checks before writing any
-output. Per-session outputs include vecta.json (canonical assessment),
-a tabular TSV projection, and an HTML report. Cohort-level outputs
+output. Per-session outputs include a canonical JSON assessment document,
+a tabular projection, and an HTML report. Cohort-level outputs
 include a session summary, a long-format findings table, a variable
 missingness matrix, and a finding prevalence table. Tabular and HTML
 outputs are derived views of the canonical JSON and cannot contain
@@ -116,8 +116,8 @@ flagged as corrupt and removed from the BIDS tree, and two additional
 sessions for sub-002 (ses-1 and ses-2) were removed due to DWI
 acquisition artifacts (corrupt multi-echo phase images). These
 exclusions occurred at the BIDS conversion stage and are documented in
-excluded_scans.csv; they are not part of the 62-session Vecta assessment
-denominator. Vecta's assessment scope begins at the BIDS representation
+a session exclusion log; they are not part of the 62-session Vecta
+assessment denominator. Vecta's assessment scope begins at the BIDS representation
 layer and does not re-evaluate conversion-stage exclusion decisions.
 
 The 62 sessions assessed by Vecta comprised 61 subjects (sub-009
@@ -132,8 +132,8 @@ the GE SIGNA Artist session.
 
 ## Assessment execution
 
-Vecta-DWI v0.1 (commit 295e477) was applied to all 62 sessions using
-the vecta assess command with the dwi_connectomics profile. Original
+Vecta-DWI v0.1 was applied to all 62 sessions using the vecta assess
+command with the dwi_connectomics profile. Original
 DICOM was available for all sessions and was provided via the --dicom
 argument, enabling evaluation of DICOM source-integrity variables
 (VECTA.DWI.DICOM.*). All per-session assessments were written to
@@ -153,3 +153,34 @@ command. Two sessions (sub-009 ses-1 and ses-2) had no QSIPrep output
 and were recorded as no outcome available. The reason for their absence
 from the QSIPrep output tree was investigated separately and is
 described in the Results.
+
+## TrackTBI transportability pilot
+
+An initial transportability pilot was conducted using BIDS-converted DWI
+sessions from five participants in the TrackTBI study [CITE], acquired at
+Baylor College of Medicine and Massachusetts General Hospital using Siemens
+TrioTim and Skyra scanners (syngo software versions B17, B19, and D13) at
+b = 1300 s/mm² with gradient tables of 65 and 72 directions. Each participant
+contributed two longitudinal sessions (2-week and 6-month post-injury).
+Original DICOM was not available; assessment was conducted on BIDS
+representations only, with DICOM source-integrity criteria returning
+unknown. QSIPrep v0.23.1 outcomes were available for the 2-week sessions
+only; the 6-month sessions had not been processed in this batch.
+
+## OpenNeuro public dataset validation
+
+To assess criterion behavior across independently published datasets,
+Vecta-DWI v0.1 was applied to the DWI-only components of three OpenNeuro
+datasets: Stockholm SleepyBrain (ds000201; [CITE]), a sleep-deprivation
+study with 76 subjects on a GE DISCOVERY MR750 at 3.0 T (b = 800 s/mm²,
+50 directions); MASiVar (ds003416; [CITE]), a multisite, multi-scanner
+DWI variability dataset spanning Siemens, GE, and Philips platforms with
+multi-shell protocols (b = 1000 and 2000 s/mm²) across 308 sessions from
+132 subjects; and ON-Harmony (ds004712; [CITE]), a longitudinal
+multi-scanner harmonization dataset covering 165 sessions from 20 subjects
+across Siemens, Philips, and GE platforms at multiple sites. No DICOM was
+available for any dataset; assessment was conducted on BIDS representations
+only. Data were downloaded from the OpenNeuro S3 mirror
+(s3://openneuro.org/) using the DWI-only subset (`sub-*/*/dwi/*`).
+Cohort aggregates for each dataset were produced using the vecta aggregate
+command.

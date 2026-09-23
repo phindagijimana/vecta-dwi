@@ -28,8 +28,19 @@ Among sessions processed by QSIPrep v0.23.1, all 26 ready sessions
 produced valid preprocessed outputs (positive predictive value 100%).
 Thirty-three of 34 ready_with_limitations sessions were successfully
 processed; the single QSIPrep failure occurred in a session pre-flagged
-by VECTA-DWI-014 and was confirmed to fail on the same condition. These
-results indicate that structural metadata and gradient file integrity
+by VECTA-DWI-014 and was confirmed to fail on the same condition. In an
+initial external transportability pilot (five TrackTBI participants,
+b = 1300 s/mm², independent institutions), results were consistent with
+CIDUR findings. Application to three publicly available datasets (549
+additional sessions: Stockholm SleepyBrain, MASiVar, and ON-Harmony)
+demonstrated criterion behavior across diverse protocols and vendors:
+VECTA-DWI-021 (essential metadata absent) triggered in all sessions
+lacking TotalReadoutTime, VECTA-DWI-030 (gradient file missing) correctly
+identified five MASiVar sessions with genuinely absent .bvec files
+confirmed at the source repository, and a phase-encoding axis
+inconsistency in one ON-Harmony session was correctly characterized as
+non-complementary despite the presence of bidirectional filename labels.
+These results indicate that structural metadata and gradient file integrity
 checks, evaluated before preprocessing, correctly stratify DWI sessions
 by processing outcome. Vecta-DWI is open-source and provides
 criterion-level attribution for every finding, enabling targeted

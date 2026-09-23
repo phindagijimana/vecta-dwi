@@ -10,6 +10,9 @@ dist/
 htmlcov/
 .coverage
 
+# Generated manuscript output files
+writing/*.docx
+
 # Research data — contains subject IDs / EP-IDs; never committed to git.
 # See docs/paper1_conversion_issues_manifest.md and
 # docs/paper1_outcome_labeling_manual.md for descriptions of each subfolder.
