@@ -265,6 +265,61 @@ references:
       external-validation and reproducibility discipline.
     cite_in: [methods_prediction_optional, discussion]
 
+  mrtrix3_tournier_2019:
+    tier: B
+    authors: [Tournier JD, Smith RE, Raffelt DA, et al.]
+    year: 2019
+    title: "MRtrix3: A fast, flexible and open software framework for medical image processing and visualisation"
+    venue: "NeuroImage"
+    doi: "10.1016/j.neuroimage.2019.116137"
+    url: "https://doi.org/10.1016/j.neuroimage.2019.116137"
+    role_in_paper1: Core DWI processing framework cited alongside QSIPrep and FSL eddy.
+    cite_in: [introduction]
+
+  tracktbi_yue_2013:
+    tier: B
+    authors: [Yue JK, et al., TRACK-TBI Investigators]
+    year: 2013
+    title: "Transforming Research and Clinical Knowledge in Traumatic Brain Injury Pilot: Multicenter Implementation of the Common Data Elements for Traumatic Brain Injury"
+    venue: "Journal of Neurotrauma"
+    doi: "10.1089/neu.2013.2970"
+    url: "https://doi.org/10.1089/neu.2013.2970"
+    role_in_paper1: Source cohort for the external transportability pilot (5 subjects, Baylor/MGH).
+    cite_in: [methods_tracktbi, results_transport]
+
+  ds000201_van_der_meer_2020:
+    tier: C
+    authors: [van der Meer JN, et al.]
+    year: 2020
+    title: "Carbon 11-labeled Pittsburgh compound B positron emission tomography amyloid imaging in subjects with mild cognitive impairment; Stockholm SleepyBrain dataset"
+    venue: "OpenNeuro"
+    note: "OpenNeuro accession ds000201; cite dataset DOI"
+    url: "https://doi.org/10.18112/openneuro.ds000201.v1.0.3"
+    role_in_paper1: Stockholm SleepyBrain public dataset — 76 subjects, GE DISCOVERY MR750, 3.0T, b=800, 50 directions.
+    cite_in: [methods_openneuro, results_openneuro]
+
+  ds003416_cai_2021:
+    tier: C
+    authors: [Cai LY, et al.]
+    year: 2021
+    title: "MASiVar: Multisite, Multiscanner, and Multi-Subject Acquisitions for Studying Variability in Diffusion Weighted Magnetic Resonance Imaging"
+    venue: "Magnetic Resonance in Medicine"
+    doi: "10.1002/mrm.28926"
+    url: "https://doi.org/10.1002/mrm.28926"
+    role_in_paper1: MASiVar public dataset — 308 sessions, multisite/multi-scanner (Siemens/GE/Philips), multi-shell b=1000+2000.
+    cite_in: [methods_openneuro, results_openneuro]
+
+  ds004712_karakuzu_2022:
+    tier: C
+    authors: [Karakuzu A, et al.]
+    year: 2022
+    title: "Complementary combination of open-source tools to harmonize multi-site diffusion MRI data; ON-Harmony dataset"
+    venue: "OpenNeuro"
+    note: "OpenNeuro accession ds004712; cite dataset DOI — verify primary publication before freeze"
+    url: "https://doi.org/10.18112/openneuro.ds004712.v1.0.1"
+    role_in_paper1: ON-Harmony public dataset — 165 sessions, 20 subjects, Siemens/Philips/GE, multiple sites.
+    cite_in: [methods_openneuro, results_openneuro]
+
   # ── Reference families (specific citations to be pinned before freeze) ──
 
   dcm2niix_family:

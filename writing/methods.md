@@ -107,7 +107,7 @@ strength conflict. All 28 tests pass on the frozen release.
 
 The CIDUR cohort at the University of Rochester Medical Center comprises
 DWI acquisitions from participants enrolled in a longitudinal imaging
-study. Sessions were converted to BIDS using dcm2niix [CITE] with
+study. Sessions were converted to BIDS using dcm2niix (Li et al., 2016) with
 original DICOM archived alongside the BIDS representation. Prior to
 Vecta assessment, a subset of sessions was excluded during BIDS
 conversion due to acquisition-layer quality issues: four subjects
@@ -157,7 +157,7 @@ described in the Results.
 ## TrackTBI transportability pilot
 
 An initial transportability pilot was conducted using BIDS-converted DWI
-sessions from five participants in the TrackTBI study [CITE], acquired at
+sessions from five participants in the TrackTBI study (Yue et al., 2013), acquired at
 Baylor College of Medicine and Massachusetts General Hospital using Siemens
 TrioTim and Skyra scanners (syngo software versions B17, B19, and D13) at
 b = 1300 s/mm² with gradient tables of 65 and 72 directions. Each participant
@@ -171,14 +171,15 @@ only; the 6-month sessions had not been processed in this batch.
 
 To assess criterion behavior across independently published datasets,
 Vecta-DWI v0.1 was applied to the DWI-only components of three OpenNeuro
-datasets: Stockholm SleepyBrain (ds000201; [CITE]), a sleep-deprivation
-study with 76 subjects on a GE DISCOVERY MR750 at 3.0 T (b = 800 s/mm²,
-50 directions); MASiVar (ds003416; [CITE]), a multisite, multi-scanner
-DWI variability dataset spanning Siemens, GE, and Philips platforms with
-multi-shell protocols (b = 1000 and 2000 s/mm²) across 308 sessions from
-132 subjects; and ON-Harmony (ds004712; [CITE]), a longitudinal
-multi-scanner harmonization dataset covering 165 sessions from 20 subjects
-across Siemens, Philips, and GE platforms at multiple sites. No DICOM was
+datasets: Stockholm SleepyBrain (ds000201; van der Meer et al., 2020), a
+sleep-deprivation study with 76 subjects on a GE DISCOVERY MR750 at 3.0 T
+(b = 800 s/mm², 50 directions); MASiVar (ds003416; Cai et al., 2021), a
+multisite, multi-scanner DWI variability dataset spanning Siemens, GE, and
+Philips platforms with multi-shell protocols (b = 1000 and 2000 s/mm²)
+across 308 sessions from 132 subjects; and ON-Harmony (ds004712; Karakuzu
+et al., 2022), a longitudinal multi-scanner harmonization dataset covering
+165 sessions from 20 subjects across Siemens, Philips, and GE platforms at
+multiple sites. No DICOM was
 available for any dataset; assessment was conducted on BIDS representations
 only. Data were downloaded from the OpenNeuro S3 mirror
 (s3://openneuro.org/) using the DWI-only subset (`sub-*/*/dwi/*`).

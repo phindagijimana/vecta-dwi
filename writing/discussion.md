@@ -130,7 +130,7 @@ and gradient file integrity but does not include image quality assessment.
 Sessions rated ready may still have image quality problems — motion
 artifacts, thermal noise, signal dropout — that are not detectable from
 BIDS metadata alone. Image quality assessment, as provided by tools such
-as MRIQC [CITE] or eddyqc [CITE], addresses a complementary and
+as MRIQC (Esteban et al., 2017) or eddyqc (Bastiani et al., 2019), addresses a complementary and
 downstream evidence layer; we regard these tools as orthogonal to
 Vecta's scope rather than competitors. A third limitation is that
 DICOM-source module variables (VECTA-DWI-050, VECTA-DWI-060) require

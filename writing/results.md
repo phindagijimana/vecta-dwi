@@ -247,7 +247,7 @@ was not assessed by Vecta (only ses-1 appeared in the session inventory).
 
 To provide an initial assessment of Vecta-DWI's transportability to an
 independent dataset, the framework was applied to a subset of five
-participants from the TrackTBI study [CITE]. These sessions were
+participants from the TrackTBI study (Yue et al., 2013). These sessions were
 acquired at Baylor College of Medicine and Massachusetts General Hospital
 using Siemens TrioTim and Skyra scanners (syngo software versions B17,
 B19, and D13) with a b = 1300 s/mm² single-shell protocol and gradient
@@ -289,9 +289,10 @@ blocking processing in either dataset.
 
 To assess criterion behavior across independently published datasets spanning
 diverse scanners, sites, and protocols, Vecta-DWI was applied to three
-OpenNeuro datasets: the Stockholm SleepyBrain dataset (ds000201; [CITE]),
-the MASiVar multisite variability dataset (ds003416; [CITE]), and the
-ON-Harmony multi-scanner harmonization dataset (ds004712; [CITE]). No DICOM
+OpenNeuro datasets: the Stockholm SleepyBrain dataset (ds000201; van der
+Meer et al., 2020), the MASiVar multisite variability dataset (ds003416;
+Cai et al., 2021), and the ON-Harmony multi-scanner harmonization dataset
+(ds004712; Karakuzu et al., 2022). No DICOM
 was available for any of these datasets; accordingly, source-integrity criteria
 (VECTA-DWI-050, VECTA-DWI-060) were not evaluated. Table 4 summarizes the
 criterion-level results across all three datasets.
@@ -319,7 +320,7 @@ SDC calibration would require either the EffectiveEchoSpacing parameter
 (present in this dataset) or a DICOM-derived alternative.
 
 **MASiVar (ds003416).** MASiVar is a multi-site, multi-scanner, multi-subject
-dataset spanning Siemens, GE, and Philips platforms [CITE]. Vecta-DWI assessed
+dataset spanning Siemens, GE, and Philips platforms (Cai et al., 2021). Vecta-DWI assessed
 all 308 sessions. Twenty-seven sessions belonging to a Philips scanner cohort
 (sub-cIIs* subjects) lacked JSON sidecar files entirely and received
 assessment_status failed with readiness not_assessed; these represent a
@@ -345,7 +346,7 @@ a blocking error.
 
 **ON-Harmony (ds004712).** ON-Harmony is a longitudinal multi-scanner
 harmonization dataset covering Siemens (75 sessions), Philips (50 sessions),
-and GE (40 sessions) platforms across multiple sites [CITE]. Vecta-DWI assessed
+and GE (40 sessions) platforms across multiple sites (Karakuzu et al., 2022). Vecta-DWI assessed
 all 165 sessions to completion (status completed_with_unknowns, mean completeness
 0.882). One hundred and sixty-four of 165 sessions received a readiness state of
 ready (VECTA-DWI-014 not triggered, TotalReadoutTime present). A single session
