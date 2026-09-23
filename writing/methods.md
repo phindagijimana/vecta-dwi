@@ -124,11 +124,12 @@ The 62 sessions assessed by Vecta comprised 61 subjects (sub-009
 contributed two longitudinal sessions). Scanning was performed across
 three scanner models at two field strengths: Siemens Skyra (n = 16
 sessions), Siemens MAGNETOM Vida Fit (n = 12), and GE SIGNA Premier
-(n = 33) at 3.0 T, and one GE SIGNA Artist session at 1.5 T (sub-002
-ses-3, acquired at a PET/MR scanner). All sessions used a single-shell
+(n = 33) at 3.0 T, and one GE SIGNA Artist session at 1.5 T (sub-057
+ses-1, acquired at a PET/MR scanner). All sessions used a single-shell
 DWI protocol (b = 1000 s/mm²). Gradient table size varied by vendor:
-67 directions for Siemens sessions, 53 for GE SIGNA Premier, and 51 for
-the GE SIGNA Artist session.
+67 directions for Siemens sessions, 53 for the majority of GE sessions
+(including the SIGNA Artist), and 51 for one GE SIGNA Premier session
+(sub-060 ses-1).
 
 ## Assessment execution
 

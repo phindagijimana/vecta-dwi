@@ -18,17 +18,22 @@ The 62 sessions assessed by Vecta comprised 61 subjects (one subject,
 sub-009, contributed two longitudinal sessions). Scanning was performed
 across three scanner models at two field strengths: Siemens Skyra (n = 16
 sessions), Siemens MAGNETOM Vida Fit (n = 12), and GE SIGNA Premier
-(n = 33) at 3.0 T, and one GE SIGNA Artist session at 1.5 T (sub-002
-ses-3; acquired at a PET/MR scanner). All sessions used a single-shell
+(n = 33) at 3.0 T, and one GE SIGNA Artist session at 1.5 T (sub-057
+ses-1; acquired at a PET/MR scanner). All sessions used a single-shell
 protocol (b = 1000 s/mm²). Gradient table size varied by vendor: 67
-directions for Siemens sessions, 53 for GE SIGNA Premier, and 51 for
-the GE SIGNA Artist session.
+directions for Siemens sessions, 53 for the majority of GE sessions
+(including the SIGNA Artist), and 51 for one GE SIGNA Premier session
+(sub-060 ses-1).
 
 Vecta-DWI assessed all 62 sessions to completion (assessment status
 completed for all). Mean assessment completeness ratio was 0.911
 (range 0.826–0.913 across sessions), with the lower value attributable
-to the GE SIGNA Artist session where the absence of DWI DICOM series
-prevented evaluation of the DICOM source-integrity criteria. Assessment
+to sub-002 ses-3: Vecta's session-matching heuristic (alphabetical DICOM
+directory ordering) mapped this subject's BIDS ses-3 to a PET-only DICOM
+session directory that contained no DWI acquisition, so DICOM
+source-integrity variables were scored not_applicable for that session.
+The GE SIGNA Artist session (sub-057 ses-1) was correctly matched to its
+MR DICOM directory and received the standard completeness ratio. Assessment
 runtimes varied 17–670 seconds per session; sessions with larger DICOM
 archives (>5,000 instances) took proportionally longer due to header
 parsing.
@@ -68,9 +73,9 @@ This criterion fires at severity major and downgrades readiness from
 ready to ready_with_limitations without blocking assessment.
 
 The DICOM source module (VECTA-DWI-050 and VECTA-DWI-060) was evaluated
-for 61 of 62 sessions; the single GE SIGNA Artist session contained no
-DWI DICOM series (only localizer and planning series), so those criteria
-were scored not_applicable for that session. Among the 61 evaluable
+for 61 of 62 sessions; for sub-002 ses-3 the session-matching heuristic
+resolved to a PET-only DICOM directory with no DWI acquisition, so those
+criteria were scored not_applicable for that session. Among the 61 evaluable
 sessions, no DICOM geometry inconsistency and no DICOM/BIDS
 field-strength disagreement was detected. All DICOM slice geometry,
 spacing, and field-of-view parameters were internally consistent within
