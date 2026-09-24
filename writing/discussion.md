@@ -139,12 +139,11 @@ This study has several notable limitations. A primary limitation is that
 the primary validation cohort comprises a single site with two vendors
 but limited protocol diversity: all sessions used single-shell DWI at
 b = 1000 s/mm², and the vendor-stratified readiness split reflects a
-single protocol-level difference. An initial transportability pilot
-using five participants from the TrackTBI dataset — acquired at different
-institutions with Siemens TrioTim and Skyra scanners at b = 1300 s/mm²
-— produced results consistent with the CIDUR findings: VECTA-DWI-014
-triggered in all sessions and all 2-week sessions processed successfully
-by QSIPrep. The three OpenNeuro datasets provide broader external evidence:
+single protocol-level difference. An independent criterion
+replication cohort using five participants from the TrackTBI dataset —
+acquired at different institutions with Siemens TrioTim and Skyra scanners
+at b = 1300 s/mm² — produced consistent results: VECTA-DWI-014 triggered
+in all sessions and all 2-week sessions processed successfully by QSIPrep. The three OpenNeuro datasets provide broader external evidence:
 SleepyBrain and MASiVar demonstrate criterion behavior in datasets with
 sparse or absent TotalReadoutTime metadata, while MASiVar is a multi-shell
 protocol (b = 1000 and 2000 s/mm²), demonstrating that the framework
@@ -164,17 +163,51 @@ original DICOM to be available alongside the BIDS dataset. Sites that
 retain only the BIDS representation will receive lower assessment
 completeness scores for the source-integrity criteria, which will return
 unknown rather than evaluated. A fourth limitation is that the
-probability that a finding causes downstream failure has not been
-calibrated in this cohort; the observed associations between findings
-and outcomes should be interpreted as exploratory rather than
-predictive.
+sensitivity and NPV estimates from the primary cohort rest on a single
+QSIPrep failure event. Confidence intervals on sensitivity cannot be
+meaningfully computed at this sample size. A powered external validation
+for VECTA-DWI-014 requires a cohort with sufficient failure events to
+permit cross-site variance estimation; the full TrackTBI cohort
+(approximately 600 sessions across multiple sites) is designed to provide
+this. The MASiVar prequal-v1.0.0 derivatives show that all five VECTA-DWI-030
+sessions produce no preprocessed NIfTI output; however, this pattern
+reflects a sub-cohort-level preprocessing incompatibility affecting all
+sessions from those scanner groups, not an outcome specific to the
+gradient file deficiency. The primary validation for VECTA-DWI-030
+therefore rests on S3 source confirmation of absent bvec files. The
+observed associations between Vecta findings and preprocessing outcomes
+should be interpreted as exploratory evidence supporting criterion face
+validity rather than calibrated predictive performance.
+A fifth limitation is that Vecta's assessment scope begins at the
+BIDS representation layer and does not evaluate the correctness or
+completeness of the DICOM-to-BIDS conversion itself. The CIDUR BIDS
+tree required several pre-assessment cleanup steps that are not
+visible to Vecta: Siemens inline derived maps (ADC, TRACEW, FA,
+ColFA) were identified and excluded during conversion for all 28
+Siemens sessions; non-protocol DWI series with mismatched direction
+counts were isolated by a vendor-specific filtering script in 10 of
+75 subjects (13%); and fieldmap IntendedFor fields were populated via
+a post-conversion script for all 16 Siemens sessions, since dcm2niix
+does not populate this field automatically. Each of these represents
+a generalizable conversion-boundary issue: Siemens inline map
+generation is default scanner behavior unless explicitly suppressed,
+multi-DWI co-conversion occurs at any site with protocol transitions
+or co-acquired scout acquisitions, and IntendedFor population
+requires a post-conversion step at every site using dcm2niix.
+Vecta cannot determine from the BIDS representation alone whether
+such cleanup was performed; a dataset that reaches assessment with
+these issues unresolved may receive structurally correct findings
+while concealing upstream data selection decisions. Extending Vecta's
+scope to include conversion-boundary traceability checks — derived
+map detection, multi-series disambiguation, and session-to-DICOM
+mapping validation — is a priority for future versions.
 
-Future work will address several of these limitations. The initial TBI
-pilot is consistent with criterion transportability; the full TrackTBI
-cohort will provide sufficient power to formally test whether the
-VECTA-DWI-014 finding-to-outcome association replicates across a
-multi-site, multi-scanner, multi-protocol dataset, and to evaluate
-criteria that did not trigger in CIDUR.
+Future work will address several of these limitations. The TrackTBI pilot
+demonstrates criterion consistency across independent institutions and
+scanner platforms; the full cohort will provide sufficient power to
+formally test whether the VECTA-DWI-014 finding-to-outcome association
+replicates across a multi-site, multi-scanner, multi-protocol dataset,
+and to evaluate criteria that did not trigger in CIDUR.
 An image quality domain incorporating MRIQC-derived metrics is planned
 for Vecta-DWI v0.2, enabling joint assessment of metadata integrity and
 image quality in a single framework. Extension to multi-shell protocols

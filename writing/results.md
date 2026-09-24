@@ -239,10 +239,11 @@ preprocessing succeeded. The inconsistency arises from the subject-level
 granularity of the QC file, not from a Vecta misclassification; ses-2
 was not assessed by Vecta (only ses-1 appeared in the session inventory).
 
-## External transportability pilot
+## Criterion replication: TrackTBI independent cohort
 
-To provide an initial assessment of Vecta-DWI's transportability to an
-independent dataset, the framework was applied to a subset of five
+To assess whether the primary triggered criterion replicated in an
+independent cohort with a different institution, scanner platform, and
+protocol, the framework was applied to a subset of five
 participants from the TrackTBI study (Yue et al., 2013). These sessions were
 acquired at Baylor College of Medicine and Massachusetts General Hospital
 using Siemens TrioTim and Skyra scanners (syngo software versions B17,
@@ -338,7 +339,18 @@ the corresponding gradient table and image data were never deposited. These five
 sessions would fail any DWI preprocessing pipeline at the gradient-loading step.
 No BIDS Validator error was reported for these sessions because the validator
 treats absent optional gradient files as a structure-level warning rather than
-a blocking error.
+a blocking error. The MASiVar derivatives folder on OpenNeuro contains
+published prequal-v1.0.0 outputs. Examination shows that the five VECTA-DWI-030
+sessions each have 8–12 files in the prequal derivatives with 0 preprocessed
+NIfTI images; however, all sessions from the same sub-cohorts (sub-cIIIsA and
+sub-cIIIsC scanner variability groups) also produce no NIfTI output in prequal,
+regardless of bvec availability. The prequal derivative pattern therefore reflects
+a sub-cohort-level preprocessing incompatibility — likely related to the absent
+TotalReadoutTime flagged by VECTA-DWI-021 across all MASiVar sessions — rather
+than an outcome specific to the VECTA-DWI-030 finding. The primary evidence for
+VECTA-DWI-030's finding validity remains the S3 source inspection: confirmed
+absence of bvec files and NIfTI images from the source repository for these
+five sessions.
 
 **ON-Harmony (ds004712).** ON-Harmony is a longitudinal multi-scanner
 harmonization dataset covering Siemens (75 sessions), Philips (50 sessions),
@@ -359,3 +371,32 @@ mismatch and triggers VECTA-DWI-014. This case is analogous to the GRE phasediff
 edge case observed in the TrackTBI pilot: in both instances, a file whose label
 suggests distortion-correction capability does not satisfy the criterion's
 metadata-level conditions.
+
+## Cross-dataset criterion activation summary
+
+Table 5 presents the criterion activation pattern across all five datasets.
+Each criterion was activated in at least one dataset, with the exception of
+VECTA-DWI-001 and VECTA-DWI-040, which did not trigger in any cohort.
+VECTA-DWI-014 and VECTA-DWI-021 exhibited complementary co-occurrence
+(SleepyBrain) and mutually exclusive patterns (MASiVar, ON-Harmony), reflecting
+distinct acquisition and metadata practices. VECTA-DWI-030 activated exclusively
+in MASiVar, where preprocessing failure was independently confirmed.
+VECTA-DWI-050 and VECTA-DWI-060 were evaluable only in CIDUR (DICOM available);
+neither triggered, indicating a clean conversion in that cohort.
+
+**Table 5.** Criterion activation across all five datasets. Bold: criterion
+triggered. Dash: DICOM not available; criterion not evaluated.
+
+| Criterion | CIDUR (n=62) | TrackTBI (n=10) | SleepyBrain (n=76) | MASiVar (n=281ᵃ) | ON-Harmony (n=165) |
+|---|---|---|---|---|---|
+| VECTA-DWI-001: PE direction unknown | 0 | 0 | 0 | 0 | 0 |
+| VECTA-DWI-014: Reverse PE unavailable | **34 (54.8%)** | **10 (100%)** | **76 (100%)** | 0 | **1 (0.6%)** |
+| VECTA-DWI-021: Essential metadata absent | 0 | 0 | **76 (100%)** | **281 (100%)** | 0 |
+| VECTA-DWI-030: Gradient file missing | 0 | 0 | 0 | **5 (1.8%)** | 0 |
+| VECTA-DWI-040: No DWI present | 0 | 0 | 0 | 0 | 0 |
+| VECTA-DWI-050: DICOM geometry inconsistent | 0/61ᵇ | — | — | — | — |
+| VECTA-DWI-060: DICOM/BIDS field-strength mismatch | 0/61ᵇ | — | — | — | — |
+
+ᵃ 27 Philips sessions (sub-cIIs\* subjects) lacked JSON sidecars and were not
+assessed; 281 assessed sessions shown. ᵇ DICOM available for CIDUR only;
+evaluated for 61/62 sessions (one not applicable due to DICOM directory mismatch).
