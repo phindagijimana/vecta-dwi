@@ -20,6 +20,7 @@ SECTIONS = [
     ("methods.md",       "Methods"),
     ("results.md",       "Results"),
     ("discussion.md",    "Discussion"),
+    ("references.md",    "References"),
 ]
 
 

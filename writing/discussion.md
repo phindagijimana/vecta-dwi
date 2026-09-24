@@ -38,34 +38,30 @@ specification does not require fieldmap acquisitions. This gap between
 conformance and readiness is the central motivation for a dedicated
 readiness assessment layer.
 
-An ablation comparison across four detection approaches — BIDS Validator
-error count only (Level 0), basic metadata completeness (Level 1), Vecta
-Core (Level 2), and Vecta with DICOM source integrity (Level 3) — illustrates
-the cost of under-specification. Levels 0 and 1 both achieve sensitivity
-of 0.0, missing the single QSIPrep failure entirely because the failed
-session passed BIDS validation and had a known phase-encoding direction
-and readout time. Level 2 achieves sensitivity of 1.0 and NPV of 1.0,
-correctly identifying the failure while producing no false negatives. The
+The detection approach comparison (Table 4) illustrates the cost of
+under-specification. Levels 0 and 1 both achieve sensitivity of 0.000,
+missing the single QSIPrep failure entirely: the failed session produced no
+BIDS Validator errors and carried signed PhaseEncodingDirection and
+TotalReadoutTime values. Level 2 achieves sensitivity of 1.000 and NPV of
+1.000, correctly identifying the failure with no false negatives. The
 positive predictive value (PPV) of 0.029 at Level 2 warrants careful
-interpretation. A PPV of 3% would indicate a poorly performing
-screening tool if the estimand were pipeline crash prediction. But PPV
-as a crash-predictor is the wrong estimand for a readiness framework.
+interpretation. A PPV of 3% would indicate a poorly performing screening
+tool if the estimand were pipeline crash prediction. But PPV as a
+crash-predictor is the wrong estimand for a readiness framework.
 VECTA-DWI-014 makes a structural claim about data properties — specifically,
 that no reverse phase-encoding reference is available for susceptibility
 distortion correction — not a claim that the pipeline will abort. The
-33 GE sessions that Vecta flagged but QSIPrep completed without error
-did not receive susceptibility distortion correction: QSIPrep applied a
-fallback correction path and completed, but the absence of SDC is a
-methodological limitation of those outputs, not evidence that the
-finding was incorrect. The relevant performance question is whether
-VECTA-DWI-014 correctly characterizes the acquisition property it claims
-to characterize: all 34 GE sessions in CIDUR lack any reverse-PE EPI
-acquisition, a fact independently verifiable from the BIDS tree and
-confirmed by S3 manifest inspection. Level 3 results are identical to
-Level 2 in this cohort because no DICOM source-integrity findings
-(VECTA-DWI-050 or VECTA-DWI-060) triggered: all 62 sessions passed
-geometry consistency and DICOM-to-BIDS field-strength checks, indicating
-a clean BIDS conversion with no DICOM-level anomalies.
+33 GE sessions classified as false positives did not receive susceptibility
+distortion correction: QSIPrep applied a fallback correction path and
+completed, but the absence of SDC is a methodological limitation of those
+outputs, not evidence that the finding was incorrect. The relevant
+performance question is whether VECTA-DWI-014 correctly characterizes the
+acquisition property it claims to characterize: all 34 GE sessions lack any
+reverse-PE EPI acquisition, independently verifiable from the BIDS tree and
+confirmed by S3 manifest inspection. Level 3 is identical to Level 2
+because no DICOM source-integrity findings triggered: all 62 sessions passed
+geometry consistency and DICOM-to-BIDS field-strength checks, indicating a
+clean BIDS conversion with no DICOM-level anomalies.
 
 The criterion-level attribution provided by Vecta adds information
 beyond a binary pass/fail by identifying the specific evidence layer

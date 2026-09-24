@@ -178,6 +178,37 @@ reverse-PE fieldmap for which distortion correction was not applicable.
 QSIPrep confirmed this at runtime and produced no preprocessed DWI
 output for that session. No ready session failed QSIPrep processing.
 
+## Detection approach comparison
+
+Table 4 presents the 2×2 confusion matrix and derived performance metrics for
+the four detection levels evaluated against QSIPrep processing outcomes on the
+60 sessions with available outcomes.
+
+**Table 4.** Performance metrics for four detection levels against QSIPrep
+processing failure as outcome (n = 60 sessions; 1 failure, 59 successes;
+2 sessions without QSIPrep outcome excluded). PPV undefined (—) when no
+sessions are flagged (zero positive predictions).
+
+| Level | Description | TP | FP | TN | FN | Sensitivity | Specificity | PPV | NPV |
+|---|---|---|---|---|---|---|---|---|---|
+| 0 | BIDS Validator errors > 0 | 0 | 0 | 59 | 1 | 0.000 | 1.000 | — | 0.983 |
+| 1 | PE direction unknown OR TotalReadoutTime absent | 0 | 0 | 59 | 1 | 0.000 | 1.000 | — | 0.983 |
+| 2 | Vecta Core (readiness ≠ ready) | 1 | 33 | 26 | 0 | 1.000 | 0.441 | 0.029 | 1.000 |
+| 3 | Vecta + DICOM source integrity | 1 | 33 | 26 | 0 | 1.000 | 0.441 | 0.029 | 1.000 |
+
+Levels 0 and 1 flag no sessions: the failed session produced no BIDS Validator
+errors and carried a signed PhaseEncodingDirection and TotalReadoutTime in its
+sidecar JSON. Level 2 correctly identifies the single failure (TP = 1) with no
+false negatives (FN = 0), achieving sensitivity and NPV of 1.000. The 33 false
+positives at Level 2 are GE sessions that Vecta correctly characterizes as
+lacking a reverse-PE reference (VECTA-DWI-014); these sessions were processed
+by QSIPrep via a fallback distortion-correction path and completed without
+pipeline error. The absence of susceptibility distortion correction in their
+outputs is a methodological limitation, not a processing failure. Level 3 is
+identical to Level 2 because no DICOM source-integrity criteria triggered in
+this cohort. The two sessions excluded from the comparison (sub-009 ses-1 and
+ses-2) are examined in Notable individual cases below.
+
 ## Connectome output metrics by readiness group
 
 To assess whether the absence of SDC in ready_with_limitations sessions
@@ -252,7 +283,7 @@ phasediff fieldmap, which Vecta correctly identified as a non-EPI
 acquisition and did not treat as satisfying the reverse-PE availability
 requirement.
 
-Table 4 presents the joint distribution for the five 2-week sessions,
+Table 5 presents the joint distribution for the five 2-week sessions,
 the only sessions for which QSIPrep outcomes were available in this
 batch.
 
@@ -279,7 +310,7 @@ Meer et al., 2020), the MASiVar multisite variability dataset (ds003416;
 Cai et al., 2021), and the ON-Harmony multi-scanner harmonization dataset
 (ds004712; Karakuzu et al., 2022). No DICOM
 was available for any of these datasets; accordingly, source-integrity criteria
-(VECTA-DWI-050, VECTA-DWI-060) were not evaluated. Table 5 summarizes the
+(VECTA-DWI-050, VECTA-DWI-060) were not evaluated. Table 6 summarizes the
 criterion-level results across all three datasets.
 
 | Dataset | Sessions assessed | Ready | Ready_with_limitations | Not assessed | VECTA-DWI-014 | VECTA-DWI-021 | VECTA-DWI-030 | Mean completeness |
@@ -368,7 +399,7 @@ pre-intervention BIDS dataset (71 sessions: the 62 retained sessions plus
 the 9 sessions whose DWI acquisitions were removed by protocol-variant
 selection; see Methods).
 
-**Table 6.** Readiness distribution before and after protocol-variant
+**Table 7.** Readiness distribution before and after protocol-variant
 selection. The pre-intervention dataset includes 9 sessions subsequently
 excluded from the analysis cohort.
 
@@ -425,7 +456,7 @@ the BIDS sidecar at the time of conversion, without DICOM access.
 
 ## Cross-dataset criterion activation summary
 
-Table 7 presents the criterion activation pattern across all five datasets.
+Table 8 presents the criterion activation pattern across all five datasets.
 Each criterion was activated in at least one dataset, with the exception of
 VECTA-DWI-001 and VECTA-DWI-040, which did not trigger in any cohort.
 VECTA-DWI-014 and VECTA-DWI-021 exhibited complementary co-occurrence
@@ -435,7 +466,7 @@ in MASiVar, where preprocessing failure was independently confirmed.
 VECTA-DWI-050 and VECTA-DWI-060 were evaluable only in CIDUR (DICOM available);
 neither triggered, indicating a clean conversion in that cohort.
 
-**Table 7.** Criterion activation across all five datasets. Bold: criterion
+**Table 8.** Criterion activation across all five datasets. Bold: criterion
 triggered. Dash: DICOM not available; criterion not evaluated.
 
 | Criterion | CIDUR (n=62) | TrackTBI (n=10) | SleepyBrain (n=76) | MASiVar (n=281ᵃ) | ON-Harmony (n=165) |
