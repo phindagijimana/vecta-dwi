@@ -70,15 +70,32 @@ case of VECTA-DWI-014, the finding identified that the limitation was a
 site-level protocol decision rather than a data artifact, enabling
 researchers to accurately characterize their distortion-correction
 options rather than investigate potential data transfer or conversion
-errors. Connectome output metrics were consistent with the non-blocking
-designation: the QSIRecon configuration used a fixed tractography target
-of 10 million streamlines per session, and all 58 subjects with
-available connectome data achieved this target across both groups,
-indicating equivalent tractography yield regardless of SDC status. All
-58 subjects passed downstream QC. These findings support the
-interpretation that VECTA-DWI-014 correctly characterizes a
-methodological limitation without overstating its impact on usable
-output in this cohort.
+errors. Connectome output metrics were broadly consistent with the
+non-blocking designation: the QSIRecon configuration used a fixed
+tractography target of 10 million streamlines per session, and all 58
+subjects with available connectome data achieved this target across
+both groups, indicating equivalent tractography yield regardless of SDC
+status. All 58 subjects passed downstream QC. At the regional level, an
+exploratory analysis of node strength identified bilateral lateral
+orbitofrontal cortex as showing significantly higher apparent connectivity
+in GE (no-SDC) sessions compared to Siemens (SDC) sessions after FDR
+correction (left and right OFC, p_adj = 0.005). The direction of this
+difference — elevated apparent connectivity in the absence of SDC — is
+consistent with the known behavior of EPI susceptibility distortion near
+the orbital plate, where field inhomogeneity can displace image
+boundaries anteriorly and inflate apparent streamline density in OFC. This
+finding should be interpreted cautiously: the two groups differ in voxel
+size and gradient direction count, and marginal differences were also
+observed in non-susceptible control regions, indicating that acquisition
+parameter differences contribute to regional strength variation
+independent of SDC status. The OFC observation is reported as
+hypothesis-generating evidence — a connectome-layer difference in a region
+specifically expected to be sensitive to the VECTA-DWI-014 condition —
+not as a calibrated measure of SDC effect. Taken together, these findings
+support the interpretation that VECTA-DWI-014 correctly characterizes a
+methodological limitation whose connectome consequences are regionally
+specific and detectable in susceptibility-sensitive areas at the
+exploratory level.
 
 Two individual cases illustrate additional uses of the framework. The
 first demonstrates a cross-layer inference capability that neither BIDS
@@ -170,7 +187,17 @@ protocol (b = 1000 and 2000 s/mm²), demonstrating that the framework
 operates correctly on multi-shell acquisitions. The full TrackTBI cohort
 (approximately 600 sessions across multiple sites) will constitute the
 formal outcome-based external validation.
-A second limitation is that Vecta-DWI v0.1 evaluates structural metadata
+A second limitation is that the regional connectome comparison between
+Siemens (SDC) and GE (no-SDC) sessions is confounded by systematic
+acquisition differences: voxel size (Siemens ≈ 2×2×2 mm, GE 1×1×2 mm)
+and gradient direction count (Siemens 67, GE 51–53) differ between
+groups, making between-group regional strength differences uninterpretable
+as pure SDC effects. The susceptibility index (intra-subject ratio) and
+focus on susceptibility-sensitive regions were chosen to reduce these
+confounders, but cannot eliminate them; the OFC finding should be
+considered hypothesis-generating and replicated in a cohort with
+matched acquisition parameters before causal interpretation.
+A third limitation is that Vecta-DWI v0.1 evaluates structural metadata
 and gradient file integrity but does not include image quality assessment.
 Sessions rated ready may still have image quality problems — motion
 artifacts, thermal noise, signal dropout — that are not detectable from

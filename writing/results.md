@@ -228,6 +228,57 @@ These results are consistent with VECTA-DWI-014's non-blocking severity
 designation: the criterion correctly flags a methodological limitation —
 absence of distortion correction — without predicting connectome failure.
 
+## Regional connectome differences associated with SDC absence
+
+To characterize the downstream connectomic consequences of the VECTA-DWI-014
+condition beyond tractography yield, we compared regional node strength between
+the 26 Siemens (with SDC) and 32 GE (no-SDC) sessions with available connectome
+outputs. Because the two groups differ systematically in voxel size
+(Siemens ≈ 2×2×2 mm, GE 1×1×2 mm) and gradient direction count (Siemens 67,
+GE 51–53), global streamline count is not interpretable as a between-group
+metric independent of acquisition parameters. The primary metric was therefore
+an intra-subject susceptibility index — the ratio of mean node strength across
+susceptibility-sensitive regions (bilateral entorhinal, parahippocampal,
+lateral and medial orbitofrontal, fusiform, inferior temporal, and orbital
+inferior frontal) to mean node strength across non-susceptible control regions
+(bilateral postcentral, precentral, paracentral, superior parietal, precuneus,
+cuneus, and superior frontal). This ratio controls for between-subject
+differences in overall tractography yield and is independent of the voxel size
+and gradient count confounders.
+
+At the global level, mean node strength did not differ significantly between
+groups (Siemens median 199,714, GE median 199,613; Mann-Whitney U = 427,
+p = 0.87), consistent with the fixed tractography target applied equally to
+both groups. The susceptibility index was also not significantly different
+at the composite level (Siemens median 0.28, GE median 0.28; U = 379,
+p = 0.57), indicating that the mean across susceptibility-sensitive regions
+as a class was not selectively depressed in GE sessions.
+
+Per-region analysis revealed a significant between-group difference in bilateral
+lateral orbitofrontal cortex (OFC) that survived FDR correction
+(Benjamini-Hochberg). GE (no-SDC) sessions showed higher lateral OFC node
+strength than Siemens (SDC) sessions in both hemispheres
+(left: Siemens median 151,286, GE median 167,391, p_adj = 0.005;
+right: Siemens median 154,551, GE median 174,908, p_adj = 0.005). No other
+susceptibility-sensitive region reached FDR significance. Marginal
+non-significant differences were present in several non-susceptible control
+regions (e.g., left superior parietal p = 0.024, right superior frontal
+p = 0.022 uncorrected), suggesting that acquisition parameter differences
+between groups contribute to regional strength variation independent of SDC.
+
+The direction of the OFC finding is consistent with the known behavior of EPI
+geometric distortion in that region: in the absence of SDC, susceptibility-induced
+field inhomogeneity near the orbital plate displaces voxels in the phase-encode
+direction, which in anterior OFC typically shifts the image boundary anteriorly
+into adjacent white matter, potentially inflating apparent cortical streamline
+counts in that region. However, the presence of acquisition differences between
+groups prevents causal attribution of this finding to SDC status alone; the
+observation is hypothesis-generating rather than confirmatory evidence of an
+SDC effect. These findings are reported to characterize the scope of
+downstream consequence associated with the VECTA-DWI-014 condition and to
+demonstrate that connectome-layer differences can be detected in regions
+specifically expected to be sensitive to the flagged limitation.
+
 ## Notable individual cases
 
 **sub-009 (ses-1 and ses-2).** Both sessions were assessed as ready
