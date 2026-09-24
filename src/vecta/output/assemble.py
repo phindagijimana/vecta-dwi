@@ -88,70 +88,60 @@ def assess_session(
     profile_id = spec.profile["profile_id"]
     profile_version = spec.profile["version"]
 
-    # Empty session (no dwi entities) → not_assessed
-    if not session.dwi_entities:
-        return _empty_assessment(session, spec, started, "no_dwi_entities_found")
-
-    # For v0.1 we treat the first-listed non-reverse-PE-like entity as target.
-    # A future revision should let the profile declare target selection rules.
-    target = session.dwi_entities[0]
-
-    # ── Extract ─────────────────────────────────────────────────────────
+    # ── Session-level BIDS variables (always computed) ──────────────────
     variables: dict[str, VariableResult] = {}
-    per_entity_extractors = (
-        extract_manufacturer,
-        extract_model,
-        extract_field_strength,
-        extract_software_version,
-        extract_voxel_size,
-        extract_volume_count,
-        extract_bval_count,
-        extract_bvec_count,
-        extract_pe_direction,
-        extract_total_readout_time_present,
-    )
-    for extractor in per_entity_extractors:
-        vr = extractor(target)
-        variables[vr.variable_id] = vr
-
-    # ── Derive ──────────────────────────────────────────────────────────
-    for deriver in (derive_shell_count, derive_bvec_plausibility):
-        vr = deriver(target)
-        variables[vr.variable_id] = vr
-    rev = derive_reverse_pe_availability(session, target)
-    variables[rev.variable_id] = rev
-
-    # Session-level (not per-entity)
-    variables[
-        "VECTA.DWI.BIDS.VALIDATOR_ERROR_COUNT"
-    ] = extract_validator_error_count(session)
-    variables[
-        "VECTA.DWI.BIDS.VALIDATOR_WARNING_COUNT"
-    ] = extract_validator_warning_count(session)
-    variables[
-        "VECTA.DWI.BIDS.REQUIRED_SERIES_PRESENT"
-    ] = derive_required_series_present(session, spec.profile)
-    variables["VECTA.DWI.BIDS.DWI_PRESENT"] = derive_dwi_present(session)
-
-    # ── DICOM Source module (optional, only if inventory supplied) ────
     dcm_evidence = []
-    if dicom_inventory is not None:
-        for extractor in (
-            extract_series_count,
-            derive_dwi_series_count,
-            extract_instance_count,
-            extract_duplicate_instance_count,
-            derive_dwi_geometry_consistent,
-        ):
-            vr = extractor(dicom_inventory)
-            variables[vr.variable_id] = vr
-        variables[
-            "VECTA.DWI.DICOM.FIELD_STRENGTH_AGREES_WITH_BIDS"
-        ] = derive_field_strength_agrees_with_bids(
-            dicom_inventory, variables["VECTA.DWI.SCANNER.FIELD_STRENGTH"]
+
+    variables["VECTA.DWI.BIDS.DWI_PRESENT"] = derive_dwi_present(session)
+    variables["VECTA.DWI.BIDS.VALIDATOR_ERROR_COUNT"] = extract_validator_error_count(session)
+    variables["VECTA.DWI.BIDS.VALIDATOR_WARNING_COUNT"] = extract_validator_warning_count(session)
+    variables["VECTA.DWI.BIDS.REQUIRED_SERIES_PRESENT"] = derive_required_series_present(session, spec.profile)
+
+    # ── Per-entity extraction (skipped when no DWI entities present) ────
+    if session.dwi_entities:
+        # For v0.1 we treat the first-listed non-reverse-PE-like entity as target.
+        target = session.dwi_entities[0]
+
+        per_entity_extractors = (
+            extract_manufacturer,
+            extract_model,
+            extract_field_strength,
+            extract_software_version,
+            extract_voxel_size,
+            extract_volume_count,
+            extract_bval_count,
+            extract_bvec_count,
+            extract_pe_direction,
+            extract_total_readout_time_present,
         )
-        # Preserve Source-module evidence records
-        dcm_evidence = list(dicom_inventory.evidence)
+        for extractor in per_entity_extractors:
+            vr = extractor(target)
+            variables[vr.variable_id] = vr
+
+        # ── Derive ──────────────────────────────────────────────────────
+        for deriver in (derive_shell_count, derive_bvec_plausibility):
+            vr = deriver(target)
+            variables[vr.variable_id] = vr
+        rev = derive_reverse_pe_availability(session, target)
+        variables[rev.variable_id] = rev
+
+        # ── DICOM Source module (optional, only if inventory supplied) ──
+        if dicom_inventory is not None:
+            for extractor in (
+                extract_series_count,
+                derive_dwi_series_count,
+                extract_instance_count,
+                extract_duplicate_instance_count,
+                derive_dwi_geometry_consistent,
+            ):
+                vr = extractor(dicom_inventory)
+                variables[vr.variable_id] = vr
+            variables[
+                "VECTA.DWI.DICOM.FIELD_STRENGTH_AGREES_WITH_BIDS"
+            ] = derive_field_strength_agrees_with_bids(
+                dicom_inventory, variables["VECTA.DWI.SCANNER.FIELD_STRENGTH"]
+            )
+            dcm_evidence = list(dicom_inventory.evidence)
 
     # ── Evaluate criteria ──────────────────────────────────────────────
     _finding_counter = [0]
@@ -191,7 +181,10 @@ def assess_session(
         else AssessmentState.COMPLETED
     )
 
-    _domains = ["scanner", "acquisition", "bids"] + (["dicom_source"] if dicom_inventory is not None else [])
+    if session.dwi_entities:
+        _domains = ["scanner", "acquisition", "bids"] + (["dicom_source"] if dicom_inventory is not None else [])
+    else:
+        _domains = ["bids"]
 
     assessment = Assessment(
         schema_version=SCHEMA_VERSION,

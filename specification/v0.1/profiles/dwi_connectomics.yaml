@@ -46,6 +46,7 @@ criteria:
 # with a finding contributes to `ready_with_limitations`.
 readiness_rules:
   rule_version: readiness_dwi_v1
-  blocking_criteria: []
+  blocking_criteria:
+    - VECTA-DWI-040       # session has no DWI acquisition — pipeline cannot run
   review_criteria:
     - VECTA-DWI-001       # unknown PE is a review-required condition

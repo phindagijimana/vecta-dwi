@@ -1,0 +1,15 @@
+assessment_status_state: completed_with_unknowns
+readiness_state: not_ready
+variables:
+  VECTA.DWI.BIDS.DWI_PRESENT:
+    value: false
+    state: derived
+criteria:
+  VECTA-DWI-040: finding
+findings_present:
+  VECTA-DWI-040: true
+finding_details:
+  VECTA-DWI-040:
+    severity: critical
+    severity_status: provisional
+    category: cohort_integrity
