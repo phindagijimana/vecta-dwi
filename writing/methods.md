@@ -11,11 +11,28 @@ consistent, traceable, and appropriately preserved from acquisition
 through the analysis-ready representation. DBI is intended-use
 conditional: the same session may be sufficient for one analysis and
 insufficient for another depending on what the downstream workflow
-requires. We operationalize DBI through a versioned specification
-executed by a deterministic engine, with scientific meaning encoded in
-the specification rather than in code, so that the assessment contract
-is independently reviewable and reproducible independently of the
-software implementation.
+requires.
+
+Four formal properties distinguish DBI assessment from ad hoc quality
+checks. First, **intended-use conditionality**: assessment is always
+evaluated relative to a declared profile that encodes downstream
+requirements; readiness states are profile-relative, not absolute.
+Second, **null safety**: the value state `unknown` is never coerced to
+false or absent; a criterion requiring a variable in an `unknown` state
+returns `unknown` status and emits no finding, preventing both
+false-positive findings and false reassurance. Third, **determinism**:
+for a fixed specification version and fixed inputs, the engine produces
+an identical output; findings are reproducible without re-running any
+preprocessing. Fourth, **specification-version pinning**: variables,
+criteria, and profiles carry explicit version identifiers so that
+assessment runs can be compared unambiguously and specification changes
+are traceable.
+
+We operationalize DBI through a versioned specification executed by a
+deterministic engine, with scientific meaning encoded in the
+specification rather than in code, so that the assessment contract is
+independently reviewable and reproducible independently of the software
+implementation.
 
 ### Specification structure
 
@@ -107,29 +124,18 @@ strength conflict. All 28 tests pass on the frozen release.
 
 The CIDUR cohort at the University of Rochester Medical Center comprises
 DWI acquisitions from participants enrolled in a longitudinal imaging
-study. Sessions were converted to BIDS using dcm2niix (Li et al., 2016) with
-original DICOM archived alongside the BIDS representation. Prior to
-Vecta assessment, a subset of sessions was excluded during BIDS
-conversion due to acquisition-layer quality issues: four subjects
-(sub-016, sub-018, sub-047, sub-065) had their entire DWI acquisition
-flagged as corrupt and removed from the BIDS tree, and two additional
-sessions for sub-002 (ses-1 and ses-2) were removed due to DWI
-acquisition artifacts (corrupt multi-echo phase images). These
-exclusions occurred at the BIDS conversion stage and are documented in
-a session exclusion log; they are not part of the 62-session Vecta
-assessment denominator. Vecta's assessment scope begins at the BIDS representation
-layer and does not re-evaluate conversion-stage exclusion decisions.
-
-The 62 sessions assessed by Vecta comprised 61 subjects (sub-009
-contributed two longitudinal sessions). Scanning was performed across
-three scanner models at two field strengths: Siemens Skyra (n = 16
-sessions), Siemens MAGNETOM Vida Fit (n = 12), and GE SIGNA Premier
-(n = 33) at 3.0 T, and one GE SIGNA Artist session at 1.5 T (sub-057
-ses-1, acquired at a PET/MR scanner). All sessions used a single-shell
+study. Sessions were converted to BIDS using dcm2niix (Li et al., 2016)
+with original DICOM archived alongside the BIDS representation. Six
+sessions were excluded from the BIDS tree before Vecta assessment due to
+acquisition-layer quality issues (corrupt DWI or multi-echo phase image
+artifacts) documented in the conversion log; these are outside Vecta's
+assessment scope. The resulting Vecta denominator comprised 62 sessions
+across 61 subjects, spanning three scanner models at two field strengths:
+Siemens Skyra (n = 16), Siemens MAGNETOM Vida Fit (n = 12), and GE SIGNA
+Premier (n = 33) at 3.0 T, and one GE SIGNA Artist session at 1.5 T
+(acquired at a combined PET/MR scanner). All sessions used a single-shell
 DWI protocol (b = 1000 s/mm²). Gradient table size varied by vendor:
-67 directions for Siemens sessions, 53 for the majority of GE sessions
-(including the SIGNA Artist), and 51 for one GE SIGNA Premier session
-(sub-060 ses-1).
+67 directions for Siemens sessions, 51–53 for GE sessions.
 
 ## Assessment execution
 

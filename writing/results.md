@@ -2,28 +2,16 @@
 
 ## Study cohort and assessment completeness
 
-Vecta-DWI was applied to the post-conversion BIDS dataset. Prior to
-assessment, a subset of sessions was excluded during BIDS conversion
-due to source-layer quality issues: four subjects (sub-016, sub-018,
-sub-047, sub-065) had their entire DWI acquisition flagged as corrupt
-and removed from the BIDS tree, and two additional sessions for sub-002
-(ses-1 and ses-2) were similarly removed due to DWI acquisition
-artifacts (corrupt multi-echo phase images). These exclusions occurred
-at the BIDS conversion stage; they are not part of the 62-session
-denominator reported here. Vecta's assessment scope begins at the BIDS
-representation layer and does not re-evaluate conversion-stage exclusion
-decisions.
-
-The 62 sessions assessed by Vecta comprised 61 subjects (one subject,
-sub-009, contributed two longitudinal sessions). Scanning was performed
-across three scanner models at two field strengths: Siemens Skyra (n = 16
-sessions), Siemens MAGNETOM Vida Fit (n = 12), and GE SIGNA Premier
-(n = 33) at 3.0 T, and one GE SIGNA Artist session at 1.5 T (sub-057
-ses-1; acquired at a PET/MR scanner). All sessions used a single-shell
-protocol (b = 1000 s/mm²). Gradient table size varied by vendor: 67
-directions for Siemens sessions, 53 for the majority of GE sessions
-(including the SIGNA Artist), and 51 for one GE SIGNA Premier session
-(sub-060 ses-1).
+Six sessions were excluded from the BIDS tree before Vecta assessment due
+to acquisition-layer quality issues (corrupt DWI or multi-echo phase image
+artifacts); these are outside Vecta's assessment scope. The 62-session
+denominator comprised 61 subjects (one subject contributed two longitudinal
+sessions) spanning three scanner models at two field strengths: Siemens
+Skyra (n = 16), Siemens MAGNETOM Vida Fit (n = 12), and GE SIGNA Premier
+(n = 33) at 3.0 T, and one GE SIGNA Artist session at 1.5 T (acquired at
+a combined PET/MR scanner). All sessions used a single-shell protocol
+(b = 1000 s/mm²). Gradient table size varied by vendor: 67 directions for
+Siemens sessions, 51–53 for GE sessions.
 
 Vecta-DWI assessed all 62 sessions to completion (assessment status
 completed for all). Mean assessment completeness ratio was 0.911
@@ -376,24 +364,15 @@ metadata-level conditions.
 
 To assess Vecta's prospective sensitivity to the metadata issues that
 drove post-conversion curation decisions, we reconstructed a
-pre-intervention BIDS dataset by restoring the programmatically
-excluded DWI files from the curation archive into a new BIDS tree
-alongside all non-excluded BIDS data. This pre-intervention dataset
-comprised 71 sessions: the 62 retained sessions plus the 9 sessions
-whose DWI acquisitions were removed by vendor selection rules. The
-reconstruction is strictly additive — no BIDS files present in the
-post-curation tree were modified.
+pre-intervention BIDS dataset comprising 71 sessions: the 62 retained
+sessions plus the 9 sessions whose DWI acquisitions were removed by
+protocol-variant selection during curation. The reconstruction was
+strictly additive — no files present in the post-curation BIDS tree
+were modified.
 
-Of the 71 pre-intervention sessions, 29 (40.8%) received a readiness
-state of ready (no criteria triggered), 40 (56.3%) received
-ready_with_limitations (VECTA-DWI-014 only), and 2 (2.8%) received
-review_required (VECTA-DWI-021 and VECTA-DWI-001 co-triggered). No
-session received not_ready. Table 6 summarizes the comparison with
-the post-intervention cohort.
-
-**Table 6.** Readiness distribution before and after vendor selection
-rules. The pre-intervention dataset includes 9 sessions whose DWI
-acquisitions were subsequently excluded by programmatic curation.
+**Table 6.** Readiness distribution before and after protocol-variant
+selection. The pre-intervention dataset includes 9 sessions subsequently
+excluded from the analysis cohort.
 
 | Readiness state | Pre-intervention (n=71) | Post-intervention (n=62) |
 |---|---|---|
@@ -401,101 +380,50 @@ acquisitions were subsequently excluded by programmatic curation.
 | ready_with_limitations | 40 (56.3%) | 34 (54.8%) |
 | review_required | 2 (2.8%) | 0 (0%) |
 
-The two pre-intervention sessions that received review_required —
-sub-036 ses-1 and sub-069 ses-1 — were Siemens Skyra acquisitions
-whose dcm2niix output contained only `PhaseEncodingAxis: j` (unsigned
-axis) without the signed `PhaseEncodingDirection` field. These are
-distinct BIDS fields: `PhaseEncodingAxis` specifies the image axis
-along which phase encoding occurs but not the direction of k-space
-traversal; SDC calibration requires the signed direction. Vecta derives
-PE direction exclusively from `PhaseEncodingDirection` and correctly
-treats the unsigned-axis-only state as a metadata-insufficiency
-failure. VECTA-DWI-021 (essential metadata absent) and VECTA-DWI-001
-(PE direction unknown) co-trigger and elevate the readiness state to
-review_required.
+Two pre-intervention sessions received review_required: VECTA-DWI-021
+(essential metadata absent) and VECTA-DWI-001 (PE direction unknown)
+co-triggered in both. The root cause was a Siemens Skyra dcm2niix export
+behavior that produces only the unsigned `PhaseEncodingAxis` field
+(indicating the readout axis) without the signed `PhaseEncodingDirection`
+field (indicating polarity). These are semantically distinct BIDS fields:
+`PhaseEncodingDirection` encodes k-space traversal direction and is
+required for SDC calibration; `PhaseEncodingAxis` does not carry
+polarity and cannot substitute. The 16 Skyra sessions retained in the
+post-curation cohort carry the signed direction field — inferred from
+the BIDS filename direction entity and added during the post-conversion
+curation step that ran after protocol-variant selection was complete.
+The two flagged sessions were excluded before that step ran, leaving
+their sidecars with only the raw dcm2niix output.
 
-The 16 Siemens Skyra sessions retained in the post-intervention cohort
-(all rated ready) carry both fields in their sidecars:
-`PhaseEncodingDirection: j-` and `PhaseEncodingAxis: j`. The signed
-direction field was not produced by dcm2niix; it was inferred and added
-by the CIDUR BIDS curation pipeline from the BIDS filename dir entity
-(`dir-ap` → `j-`). Sub-036 and sub-069 were excluded from the dataset
-before this inference step ran and therefore their sidecars contain
-only the raw dcm2niix output. This pipeline ordering is what makes
-them identifiable as a distinct case: the PED absence is not a
-scanner-level difference — it is a curation pipeline byproduct.
+Both sessions were independently excluded by the curation protocol,
+which used BIDS filename label detection and had no access to sidecar
+JSON content. Vecta's sidecar-metadata validation and the filename-label
+approach identified the same two sessions through entirely independent
+evidence paths. The absent signed `PhaseEncodingDirection` implies that
+any SDC-dependent preprocessing pipeline would fail at the
+susceptibility-correction step — consistent with the confirmed failure
+mode for the same unsigned-PED condition in the TrackTBI cohort.
 
-Both sessions were independently excluded by the vendor selection
-script, which used BIDS filename entity detection to identify
-non-conforming acquisitions and had no access to sidecar JSON content.
-The two approaches — filename-entity detection and sidecar-metadata
-validation — identified the same sessions through entirely independent
-evidence paths. The manual exclusion was the immediate ground-truth
-outcome; the absent signed `PhaseEncodingDirection` implies that any
-SDC-dependent preprocessing pipeline would have failed for these
-sessions at the susceptibility-correction step, consistent with the
-confirmed failure mode for the analogous unsigned-PED condition in the
-TrackTBI cohort (participant TBI011204; see Section "Criterion
-replication").
+The seven remaining excluded sessions triggered VECTA-DWI-014 only
+(no reverse-PE EPI fieldmap) — the same condition as the 34 GE sessions
+in the retained cohort. Their curation exclusion was a protocol-selection
+decision (non-standard gradient direction count) not detectable from
+sidecar metadata, and is outside Vecta's DBI scope. One shared session
+showed a readiness change (ready → ready_with_limitations) after the
+curation step removed one of its two complementary-PE DWI acquisitions;
+Vecta's sidecar-level reverse-PE detection had identified the pair, and
+correctly revised its assessment once the pair was dissolved.
 
-One additional session, sub-002 ses-3, showed a readiness regression
-attributable to the vendor intervention: ready (pre-intervention) →
-ready_with_limitations (post-intervention). In the pre-intervention
-BIDS, this session contained both a 30-direction GE acquisition
-(acq-30dirax; PED j) and a 50-direction acquisition (acq-50dirax;
-PED j−). Vecta's sidecar-level complementary-PE algorithm detected
-these two acquisitions as a reverse-PE pair and rated the session
-ready. The vendor rule then removed the 30-direction acquisition
-(phase=None in BIDS filename; no dir-AP/dir-PA entity). After removal,
-only the 50-direction acquisition remained, the complementary-PE pair
-dissolved, and Vecta correctly classified the post-intervention session
-as ready_with_limitations (VECTA-DWI-014 triggered). This case
-illustrates a limitation of filename-entity-based curation: a DWI
-acquisition without the expected BIDS direction-entity label may
-nonetheless express its phase-encoding polarity in the sidecar JSON
-and thus constitute a valid reverse-PE reference for another
-acquisition in the same session.
-
-The seven remaining excluded sessions (sub-020, sub-025, sub-030,
-sub-041, sub-042, sub-048, sub-055) each triggered only VECTA-DWI-014
-in the pre-intervention assessment. These are GE acquisitions that
-lack reverse-PE EPI fieldmaps regardless of directory or filename
-configuration, consistent with the site-level protocol difference
-reported for the full cohort. Their exclusion by vendor rules (non-
-standard direction count or no phase-entity label) is not detectable
-from sidecar metadata alone; the curation motivation was protocol
-selection, not a metadata-integrity failure.
-
-The 13 Siemens fmap acquisitions excluded by vendor rules
-(acq-multidirax_dir-pa_epi) were B0-subset EPI images generated
-automatically by dcm2niix during conversion of the multi-direction DWI
-series. These files lacked IntendedFor sidecar fields and were
-duplicates of the session's primary reverse-PE EPI fmap
-(sub-XXX_ses-1_dir-pa_epi.json). Their exclusion did not alter any
-session's readiness assessment: the primary fmap with IntendedFor was
-retained in all 13 sessions, and Vecta's pre-intervention assessment
-for those sessions was already ready — identical to the post-
-intervention result.
-
-BIDS Validator v1.15.0 was run on the pre-intervention dataset. The
-validator reported one structural error (SIDECAR_WITHOUT_DATAFILE:
-JSON sidecars without NIfTI companions, a direct consequence of the
-NIfTI-excluded reconstruction methodology) and two structural warnings
-(INCONSISTENT_SUBJECTS and MISSING_SESSION, reflecting the multi-session,
-multi-protocol design). No error or warning was issued for the absent
-`PhaseEncodingDirection` in sub-036 or sub-069, for the unsigned-axis-only
-sidecar state, or for missing reverse-PE acquisitions. The BIDS
-specification does not require `PhaseEncodingDirection` to be present;
-its absence is invisible to conformance-based validation but detectable
-by a readiness-focused assessment.
-
-Taken together, the pre-intervention analysis demonstrates that Vecta
-would have prospectively flagged the unsigned-PED metadata failure mode
-(VECTA-DWI-021) in sub-036 and sub-069 prior to and independent of the
-manual curation decisions that excluded those sessions. The critical
-information — absence of the signed PhaseEncodingDirection field — is
-present in the BIDS sidecar at the time of conversion, detectable
-without DICOM access, and invisible to BIDS Validator.
+BIDS Validator v1.15.0 issued no error or warning for the absent
+`PhaseEncodingDirection`, the unsigned-axis-only sidecar state, or the
+missing reverse-PE acquisitions in any pre-intervention session. The
+BIDS specification does not require `PhaseEncodingDirection`; its
+absence is invisible to conformance-based validation but detectable by
+a readiness-focused assessment. Taken together, this analysis
+demonstrates that Vecta would have prospectively flagged the
+metadata-level failure mode in both excluded sessions prior to and
+independent of the curation decisions — from information present in
+the BIDS sidecar at the time of conversion, without DICOM access.
 
 ## Cross-dataset criterion activation summary
 

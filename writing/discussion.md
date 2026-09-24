@@ -178,29 +178,25 @@ therefore rests on S3 source confirmation of absent bvec files. The
 observed associations between Vecta findings and preprocessing outcomes
 should be interpreted as exploratory evidence supporting criterion face
 validity rather than calibrated predictive performance.
-A fifth limitation is that Vecta's assessment scope begins at the
-BIDS representation layer and does not evaluate the correctness or
-completeness of the DICOM-to-BIDS conversion itself. The CIDUR BIDS
-tree required several pre-assessment cleanup steps that are not
-visible to Vecta: Siemens inline derived maps (ADC, TRACEW, FA,
-ColFA) were identified and excluded during conversion for all 28
-Siemens sessions; non-protocol DWI series with mismatched direction
-counts were isolated by a vendor-specific filtering script in 10 of
-75 subjects (13%); and fieldmap IntendedFor fields were populated via
-a post-conversion script for all 16 Siemens sessions, since dcm2niix
-does not populate this field automatically. Each of these represents
-a generalizable conversion-boundary issue: Siemens inline map
-generation is default scanner behavior unless explicitly suppressed,
-multi-DWI co-conversion occurs at any site with protocol transitions
-or co-acquired scout acquisitions, and IntendedFor population
-requires a post-conversion step at every site using dcm2niix.
-Vecta cannot determine from the BIDS representation alone whether
-such cleanup was performed; a dataset that reaches assessment with
-these issues unresolved may receive structurally correct findings
-while concealing upstream data selection decisions. Extending Vecta's
-scope to include conversion-boundary traceability checks — derived
-map detection, multi-series disambiguation, and session-to-DICOM
-mapping validation — is a priority for future versions.
+A fifth limitation is that Vecta's assessment scope begins at the BIDS
+representation layer and does not evaluate the correctness or
+completeness of the DICOM-to-BIDS conversion. The CIDUR dataset
+represents standard institutional BIDS conversion conditions: dcm2niix
+produces inline derived image series (ADC, diffusion tensor maps) that
+require exclusion, co-acquired protocol variants that require selection,
+and fieldmap IntendedFor fields that require a post-conversion population
+step. Vecta assesses the BIDS representation as presented and correctly
+reflects the state of the tree; it cannot determine from the BIDS layer
+alone whether upstream data selection decisions were applied or what
+criteria governed them. The pre-intervention analysis in this paper
+directly addresses this boundary: Vecta correctly detects the
+metadata-integrity failures that remained visible in the sidecar, while
+protocol-selection exclusions (non-standard gradient direction count)
+are recognized as outside DBI scope. Extending Vecta to include
+conversion-boundary traceability — derived map detection, multi-series
+disambiguation, and session-to-DICOM mapping validation — is a priority
+for future versions and would make the assessment scope contiguous from
+DICOM through BIDS.
 
 Future work will address several of these limitations. The TrackTBI pilot
 demonstrates criterion consistency across independent institutions and
