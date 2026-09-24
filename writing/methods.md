@@ -40,8 +40,8 @@ The Vecta-DWI v0.1 specification consists of versioned variables,
 criteria, intended-use profiles, evidence entries, and numeric
 tolerances. Variables are machine-readable measurement contracts, each
 carrying a stable identifier, lifecycle layer, allowed value states,
-source mappings with exact DICOM tags [CITE DICOM standard] and BIDS
-fields [CITE BIDS spec], canonical units, validity constraints, and an
+source mappings with exact DICOM tags (NEMA, 2024) and BIDS
+fields (Gorgolewski et al., 2016), canonical units, validity constraints, and an
 extraction algorithm reference. Version 0.1 defines 22 variables across
 five domains: scanner context (manufacturer, model, field strength,
 software version), acquisition parameters (voxel size, volume count,
