@@ -402,21 +402,41 @@ acquisitions were subsequently excluded by programmatic curation.
 | review_required | 2 (2.8%) | 0 (0%) |
 
 The two pre-intervention sessions that received review_required —
-sub-036 ses-1 and sub-069 ses-1 — were Siemens acquisitions whose
-dcm2niix sidecar output contained only `PhaseEncodingAxis: j` (unsigned
-axis) without the signed `PhaseEncodingDirection` field. Vecta derives
-PE direction exclusively from the signed field; its absence causes
-VECTA-DWI-021 (essential metadata absent) and VECTA-DWI-001 (PE
-direction unknown) to co-trigger and elevates the readiness state to
-review_required. Both sessions were independently excluded by the
-vendor selection script, which used BIDS filename entity detection
-(dir-AP / dir-PA absent → phase=None) to identify non-conforming
-acquisitions. The script operated on BIDS filename labels rather than
-sidecar JSON content and therefore had no information about whether
-PhaseEncodingDirection was present or absent in the sidecar. The two
-approaches — filename-entity detection and sidecar-metadata validation
-— identified the same sessions for exclusion through entirely
-independent evidence paths.
+sub-036 ses-1 and sub-069 ses-1 — were Siemens Skyra acquisitions
+whose dcm2niix output contained only `PhaseEncodingAxis: j` (unsigned
+axis) without the signed `PhaseEncodingDirection` field. These are
+distinct BIDS fields: `PhaseEncodingAxis` specifies the image axis
+along which phase encoding occurs but not the direction of k-space
+traversal; SDC calibration requires the signed direction. Vecta derives
+PE direction exclusively from `PhaseEncodingDirection` and correctly
+treats the unsigned-axis-only state as a metadata-insufficiency
+failure. VECTA-DWI-021 (essential metadata absent) and VECTA-DWI-001
+(PE direction unknown) co-trigger and elevate the readiness state to
+review_required.
+
+The 16 Siemens Skyra sessions retained in the post-intervention cohort
+(all rated ready) carry both fields in their sidecars:
+`PhaseEncodingDirection: j-` and `PhaseEncodingAxis: j`. The signed
+direction field was not produced by dcm2niix; it was inferred and added
+by the CIDUR BIDS curation pipeline from the BIDS filename dir entity
+(`dir-ap` → `j-`). Sub-036 and sub-069 were excluded from the dataset
+before this inference step ran and therefore their sidecars contain
+only the raw dcm2niix output. This pipeline ordering is what makes
+them identifiable as a distinct case: the PED absence is not a
+scanner-level difference — it is a curation pipeline byproduct.
+
+Both sessions were independently excluded by the vendor selection
+script, which used BIDS filename entity detection to identify
+non-conforming acquisitions and had no access to sidecar JSON content.
+The two approaches — filename-entity detection and sidecar-metadata
+validation — identified the same sessions through entirely independent
+evidence paths. The manual exclusion was the immediate ground-truth
+outcome; the absent signed `PhaseEncodingDirection` implies that any
+SDC-dependent preprocessing pipeline would have failed for these
+sessions at the susceptibility-correction step, consistent with the
+confirmed failure mode for the analogous unsigned-PED condition in the
+TrackTBI cohort (participant TBI011204; see Section "Criterion
+replication").
 
 One additional session, sub-002 ses-3, showed a readiness regression
 attributable to the vendor intervention: ready (pre-intervention) →
@@ -457,13 +477,25 @@ retained in all 13 sessions, and Vecta's pre-intervention assessment
 for those sessions was already ready — identical to the post-
 intervention result.
 
+BIDS Validator v1.15.0 was run on the pre-intervention dataset. The
+validator reported one structural error (SIDECAR_WITHOUT_DATAFILE:
+JSON sidecars without NIfTI companions, a direct consequence of the
+NIfTI-excluded reconstruction methodology) and two structural warnings
+(INCONSISTENT_SUBJECTS and MISSING_SESSION, reflecting the multi-session,
+multi-protocol design). No error or warning was issued for the absent
+`PhaseEncodingDirection` in sub-036 or sub-069, for the unsigned-axis-only
+sidecar state, or for missing reverse-PE acquisitions. The BIDS
+specification does not require `PhaseEncodingDirection` to be present;
+its absence is invisible to conformance-based validation but detectable
+by a readiness-focused assessment.
+
 Taken together, the pre-intervention analysis demonstrates that Vecta
 would have prospectively flagged the unsigned-PED metadata failure mode
 (VECTA-DWI-021) in sub-036 and sub-069 prior to and independent of the
 manual curation decisions that excluded those sessions. The critical
 information — absence of the signed PhaseEncodingDirection field — is
-present in the BIDS sidecar at the time of conversion and detectable
-without DICOM access.
+present in the BIDS sidecar at the time of conversion, detectable
+without DICOM access, and invisible to BIDS Validator.
 
 ## Cross-dataset criterion activation summary
 

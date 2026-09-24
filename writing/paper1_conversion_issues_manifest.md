@@ -44,7 +44,7 @@ The script used BIDS filename entities as its detection signal: it
 read `acq-<N>dirax` to extract direction count and `dir-<X>` to detect
 phase label. It did not inspect sidecar JSON content.
 
-### 2a. GE sessions excluded for non-standard protocol
+### 2a. GE sessions excluded for non-standard protocol (direction count)
 
 | Session | Vendor rule reason | Pre-intervention Vecta | Vecta criterion |
 |---|---|---|---|
@@ -56,22 +56,24 @@ phase label. It did not inspect sidecar JSON content.
 | sub-048 ses-1 | GE, dir_count=30, phase=None | ready_with_limitations | VECTA-DWI-014 |
 | sub-055 ses-1 | GE, dir_count=30, phase=None | ready_with_limitations | VECTA-DWI-014 |
 
-**Interpretation.** These sessions lack a reverse-PE EPI fieldmap
-regardless of direction count or phase label — consistent with the
-site-level GE protocol that does not acquire EPI fieldmaps. VECTA-DWI-014
-fires for each, correctly characterizing the distortion-correction
-limitation. The curation motivation (non-standard direction count or no
-phase-entity label) is a protocol-selection decision that Vecta does not
-encode; Vecta captures the consequence (no reverse-PE reference) but
-not the cause (wrong acquisition version). A future criterion extending
-Vecta to enforce expected gradient-table size against a protocol
-reference would close this gap.
+**Interpretation.** The curation reason for these exclusions was
+**protocol selection** (direction count outside the site's expected
+range, or absent BIDS direction entity), not a metadata-integrity
+failure. Vecta does not encode protocol selection rules and does not
+fire VECTA-DWI-021 for these sessions: all six GE DWI sidecars carry
+a signed `PhaseEncodingDirection` field, so the essential metadata
+criterion is satisfied. VECTA-DWI-014 fires for each session because
+none has a reverse-PE EPI fieldmap — the expected downstream
+consequence for GE acquisitions at this site, regardless of direction
+count. The direction count itself is outside Vecta's current scope
+(see Section 7).
 
-Note: sub-042 ses-1 is Siemens (dir_count=24) with `phase=ap` (dir-AP
-in filename) and was excluded because the 24-direction table is below
-the site's expected 67-direction Siemens protocol. Its sidecar contains
-a signed `PhaseEncodingDirection: j-`, so VECTA-DWI-021 did not trigger
-(contrast with sub-069 below).
+Note: sub-042 ses-1 is a Siemens 24-direction acquisition with `dir-ap`
+in the BIDS filename and a signed `PhaseEncodingDirection: j-` in the
+sidecar. It was excluded for the same direction-count reason (24 ≠ 67
+expected Siemens directions) and fires only VECTA-DWI-014 (no reverse
+PE available). This distinguishes it from sub-069, which also has
+24-direction Siemens DWI but lacks a signed PED (see Section 2b).
 
 ### 2b. Siemens sessions excluded for unsigned phase-encoding metadata
 
@@ -95,25 +97,48 @@ field; its absence causes:
 **Concordance with curation decision.** The vendor selection script
 excluded both sessions because their BIDS filenames lacked a recognized
 phase-entity label:
-- sub-036: no `dir-AP` or `dir-PA` in filename (phase=None)
+- sub-036: no `dir-AP` or `dir-PA` in filename → phase=None
 - sub-069: has `dir-ap` label but was still excluded (24-direction Siemens
   table; 24 ≠ 67 expected)
 
 The curation script operated on BIDS filename entities only and had no
 access to sidecar JSON. Vecta and the curation script identified the same
-two sessions for concern via entirely independent evidence paths. This
-concordance validates both the curation decision and the Vecta criterion:
-the session-level metadata condition that makes SDC calibration impossible
-was correctly characterized by Vecta's sidecar-based rule.
+two sessions for concern via entirely independent evidence paths.
 
-**Siemens Skyra dcm2niix export note.** Not all Siemens Skyra sessions
-exhibit this behavior. Among the 28 Siemens sessions in the post-
-intervention cohort (all rated ready), the sidecar JSONs contain signed
-`PhaseEncodingDirection` values. The unsigned-axis-only export appears
-to be version- or sequence-specific. Sub-042 (Siemens, 24-dir) does
-carry a signed `PhaseEncodingDirection: j-` and does not trigger
-VECTA-DWI-021 — confirming that the criterion discriminates based on
-sidecar content, not scanner platform alone.
+**Ground truth note.** The immediate ground truth for sub-036 and sub-069
+is **manual exclusion from the analysis cohort** — the exclusion itself
+was the outcome. The absent signed `PhaseEncodingDirection` additionally
+implies downstream preprocessing failure: SDC calibration (topup /
+SyN-SDC) requires the signed phase-encoding direction; without it,
+QSIPrep cannot compute a displacement field and will exit with a
+`KeyError: PhaseEncodingDirection` at the susceptibility-correction step.
+This failure mode has been confirmed in the TrackTBI cohort (participant
+TBI011204; see TrackTBI-Sub/bids.md §8), where the identical unsigned-PED
+condition caused QSIPrep to fail until the metadata was repaired.
+
+**Siemens Skyra PhaseEncodingDirection inference by the CIDUR BIDS pipeline.**
+All 16 Siemens Skyra sessions retained in the post-intervention cohort carry
+both `PhaseEncodingDirection: j-` AND `PhaseEncodingAxis: j` in their DWI
+sidecars. The raw dcm2niix output for Siemens Skyra populates only
+`PhaseEncodingAxis` (unsigned axis). The CIDUR BIDS curation pipeline
+inferred and added `PhaseEncodingDirection` to retained sessions based on
+the BIDS filename `dir-<X>` entity: acquisitions labeled `dir-ap` received
+`PhaseEncodingDirection: j-`. Sub-036 and sub-069 were moved to
+`for_review/` before this inference step ran and therefore their sidecars
+contain only the raw dcm2niix output — `PhaseEncodingAxis: j` only,
+no signed direction.
+
+This means the 16 retained Skyra sessions pass VECTA-DWI-021 because the
+*curated* sidecar has the signed field; sub-036 and sub-069 fail because
+the *uncurated* sidecar does not. Vecta's criterion correctly reflects
+the actual state of each session's sidecar as presented to it.
+
+`PhaseEncodingAxis` and `PhaseEncodingDirection` are distinct BIDS fields
+with distinct semantics. Vecta reads only `PhaseEncodingDirection`
+(signed, includes polarity). This is the correct design: `PhaseEncodingAxis`
+specifies which image axis is the phase-encoding axis but does not specify
+polarity (positive vs. negative); SDC calibration requires polarity, so
+the axis field cannot substitute for the direction field.
 
 ---
 
@@ -212,13 +237,62 @@ ready_with_limitations by the removal.
 
 ---
 
-## 7. Gap analysis: issues not captured by current Vecta criteria
+## 7. BIDS Validator result on pre-intervention dataset
 
-The following curation observations do not map to an existing Vecta
-criterion at v0.1:
+BIDS Validator v1.15.0 was run on the pre-intervention dataset (71
+sessions, NIfTI excluded from reconstruction).
 
-| Observation | Sessions | Gap description | Proposed criterion |
+Issues reported:
+| Code | Type | Description | Count |
 |---|---|---|---|
-| Non-standard gradient table size (30-dir, 12-dir, 24-dir GE) | 6 sessions | Vecta does not validate acquisition direction count against a protocol expectation | v0.2: VECTA-DWI-070 — DWI gradient count deviates from protocol reference |
-| dcm2niix generates duplicate fmap series without IntendedFor | 13 sessions | Vecta detects IntendedFor absence but does not identify duplicate/phantom EPI fmaps | v0.2: VECTA-DWI-071 — EPI fmap has no IntendedFor and duplicates DWI geometry |
-| Complementary-PE pair expressed only in sidecar, not in filename | sub-002 ses-3 | Vecta correctly detects the pair but has no criterion for acquisitions whose filename label is inconsistent with sidecar PE direction | v0.2: VECTA-DWI-072 — BIDS filename dir entity absent or inconsistent with sidecar PhaseEncodingDirection |
+| 90 SIDECAR_WITHOUT_DATAFILE | ERROR | JSON sidecar without a corresponding NIfTI data file | 1 |
+| 38 INCONSISTENT_SUBJECTS | WARN | Subjects do not all contain the same files | 1 |
+| 97 MISSING_SESSION | WARN | Not all subjects contain the same sessions | 2 |
+
+**The SIDECAR_WITHOUT_DATAFILE error** is a direct artifact of the
+pre-intervention reconstruction methodology: NIfTI files were
+intentionally excluded (only sidecar JSON, bval, bvec restored) to
+save disk space. The validator correctly identifies that some JSON
+sidecars lack companion NIfTI images.
+
+**No errors or warnings were issued for:**
+- Absent `PhaseEncodingDirection` in sub-036 or sub-069 sidecars
+- Unsigned `PhaseEncodingAxis` without a signed direction field
+- Missing reverse-PE EPI fieldmaps (BIDS specification does not require them)
+- Any DWI gradient file issue
+
+This confirms that BIDS validation passes the two sessions with
+unsigned-only PE metadata (sub-036, sub-069) without issuing any
+structural error. The metadata deficit flagged by VECTA-DWI-021 is
+invisible to BIDS Validator.
+
+---
+
+## 8. Gap analysis: issues not currently captured by Vecta criteria
+
+The following curation observations either fall outside Vecta's DBI
+scope or point to future criterion additions:
+
+| Observation | Sessions | Status | Notes |
+|---|---|---|---|
+| Non-standard gradient table size (30-dir, 12-dir, 24-dir) | 7 sessions | Out of scope | Protocol selection decision, not a DBI issue; direction count is a curation preference, not a metadata-integrity failure |
+| dcm2niix generates duplicate fmap series without IntendedFor | 13 sessions | Potential v0.2 criterion | VECTA-DWI-071: EPI fmap has no IntendedFor and duplicates DWI geometry |
+| Complementary-PE pair expressed only in sidecar, not in filename | sub-002 ses-3 | Potential v0.2 criterion | VECTA-DWI-072: BIDS filename dir entity absent or inconsistent with sidecar PhaseEncodingDirection |
+
+**Direction count is explicitly out of scope.** Vecta assesses Data Birth
+Integrity — whether the metadata needed for downstream use is present,
+traceable, and preserved. Direction count selection is a protocol design
+decision that belongs in a protocol reference, not a DBI criterion.
+A session with 12 gradient directions is not a DBI failure; it may be
+a valid acquisition for a different analysis goal. Enforcing direction
+count requires a protocol reference YAML (which Vecta can hold) and a
+comparator criterion, but this is a separate design question to be
+addressed if and when the framework is extended for protocol compliance
+checking.
+
+**PhaseEncodingAxis tracking is intentionally absent.** Vecta reads only
+`PhaseEncodingDirection` (signed). `PhaseEncodingAxis` (unsigned) cannot
+substitute because it does not encode polarity. There is no gap here —
+treating an unsigned axis field as equivalent to a signed direction field
+would introduce false negatives (reporting PED as present when only
+polarity-unknown axis is available).
