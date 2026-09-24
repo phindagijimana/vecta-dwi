@@ -159,7 +159,7 @@ present), and Vecta correctly assessed the DWI layer as ready. The
 pipeline exclusion was driven by an anatomical (T1w) quality concern
 that falls outside Vecta's current assessment scope.
 
-Table 2 presents the joint distribution of Vecta readiness state and
+Table 3 presents the joint distribution of Vecta readiness state and
 QSIPrep success.
 
 | Vecta readiness | QSIPrep success | QSIPrep failure | No QSIPrep outcome | Total |
@@ -252,7 +252,7 @@ phasediff fieldmap, which Vecta correctly identified as a non-EPI
 acquisition and did not treat as satisfying the reverse-PE availability
 requirement.
 
-Table 3 presents the joint distribution for the five 2-week sessions,
+Table 4 presents the joint distribution for the five 2-week sessions,
 the only sessions for which QSIPrep outcomes were available in this
 batch.
 
@@ -279,7 +279,7 @@ Meer et al., 2020), the MASiVar multisite variability dataset (ds003416;
 Cai et al., 2021), and the ON-Harmony multi-scanner harmonization dataset
 (ds004712; Karakuzu et al., 2022). No DICOM
 was available for any of these datasets; accordingly, source-integrity criteria
-(VECTA-DWI-050, VECTA-DWI-060) were not evaluated. Table 4 summarizes the
+(VECTA-DWI-050, VECTA-DWI-060) were not evaluated. Table 5 summarizes the
 criterion-level results across all three datasets.
 
 | Dataset | Sessions assessed | Ready | Ready_with_limitations | Not assessed | VECTA-DWI-014 | VECTA-DWI-021 | VECTA-DWI-030 | Mean completeness |
@@ -363,12 +363,10 @@ metadata-level conditions.
 ## Pre-intervention sensitivity analysis
 
 To assess Vecta's prospective sensitivity to the metadata issues that
-drove post-conversion curation decisions, we reconstructed a
-pre-intervention BIDS dataset comprising 71 sessions: the 62 retained
-sessions plus the 9 sessions whose DWI acquisitions were removed by
-protocol-variant selection during curation. The reconstruction was
-strictly additive — no files present in the post-curation BIDS tree
-were modified.
+drove post-conversion curation decisions, Vecta-DWI was applied to the
+pre-intervention BIDS dataset (71 sessions: the 62 retained sessions plus
+the 9 sessions whose DWI acquisitions were removed by protocol-variant
+selection; see Methods).
 
 **Table 6.** Readiness distribution before and after protocol-variant
 selection. The pre-intervention dataset includes 9 sessions subsequently
@@ -427,7 +425,7 @@ the BIDS sidecar at the time of conversion, without DICOM access.
 
 ## Cross-dataset criterion activation summary
 
-Table 5 presents the criterion activation pattern across all five datasets.
+Table 7 presents the criterion activation pattern across all five datasets.
 Each criterion was activated in at least one dataset, with the exception of
 VECTA-DWI-001 and VECTA-DWI-040, which did not trigger in any cohort.
 VECTA-DWI-014 and VECTA-DWI-021 exhibited complementary co-occurrence
@@ -437,7 +435,7 @@ in MASiVar, where preprocessing failure was independently confirmed.
 VECTA-DWI-050 and VECTA-DWI-060 were evaluable only in CIDUR (DICOM available);
 neither triggered, indicating a clean conversion in that cohort.
 
-**Table 5.** Criterion activation across all five datasets. Bold: criterion
+**Table 7.** Criterion activation across all five datasets. Bold: criterion
 triggered. Dash: DICOM not available; criterion not evaluated.
 
 | Criterion | CIDUR (n=62) | TrackTBI (n=10) | SleepyBrain (n=76) | MASiVar (n=281ᵃ) | ON-Harmony (n=165) |

@@ -192,3 +192,23 @@ only. Data were downloaded from the OpenNeuro S3 mirror
 (s3://openneuro.org/) using the DWI-only subset (`sub-*/*/dwi/*`).
 Cohort aggregates for each dataset were produced using the vecta aggregate
 command.
+
+## Pre-intervention sensitivity analysis
+
+To assess Vecta's prospective sensitivity to the metadata issues that drove
+post-conversion curation decisions, a pre-intervention BIDS dataset was
+reconstructed by restoring the nine sessions removed from the CIDUR BIDS
+tree by the protocol-variant selection step. These nine sessions were
+excluded from the curated tree because their gradient direction counts or
+BIDS filename direction entities did not match the site's expected protocol;
+their sidecar JSON files, gradient tables, and NIfTI images were intact and
+available in the curation hold directory. The reconstruction was strictly
+additive: no files present in the 62-session post-intervention BIDS tree
+were modified. Vecta-DWI v0.1 was applied to the resulting 71-session
+pre-intervention dataset using the same vecta assess command and
+dwi_connectomics profile as the primary analysis. Readiness distributions
+were compared between pre-intervention (n = 71) and post-intervention (n = 62)
+datasets. Because the protocol-variant selection script operated solely on
+BIDS filename entities with no access to sidecar JSON content, Vecta's
+sidecar-level assessment was conducted on entirely independent evidence from
+the curation decisions, enabling a comparison of the two detection pathways.

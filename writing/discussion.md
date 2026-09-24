@@ -110,6 +110,30 @@ its findings, would allow a researcher to distinguish this type of
 processing gap from a data integrity issue without manual review of each
 session's output directory.
 
+The pre-intervention analysis provides a prospective validity check that is
+mechanistically distinct from the primary outcome comparison. The curation
+protocol that produced the 62-session denominator operated on BIDS filename
+entities only, with no access to sidecar JSON content. Vecta's assessment
+of the reconstructed 71-session pre-intervention dataset flagged both
+subsequently excluded sessions as review_required using sidecar-level evidence
+— the absence of the signed PhaseEncodingDirection field — independently of
+and prior to any filename-label decision. The root cause (dcm2niix populating
+only the unsigned PhaseEncodingAxis field on two Siemens Skyra acquisitions)
+is invisible to BIDS Validator and undetectable from BIDS filenames alone.
+Vecta's finding directly predicts the downstream preprocessing consequence:
+without a signed PhaseEncodingDirection, susceptibility distortion correction
+fails at the SDC calibration step — confirmed empirically in the TrackTBI
+cohort under the same condition. This convergence of three independent
+pathways — Vecta sidecar finding, curation exclusion via filename detection,
+and confirmed QSIPrep failure — supports the face validity of VECTA-DWI-021
+and demonstrates that sidecar-level metadata assessment detects preprocessing
+prerequisites that neither conformance checking nor filename inspection can
+resolve. The readiness regression in sub-002 ses-3, where the curation step
+unintentionally dissolved a complementary-PE relationship visible only in
+sidecar metadata, additionally illustrates that filename-entity-based curation
+can introduce DBI limitations that are not surfaced by the curation process
+itself but are detectable by Vecta at the metadata layer.
+
 In the Stockholm SleepyBrain dataset, both VECTA-DWI-014 and VECTA-DWI-021
 co-triggered for all 76 sessions — a pattern not observed in CIDUR. The
 CIDUR GE sessions also lack a reverse-PE EPI acquisition, yet VECTA-DWI-021
