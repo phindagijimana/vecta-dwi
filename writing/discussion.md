@@ -4,18 +4,26 @@ In this study, we describe Vecta-DWI, a declarative framework for
 assessing Data Birth Integrity of DWI datasets before preprocessing. We
 applied the framework to 71 CIDUR sessions spanning three readiness
 states and confirmed QSIPrep v0.23.1 outcomes for 62 sessions. Three
-QSIPrep failures were observed, spanning two mechanistically distinct
-failure modes: one session failed due to a missing reverse-PE fieldmap
-(VECTA-DWI-014, ready_with_limitations); two sessions failed because
-QSIPrep crashed when attempting a string operation on a NaN-valued
-PhaseEncodingDirection during DWI parameter extraction — before the
-susceptibility-distortion correction workflow was instantiated
-(VECTA-DWI-021, review_required). All three failures were pre-flagged
-by Vecta with the specific criterion responsible. No ready session
-failed QSIPrep. The failure rate was exactly 0% for ready sessions,
-2.9% for ready_with_limitations sessions, and 100% for review_required
-sessions — a monotonically ordered risk stratification across all three
-readiness states.
+QSIPrep failures were observed across three readiness states; all three
+occurred in sessions Vecta had flagged as non-ready. The failure rate
+was 0% for ready sessions (0/26), 2.9% for ready_with_limitations
+sessions (1/34), and 100% for review_required sessions (2/2) — a
+monotonically ordered risk stratification. However, the three failures
+are mechanistically heterogeneous. The two review_required failures
+(sub-036 and sub-069) have a confirmed direct cause: QSIPrep crashed
+because PhaseEncodingDirection was absent, triggering a NaN string
+operation at the DWI parameter-extraction step before the SDC
+workflow was instantiated. This is the condition VECTA-DWI-021
+precisely characterizes. The single ready_with_limitations failure
+(sub-076) is less clear: QSIPrep passed parameter extraction,
+completed anatomical preprocessing, and entered the eddy step, where
+the available log (truncated at 844 lines) does not capture the crash.
+Sub-076 has a valid signed PhaseEncodingDirection and its fieldmap
+absence is shared by 33 other GE sessions that succeeded. The most
+likely cause is a data-specific eddy failure — possibly related to
+the unusually low b0 count (3) or slightly non-standard gradient count
+(50 b1000 directions vs 51–53 in other GE sessions) — rather than the
+fieldmap-absence condition VECTA-DWI-014 characterizes.
 
 These findings demonstrate that structural metadata and gradient file
 integrity checks, performed without any preprocessing, are sufficient to

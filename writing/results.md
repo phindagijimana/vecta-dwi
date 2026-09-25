@@ -191,12 +191,25 @@ QSIPrep outcome across the extended outcome cohort (n=62).
 
 The failure rate was 0% (0/26) for ready sessions, 2.9% (1/34) for
 ready_with_limitations sessions, and 100% (2/2) for review_required
-sessions. All three failures were pre-flagged by Vecta with a specific
-criterion identifying the exact reason QSIPrep could not complete: the
-ready_with_limitations failure (sub-076) by VECTA-DWI-014
-(fieldmap absent), and the review_required failures (sub-036, sub-069)
-by VECTA-DWI-021 (PhaseEncodingDirection absent). No ready session
-failed QSIPrep processing.
+sessions. All three failures occurred in Vecta-flagged sessions. The two
+review_required failures (sub-036, sub-069) have a confirmed direct
+cause: QSIPrep crashed at parameter extraction because
+PhaseEncodingDirection was absent — the condition VECTA-DWI-021
+explicitly flags. The ready_with_limitations failure (sub-076) has
+a different character: QSIPrep completed anatomical preprocessing and
+entered the eddy head-motion correction step before failing; the
+available log (844 lines, truncated) does not contain the error message,
+and no crash file was recovered. Sub-076's sidecar carries a valid signed
+PhaseEncodingDirection (`j-`) and TotalReadoutTime, and its protocol
+(50 b1000 directions, 3 b0 volumes; `acq-50dirax`) is slightly atypical
+relative to other GE sessions (51–53 b1000 directions). The direct cause
+of the eddy-stage failure is therefore not attributable to VECTA-DWI-014's
+stated condition (absent fieldmap): 33 other fieldmap-absent GE sessions
+ran eddy without error. Vecta correctly classified sub-076 as
+ready_with_limitations — the structural assessment (no reverse-PE
+fieldmap → no SDC) is accurate — but the QSIPrep failure appears to
+have occurred for a different reason not captured by any of Vecta's
+current criteria. No ready session failed QSIPrep processing.
 
 ## Detection approach comparison
 

@@ -23,17 +23,19 @@ sessions in the pre-intervention excluded stratum received
 review_required. QSIPrep v0.23.1 outcomes were confirmed for 62
 sessions spanning all three readiness states. Failure rates were 0%
 (0/26) for ready sessions, 2.9% (1/34) for ready_with_limitations
-sessions, and 100% (2/2) for review_required sessions. All three
-QSIPrep failures were pre-flagged by Vecta with criterion-level
-attribution: the fieldmap-absence failure (sub-076) by VECTA-DWI-014
-(ready_with_limitations); the two PhaseEncodingDirection-absence
-failures (sub-036, sub-069) by VECTA-DWI-021 (review_required). Across
-two mechanistically distinct failure modes, Vecta achieved sensitivity
-1.000 (95% CI [0.438, 1.000]) and NPV 1.000 (95% CI [0.871, 1.000]).
-A naive metadata-completeness check (Level 1: PhaseEncodingDirection
-absent) matched two of three failures but had a systematic blind spot
-for the fieldmap-absence mode, which is acquisition-layer rather than
-metadata-layer. In an independent criterion replication cohort (five
+sessions, and 100% (2/2) for review_required sessions. All three QSIPrep failures occurred in Vecta-flagged sessions.
+The two review_required failures (VECTA-DWI-021) have a confirmed
+direct cause: QSIPrep crashed because PhaseEncodingDirection was absent,
+preventing parameter extraction before the SDC workflow was instantiated.
+The single ready_with_limitations failure (VECTA-DWI-014) occurred at
+the eddy step; the direct cause was not recovered from available logs
+and is not attributable to fieldmap absence alone (33 other fieldmap-absent
+sessions succeeded). Across all three failures, Vecta achieved
+sensitivity 1.000 (95% CI [0.438, 1.000]) and NPV 1.000
+(95% CI [0.871, 1.000]). A naive metadata-completeness check
+(PhaseEncodingDirection absent) matched two of three failures but
+could not detect the eddy-stage failure, which carries valid
+PhaseEncodingDirection metadata. In an independent criterion replication cohort (five
 TrackTBI participants, b = 1300 s/mm², independent institutions and
 scanner platform), the sole triggered criterion matched CIDUR findings,
 with all five 2-week sessions successfully preprocessed. Application to
