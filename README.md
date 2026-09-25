@@ -174,7 +174,12 @@ specification/v0.1/
 |--------|---------|
 | `scripts/run_openneuro_batch.sh` | Batch-assess a full OpenNeuro BIDS dataset and aggregate |
 | `scripts/run_cidur_dicom.py` | Re-run CIDUR cohort with DICOM source module; auto-aggregates and joins outcomes |
-| `scripts/collect_bids_manifest.py` | Run on a remote machine to inventory DWI sidecar fields, all fieldmap types (EPI + phasediff/magnitude completeness), and QSIPrep failure categories — produces a small TSV (~2 KB/session) safe to transfer back |
+| `scripts/collect_bids_manifest.py` | Inventory DWI sidecar fields, fieldmap types, and QSIPrep failure categories — produces small TSVs safe to transfer from a compute cluster |
+| `scripts/compute_ablation_table.py` | Compute detection-level comparison table (BIDS Validator / naive PE check / Vecta Core) against labelled pipeline outcomes |
+| `scripts/sdc_impact_analysis.py` | Regional connectome comparison between SDC and no-SDC sessions (susceptibility-sensitive region analysis) |
+| `scripts/build_injection_test.py` | Build five per-defect BIDS subdatasets for controlled criterion validation (injects VECTA-DWI-014, -021, -030, -031 defects into a known-good session) |
+| `scripts/run_injection_qsiprep.sh` | Submit SLURM jobs running QSIPrep on the five injection subdatasets; confirms each Vecta finding predicts the correct pipeline outcome |
+| `scripts/setup_pre_intervention_qsiprep_test.sh` | Build minimal BIDS trees for pre-intervention excluded sessions (sub-036, sub-069) and generate SLURM jobs to confirm VECTA-DWI-021 failure prediction |
 
 ### Remote machine workflow
 
@@ -233,6 +238,23 @@ writing/             Manuscript drafts (methods, results, discussion, abstract)
 docs/                Analysis manuals and outcome-labeling documentation
 data/                (gitignored) Local run outputs, subject mappings, BIDS trees
 ```
+
+---
+
+## Validation
+
+Vecta-DWI v0.1 has been evaluated on:
+
+- **CIDUR clinical cohort** (69 sessions, 3 scanner models, 2 vendors, 2 field strengths): QSIPrep v0.23.1 outcomes confirmed for all 69 sessions. All 3 failures occurred in Vecta-flagged sessions; no ready session failed. Sensitivity 1.000 (95% CI [0.439, 1.000]), NPV 1.000 (95% CI [0.871, 1.000]). A naive PhaseEncodingDirection-absent check matched 2 of 3 failures and could not detect the acquisition-layer failure mode.
+- **TrackTBI pilot** (10 sessions, independent institutions, Siemens TrioTim/Skyra, b=1300 s/mm²): criterion findings consistent with CIDUR; all 5 processed sessions succeeded.
+- **Three OpenNeuro datasets** (506 additional sessions): SleepyBrain (ds000201), MASiVar (ds003416), ON-Harmony (ds004712) — criterion fire patterns consistent across protocols and vendors.
+- **Controlled defect injection**: all 5 per-criterion injections (VECTA-DWI-014, -021, -030, -031, baseline) produced the predicted Vecta readiness state and the predicted QSIPrep outcome, including a silent DWI skip (no error, exit 0, anat-only output) under VECTA-DWI-021.
+
+---
+
+## Reference guide
+
+`vecta.md` contains a detailed framework reference and data collection guide for study coordinators, data managers, and site investigators — including what to collect at the scanner, criterion remediation steps, and the data specification for external validation cohorts.
 
 ---
 
