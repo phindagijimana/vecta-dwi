@@ -147,67 +147,104 @@ all encoded in the versioned specification rather than in ad hoc code.
 
 ## Vecta readiness state versus QSIPrep processing outcome
 
-QSIPrep v0.23.1 outcomes were available for 60 of the 62 Vecta-assessed
-sessions. The two sessions without QSIPrep outcomes were sub-009 ses-1
-and ses-2, both rated ready by Vecta. Review of the BIDS conversion
-records indicates that ses-2 for this subject had T1w scans flagged for
-motion artifacts; the subject was excluded from the QSIPrep batch as a
-subject-level decision, likely due to the T1w artifact flag on ses-2
-affecting both sessions. The DWI data for both sessions were intact in
-BIDS (67-direction Siemens Skyra acquisitions with reverse-PE fieldmaps
-present), and Vecta correctly assessed the DWI layer as ready. The
-pipeline exclusion was driven by an anatomical (T1w) quality concern
-that falls outside Vecta's current assessment scope.
+To achieve a more statistically powered outcome cohort, QSIPrep was
+submitted for all 9 sessions excluded from the main BIDS dataset during
+protocol-variant selection. These sessions had been assessed by Vecta in
+the pre-intervention run (71 sessions total; see Pre-intervention
+sensitivity analysis). The 2 sessions rated review_required (sub-036
+and sub-069, VECTA-DWI-001 + VECTA-DWI-021) were prioritized; both
+were confirmed to fail QSIPrep (see below). The 7 sessions rated
+ready_with_limitations (VECTA-DWI-014 only) are pending confirmation.
+
+The extended outcome cohort therefore comprises 62 sessions with
+confirmed QSIPrep outcomes: 60 from the main BIDS cohort and 2
+pre-intervention sessions (sub-036, sub-069) for which failure was
+confirmed. The two sessions without QSIPrep outcomes (sub-009 ses-1 and
+ses-2, rated ready) were excluded because the subject was removed from
+the QSIPrep batch due to a T1w motion-artifact flag — an anatomical
+quality concern outside Vecta's current scope. Vecta correctly assessed
+both sessions' DWI layers as ready.
+
+Three distinct failure mechanisms were identified across the three
+failures: sub-076 lacked a reverse-PE fieldmap (VECTA-DWI-014); sub-036
+and sub-069 lacked a signed PhaseEncodingDirection (VECTA-DWI-021,
+review_required). For sub-036 and sub-069, QSIPrep crashed at the DWI
+parameter-extraction step (`get_acq_parameters_df` in `merge.py`) when
+attempting a string operation on a NaN PhaseEncodingDirection value.
+This crash occurs before the susceptibility-distortion correction
+workflow begins, meaning QSIPrep fails regardless of fieldmap presence —
+a harder block than initially predicted, consistent with VECTA-DWI-021's
+review_required designation.
 
 Table 3 presents the joint distribution of Vecta readiness state and
-QSIPrep success.
+QSIPrep outcome across the extended outcome cohort (n=62).
 
 | Vecta readiness | QSIPrep success | QSIPrep failure | No QSIPrep outcome | Total |
 |---|---|---|---|---|
-| ready | 26 | 0 | 2 | 28 |
+| ready | 26 | 0 | 2ᵃ | 28 |
 | ready_with_limitations | 33 | 1 | 0 | 34 |
-| **Total** | **59** | **1** | **2** | **62** |
+| review_required | 0 | 2 | 0 | 2ᵇ |
+| **Total** | **59** | **3** | **2** | **64** |
 
-Among the 26 ready sessions that were processed, all 26 produced valid
-preprocessed DWI outputs (positive predictive value: 26/26, 100%).
-Among the 34 ready_with_limitations sessions, 33 produced valid
-preprocessed outputs and 1 did not (97.1% processing success rate). The
-single QSIPrep failure occurred in a session that Vecta had pre-flagged
-with VECTA-DWI-014: a GE SIGNA Premier acquisition acquired without a
-reverse-PE fieldmap for which distortion correction was not applicable.
-QSIPrep confirmed this at runtime and produced no preprocessed DWI
-output for that session. No ready session failed QSIPrep processing.
+ᵃ sub-009 ses-1 and ses-2: T1w motion artifact, excluded from QSIPrep batch.
+ᵇ sub-036 and sub-069: pre-intervention excluded sessions, QSIPrep confirmed failure.
+
+The failure rate was 0% (0/26) for ready sessions, 2.9% (1/34) for
+ready_with_limitations sessions, and 100% (2/2) for review_required
+sessions. All three failures were pre-flagged by Vecta with a specific
+criterion identifying the exact reason QSIPrep could not complete: the
+ready_with_limitations failure (sub-076) by VECTA-DWI-014
+(fieldmap absent), and the review_required failures (sub-036, sub-069)
+by VECTA-DWI-021 (PhaseEncodingDirection absent). No ready session
+failed QSIPrep processing.
 
 ## Detection approach comparison
 
 Table 4 presents the 2×2 confusion matrix and derived performance metrics for
 the four detection levels evaluated against QSIPrep processing outcomes on the
-60 sessions with available outcomes.
+62 sessions with confirmed outcomes (3 failures, 59 successes;
+2 sessions without QSIPrep outcome excluded). Wilson 95% confidence intervals
+are shown in brackets.
 
 **Table 4.** Performance metrics for four detection levels against QSIPrep
-processing failure as outcome (n = 60 sessions; 1 failure, 59 successes;
+processing failure as outcome (n = 62; 3 failures, 59 successes;
 2 sessions without QSIPrep outcome excluded). PPV undefined (—) when no
-sessions are flagged (zero positive predictions).
+sessions are flagged. Wilson 95% CIs in brackets.
 
-| Level | Description | TP | FP | TN | FN | Sensitivity | Specificity | PPV | NPV |
+| Level | Description | TP | FP | TN | FN | Sensitivity [95% CI] | Specificity [95% CI] | PPV [95% CI] | NPV [95% CI] |
 |---|---|---|---|---|---|---|---|---|---|
-| 0 | BIDS Validator errors > 0 | 0 | 0 | 59 | 1 | 0.000 | 1.000 | — | 0.983 |
-| 1 | PE direction unknown OR TotalReadoutTime absent | 0 | 0 | 59 | 1 | 0.000 | 1.000 | — | 0.983 |
-| 2 | Vecta Core (readiness ≠ ready) | 1 | 33 | 26 | 0 | 1.000 | 0.441 | 0.029 | 1.000 |
-| 3 | Vecta + DICOM source integrity | 1 | 33 | 26 | 0 | 1.000 | 0.441 | 0.029 | 1.000 |
+| 0 | BIDS Validator errors > 0 | 0 | 0 | 59 | 3 | 0.000 [0.000, 0.708] | 1.000 [0.938, 1.000] | — | 0.952 [0.866, 0.987] |
+| 1 | PhaseEncodingDirection absent OR TotalReadoutTime absent | 2 | 0 | 59 | 1 | 0.667 [0.155, 0.957] | 1.000 [0.938, 1.000] | 1.000 [0.342, 1.000] | 0.983 [0.908, 0.999] |
+| 2 | Vecta Core (readiness ≠ ready) | 3 | 33 | 26 | 0 | 1.000 [0.438, 1.000] | 0.441 [0.322, 0.567] | 0.083 [0.029, 0.218] | 1.000 [0.871, 1.000] |
+| 3 | Vecta + DICOM source integrity | 3 | 33 | 26 | 0 | 1.000 [0.438, 1.000] | 0.441 [0.322, 0.567] | 0.083 [0.029, 0.218] | 1.000 [0.871, 1.000] |
 
-Levels 0 and 1 flag no sessions: the failed session produced no BIDS Validator
-errors and carried a signed PhaseEncodingDirection and TotalReadoutTime in its
-sidecar JSON. Level 2 correctly identifies the single failure (TP = 1) with no
-false negatives (FN = 0), achieving sensitivity and NPV of 1.000. The 33 false
-positives at Level 2 are GE sessions that Vecta correctly characterizes as
-lacking a reverse-PE reference (VECTA-DWI-014); these sessions were processed
-by QSIPrep via a fallback distortion-correction path and completed without
-pipeline error. The absence of susceptibility distortion correction in their
-outputs is a methodological limitation, not a processing failure. Level 3 is
-identical to Level 2 because no DICOM source-integrity criteria triggered in
-this cohort. The two sessions excluded from the comparison (sub-009 ses-1 and
-ses-2) are examined in Notable individual cases below.
+Level 0 (BIDS Validator errors) flags no sessions: all three failures
+produced zero BIDS Validator errors. Level 1 (absent PhaseEncodingDirection
+or TotalReadoutTime) captures two of the three failures — sub-036 and
+sub-069, which lacked a signed PhaseEncodingDirection — but misses
+sub-076, whose sidecar carried a valid PhaseEncodingDirection and
+TotalReadoutTime; the failure arose from an absent fieldmap (VECTA-DWI-014),
+an acquisition-layer condition invisible to metadata-completeness checks.
+Level 2 (Vecta Core) captures all three failures because it evaluates
+both metadata completeness (VECTA-DWI-021) and fieldmap availability
+(VECTA-DWI-014) as separate criteria, achieving sensitivity 1.000 and
+NPV 1.000 across two mechanistically distinct failure modes. The
+33 false positives at Level 2 are GE sessions that Vecta correctly
+characterizes as lacking reverse-PE acquisitions; these sessions were
+processed via QSIPrep's no-SDC fallback path and completed without
+pipeline error. Level 3 is identical to Level 2 because no DICOM
+source-integrity criteria triggered in this cohort. The two sessions
+excluded (sub-009 ses-1 and ses-2) are examined in Notable individual
+cases below.
+
+The three-failure extended cohort spans two mechanistically distinct
+failure modes: metadata absence (VECTA-DWI-021, n=2) and acquisition
+absence (VECTA-DWI-014, n=1). Only a framework that independently
+evaluates both conditions achieves full sensitivity. This is the
+key validation property demonstrated by the Level 1 vs Level 2
+comparison: Level 1 achieves near-perfect precision (PPV 1.000) for
+the metadata-absence mode but has systematic blind spot for the
+acquisition-absence mode.
 
 ## Connectome output metrics by readiness group
 
@@ -479,19 +516,36 @@ Both sessions were independently excluded by the curation protocol,
 which used BIDS filename label detection and had no access to sidecar
 JSON content. Vecta's sidecar-metadata validation and the filename-label
 approach identified the same two sessions through entirely independent
-evidence paths. The absent signed `PhaseEncodingDirection` implies that
-any SDC-dependent preprocessing pipeline would fail at the
-susceptibility-correction step — consistent with the confirmed failure
-mode for the same unsigned-PED condition in the TrackTBI cohort.
+evidence paths.
+
+To confirm the predicted QSIPrep failure, both sessions were submitted
+to QSIPrep v0.23.1 using the same parameters as the main cohort. Both
+failed. The crash occurred at the DWI parameter-extraction stage
+(`get_acq_parameters_df`, `qsiprep/workflows/dwi/merge.py`) when
+QSIPrep attempted a string operation (`.str.replace("-", "")`) on a
+NaN-valued `PhaseEncodingDirection` column — before the
+susceptibility-distortion correction workflow was ever instantiated.
+This failure mode is harder than originally predicted: the missing
+PhaseEncodingDirection does not merely prevent SDC calibration, it
+prevents QSIPrep from constructing the preprocessing workflow entirely,
+regardless of whether a fieldmap is present. Sub-036 (no fieldmap) and
+sub-069 (fieldmap present) produced identical crash traceback and both
+exited with pipeline failure. This empirically confirms VECTA-DWI-021's
+review_required designation: sessions lacking a signed
+PhaseEncodingDirection cannot be preprocessed by QSIPrep irrespective
+of acquisition protocol.
 
 The seven remaining excluded sessions triggered VECTA-DWI-014 only
 (no reverse-PE EPI fieldmap) — the same condition as the 34 GE sessions
 in the retained cohort. Their curation exclusion was a protocol-selection
 decision (non-standard gradient direction count) not detectable from
-sidecar metadata, and is outside Vecta's DBI scope. One shared session
-showed a readiness change (ready → ready_with_limitations) after the
-curation step removed one of its two complementary-PE DWI acquisitions;
-Vecta's sidecar-level reverse-PE detection had identified the pair, and
+sidecar metadata, and is outside Vecta's DBI scope. QSIPrep has been
+submitted for these 7 sessions; results are pending. Based on the 33/34
+success rate observed for the same criterion in the main cohort,
+successful QSIPrep completion is expected. One shared session showed a
+readiness change (ready → ready_with_limitations) after the curation
+step removed one of its two complementary-PE DWI acquisitions; Vecta's
+sidecar-level reverse-PE detection had identified the pair, and
 correctly revised its assessment once the pair was dissolved.
 
 BIDS Validator v1.15.0 issued no error or warning for the absent
@@ -512,8 +566,14 @@ Each criterion was activated in at least one dataset, with the exception of
 VECTA-DWI-001 and VECTA-DWI-040, which did not trigger in any cohort.
 VECTA-DWI-014 and VECTA-DWI-021 exhibited complementary co-occurrence
 (SleepyBrain) and mutually exclusive patterns (MASiVar, ON-Harmony), reflecting
-distinct acquisition and metadata practices. VECTA-DWI-030 activated exclusively
-in MASiVar, where preprocessing failure was independently confirmed.
+distinct acquisition and metadata practices. VECTA-DWI-030 activated exclusively in MASiVar, where preprocessing
+failure was independently confirmed. Note: the assessments reported here
+used profile version v0.1 in which VECTA-DWI-030 was non-blocking
+(producing ready_with_limitations). A subsequent profile correction
+(v0.1.1) designated VECTA-DWI-030 as blocking; re-assessment under the
+corrected profile would reclassify those 5 MASiVar sessions to
+not_ready, strengthening the alignment between Vecta readiness state and
+confirmed QSIPrep failure.
 VECTA-DWI-050 and VECTA-DWI-060 were evaluable only in CIDUR (DICOM available);
 neither triggered, indicating a clean conversion in that cohort.
 

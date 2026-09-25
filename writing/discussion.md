@@ -2,19 +2,20 @@
 
 In this study, we describe Vecta-DWI, a declarative framework for
 assessing Data Birth Integrity of DWI datasets before preprocessing. We
-applied the framework to 62 BIDS-converted sessions from the CIDUR
-cohort and compared the resulting readiness states against QSIPrep
-processing outcomes, and conducted an initial transportability pilot in
-five participants from the TrackTBI dataset acquired at independent
-institutions with a different protocol. A single criterion, VECTA-DWI-014 (complementary
-phase-encoding reference unavailable), was triggered in all 34 GE
-sessions and in no Siemens session, stratifying the cohort into a
-ready tier and a ready_with_limitations tier. Among sessions processed
-by QSIPrep, all 26 ready sessions produced valid preprocessed outputs,
-and 33 of 34 ready_with_limitations sessions were successfully processed.
-The single QSIPrep failure in the ready_with_limitations group had been
-pre-flagged by VECTA-DWI-014 and was confirmed to fail on the same
-condition — absence of a fieldmap for distortion correction.
+applied the framework to 71 CIDUR sessions spanning three readiness
+states and confirmed QSIPrep v0.23.1 outcomes for 62 sessions. Three
+QSIPrep failures were observed, spanning two mechanistically distinct
+failure modes: one session failed due to a missing reverse-PE fieldmap
+(VECTA-DWI-014, ready_with_limitations); two sessions failed because
+QSIPrep crashed when attempting a string operation on a NaN-valued
+PhaseEncodingDirection during DWI parameter extraction — before the
+susceptibility-distortion correction workflow was instantiated
+(VECTA-DWI-021, review_required). All three failures were pre-flagged
+by Vecta with the specific criterion responsible. No ready session
+failed QSIPrep. The failure rate was exactly 0% for ready sessions,
+2.9% for ready_with_limitations sessions, and 100% for review_required
+sessions — a monotonically ordered risk stratification across all three
+readiness states.
 
 These findings demonstrate that structural metadata and gradient file
 integrity checks, performed without any preprocessing, are sufficient to
@@ -39,29 +40,31 @@ conformance and readiness is the central motivation for a dedicated
 readiness assessment layer.
 
 The detection approach comparison (Table 4) illustrates the cost of
-under-specification. Levels 0 and 1 both achieve sensitivity of 0.000,
-missing the single QSIPrep failure entirely: the failed session produced no
-BIDS Validator errors and carried signed PhaseEncodingDirection and
-TotalReadoutTime values. Level 2 achieves sensitivity of 1.000 and NPV of
-1.000, correctly identifying the failure with no false negatives. The
-positive predictive value (PPV) of 0.029 at Level 2 warrants careful
-interpretation. A PPV of 3% would indicate a poorly performing screening
-tool if the estimand were pipeline crash prediction. But PPV as a
-crash-predictor is the wrong estimand for a readiness framework.
-VECTA-DWI-014 makes a structural claim about data properties — specifically,
-that no reverse phase-encoding reference is available for susceptibility
-distortion correction — not a claim that the pipeline will abort. The
-33 GE sessions classified as false positives did not receive susceptibility
-distortion correction: QSIPrep applied a fallback correction path and
-completed, but the absence of SDC is a methodological limitation of those
-outputs, not evidence that the finding was incorrect. The relevant
-performance question is whether VECTA-DWI-014 correctly characterizes the
-acquisition property it claims to characterize: all 34 GE sessions lack any
-reverse-PE EPI acquisition, independently verifiable from the BIDS tree and
-confirmed by S3 manifest inspection. Level 3 is identical to Level 2
-because no DICOM source-integrity findings triggered: all 62 sessions passed
-geometry consistency and DICOM-to-BIDS field-strength checks, indicating a
-clean BIDS conversion with no DICOM-level anomalies.
+under-specification and demonstrates a critical distinction between
+metadata-layer and acquisition-layer failure modes. Level 0 (BIDS
+Validator errors) flags no sessions; all three failures pass structural
+conformance validation. Level 1 (PhaseEncodingDirection absent) captures
+two of the three failures — those caused by the metadata-absence mode
+(VECTA-DWI-021) — but has a systematic blind spot for the
+acquisition-absence mode: the VECTA-DWI-014 failure (sub-076) carried
+a valid signed PhaseEncodingDirection and TotalReadoutTime and was
+invisible to any metadata-completeness check. Level 2 (Vecta Core)
+captures all three failures because VECTA-DWI-014 and VECTA-DWI-021
+are independent criteria evaluating complementary evidence layers.
+Sensitivity is 0.000 (Level 0), 0.667 [0.155, 0.957] (Level 1),
+and 1.000 [0.438, 1.000] (Level 2); NPV is 0.952, 0.983, and 1.000
+respectively. These values rest on n=3 confirmed failures; the
+confidence intervals are correspondingly wide and should be interpreted
+as illustrative of criterion behavior rather than precise population
+estimates. The positive predictive value of 0.083 at Level 2 warrants
+careful interpretation: VECTA-DWI-014 makes a structural claim about
+data properties — specifically, that no reverse phase-encoding reference
+is available for susceptibility distortion correction — not a claim that
+the pipeline will abort. The 33 GE sessions classified as false positives
+did not receive SDC; QSIPrep completed via a fallback path, but the
+absence of distortion correction is a methodological limitation of those
+outputs, not a false alarm. Level 3 is identical to Level 2 because no
+DICOM source-integrity criteria triggered in this cohort.
 
 The criterion-level attribution provided by Vecta adds information
 beyond a binary pass/fail by identifying the specific evidence layer

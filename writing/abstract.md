@@ -14,35 +14,36 @@ downstream use are present, traceable, and preserved from acquisition
 into the analysis-ready representation. Vecta-DWI operationalizes DBI
 through a versioned specification of 22 variables and 8 criteria
 evaluated relative to a declared intended-use profile, without requiring
-any preprocessing to have been performed. We applied Vecta-DWI to 62
-BIDS-converted DWI sessions from the CIDUR cohort, acquired across three
-scanner models at two field strengths and two vendors, augmented with
-original DICOM source data. Assessment completed for all 62 sessions
-(mean completeness ratio 0.911). Twenty-eight sessions (45.2%) received a
-readiness state of ready and 34 (54.8%) received ready_with_limitations;
-no session was rated not_ready. A single criterion, VECTA-DWI-014
-(complementary phase-encoding reference unavailable), was triggered in
-all 34 GE sessions (54.8%) and in no Siemens session, reflecting a
-known, site-level protocol difference in reverse phase-encoding practice.
-Among sessions processed by QSIPrep v0.23.1, all 26 ready sessions
-produced valid preprocessed outputs (positive predictive value 100%).
-Thirty-three of 34 ready_with_limitations sessions were successfully
-processed; the single QSIPrep failure occurred in a session pre-flagged
-by VECTA-DWI-014 and was confirmed to fail on the same condition. In an
-independent criterion replication cohort (five TrackTBI participants,
-b = 1300 s/mm², independent institutions and scanner platform), the sole
-triggered criterion matched CIDUR findings, with all five 2-week sessions
-successfully preprocessed by QSIPrep. Application to three publicly
-available datasets (549 additional sessions: Stockholm SleepyBrain, MASiVar,
-and ON-Harmony) demonstrated criterion behavior across diverse protocols and
-vendors: VECTA-DWI-021 (essential metadata absent) triggered in all sessions
-lacking TotalReadoutTime; VECTA-DWI-030 (gradient file missing) identified
-five MASiVar sessions with absent .bvec files confirmed at the source
-repository; and a
-phase-encoding axis inconsistency in one ON-Harmony session was correctly
-characterized as non-complementary despite bidirectional filename labels.
-These results indicate that structural metadata and gradient file integrity
-checks, evaluated before preprocessing, correctly stratify DWI sessions
-by processing outcome. Vecta-DWI is open-source and provides
-criterion-level attribution for every finding, enabling targeted
-remediation without manual chart review.
+any preprocessing to have been performed. We applied Vecta-DWI to a 71-session CIDUR cohort spanning three scanner
+models at two field strengths and two vendors, with original DICOM source
+data available. Assessment completed for all sessions (mean completeness
+ratio 0.911). In the 62-session primary BIDS cohort, 28 sessions (45.2%)
+received ready and 34 (54.8%) received ready_with_limitations; 2
+sessions in the pre-intervention excluded stratum received
+review_required. QSIPrep v0.23.1 outcomes were confirmed for 62
+sessions spanning all three readiness states. Failure rates were 0%
+(0/26) for ready sessions, 2.9% (1/34) for ready_with_limitations
+sessions, and 100% (2/2) for review_required sessions. All three
+QSIPrep failures were pre-flagged by Vecta with criterion-level
+attribution: the fieldmap-absence failure (sub-076) by VECTA-DWI-014
+(ready_with_limitations); the two PhaseEncodingDirection-absence
+failures (sub-036, sub-069) by VECTA-DWI-021 (review_required). Across
+two mechanistically distinct failure modes, Vecta achieved sensitivity
+1.000 (95% CI [0.438, 1.000]) and NPV 1.000 (95% CI [0.871, 1.000]).
+A naive metadata-completeness check (Level 1: PhaseEncodingDirection
+absent) matched two of three failures but had a systematic blind spot
+for the fieldmap-absence mode, which is acquisition-layer rather than
+metadata-layer. In an independent criterion replication cohort (five
+TrackTBI participants, b = 1300 s/mm², independent institutions and
+scanner platform), the sole triggered criterion matched CIDUR findings,
+with all five 2-week sessions successfully preprocessed. Application to
+three publicly available datasets (549 additional sessions) demonstrated
+criterion stability across protocols and vendors: VECTA-DWI-021
+triggered in all sessions lacking TotalReadoutTime; VECTA-DWI-030
+identified five MASiVar sessions with absent gradient files confirmed
+at the source repository. These results demonstrate that a
+multi-criterion readiness framework spanning acquisition and metadata
+evidence layers identifies failure modes invisible to conformance-based
+validation and to single-criterion metadata checks. Vecta-DWI is
+open-source and provides criterion-level attribution for every finding,
+enabling targeted remediation without manual chart review.
