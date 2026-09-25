@@ -39,7 +39,7 @@ PhaseEncodingDirection metadata. In an independent criterion replication cohort 
 TrackTBI participants, b = 1300 s/mm², independent institutions and
 scanner platform), the sole triggered criterion matched CIDUR findings,
 with all five 2-week sessions successfully preprocessed. Application to
-three publicly available datasets (549 additional sessions) demonstrated
+three publicly available datasets (549 sessions; 522 assessed) demonstrated
 criterion stability across protocols and vendors: VECTA-DWI-021
 triggered in all sessions lacking TotalReadoutTime; VECTA-DWI-030
 identified five MASiVar sessions with absent gradient files confirmed

@@ -1,5 +1,10 @@
 # References
 
+Andersson JLR, Skare S, Ashburner J (2003). How to correct susceptibility
+distortions in spin-echo echo-planar images: application to diffusion tensor
+imaging. *NeuroImage*, 20(2), 870–888.
+https://doi.org/10.1016/S1053-8119(03)00336-7
+
 Andersson JLR, Sotiropoulos SN (2016). An integrated approach to correction
 for off-resonance effects and subject movement in diffusion MR imaging.
 *NeuroImage*, 125, 1063–1078. https://doi.org/10.1016/j.neuroimage.2015.10.019
@@ -9,6 +14,10 @@ SN, Jbabdi S, Andersson JLR (2019). Automated quality control for within and
 between studies diffusion MRI data using a non-parametric framework for
 movement and distortion correction. *NeuroImage*, 184, 801–812.
 https://doi.org/10.1016/j.neuroimage.2018.09.073
+
+Brown LD, Cai TT, DasGupta A (2001). Interval estimation for a binomial
+proportion. *Statistical Science*, 16(2), 101–117.
+https://doi.org/10.1214/ss/1009213286
 
 Cai LY, Yang Q, Hansen CB, Nath V, Ramadass K, Johnson GW, Conrad BN,
 Boyd BD, Begnoche JP, Beason-Held LL, Shafer AT, Resnick SM, Taylor WD,
@@ -29,7 +38,7 @@ https://doi.org/10.1038/s41592-021-01185-5
 
 Clark T, Schuler RE, Bandrowski A, Martone ME, FAIR Data Maturity Model
 Working Group, Bridge2AI Standards Working Group (2024). AI-readiness
-criteria for biomedical data. PMID 39484409.
+criteria for biomedical data. [journal/volume/pages: verify from PMID 39484409]
 
 Esteban O, Birman D, Schaer M, Koyejo OO, Poldrack RA, Gorgolewski KJ
 (2017). MRIQC: Advancing the automatic prediction of image quality in MRI
@@ -44,11 +53,24 @@ The brain imaging data structure, a format for organizing and describing
 outputs of neuroimaging experiments. *Scientific Data*, 3, 160044.
 https://doi.org/10.1038/sdata.2016.44
 
-Karakuzu A, Fraser L, Bhatt P, Khan AR, Agah E, Bhatt DL, Bhatt P, Bhatt S,
-Descoteaux M, Doyon J, Dvorak A, Edde M, Foias A, Garyfallidis E, Gilbert G,
-Girard G, Glatard T, Harita S, Klassen LM, Lodygensky G, MacKay AL, Narayanan
-S, Niso G, Pernet C, Pot-Nynke L, Stikov N (2022). Complementary combination
-of open-source tools to harmonize multi-site diffusion MRI data.
+Gorgolewski KJ, Alfaro-Almagro F, Auer T, Bellec P, Capotă M, Chakravarty MM,
+Churchill NW, Cohen AL, Craddock RC, Devenyi GA, Eklund A, Esteban O,
+Flandin G, Ghosh SS, Guntupalli JS, Jenkinson M, Keshavan A, Kiar G, Liem F,
+Raamana PR, Raffelt D, Steele CJ, Quirion PO, Smith RE, Strother SC,
+Varoquaux G, Wang Y, Yarkoni T, Poldrack RA (2017). BIDS apps: Improving
+ease of use, accessibility, and reproducibility of neuroimaging data analysis
+methods. *PLOS Computational Biology*, 13(3), e1005209.
+https://doi.org/10.1371/journal.pcbi.1005209
+
+Jezzard P, Balaban RS (1995). Correction for geometric distortion in echo
+planar images from B0 field variations. *Magnetic Resonance in Medicine*,
+34(1), 65–73. https://doi.org/10.1002/mrm.1910340111
+
+Karakuzu A, Fraser L, Bhatt P, Khan AR, Agah E, Descoteaux M, Doyon J,
+Dvorak A, Edde M, Foias A, Garyfallidis E, Gilbert G, Girard G, Glatard T,
+Harita S, Klassen LM, Lodygensky G, MacKay AL, Narayanan S, Niso G,
+Pernet C, Pot-Nynke L, Stikov N (2022). Complementary combination of
+open-source tools to harmonize multi-site diffusion MRI data.
 OpenNeuro dataset ds004712.
 https://doi.org/10.18112/openneuro.ds004712.v1.0.1
 
@@ -66,6 +88,15 @@ National Electrical Manufacturers Association (NEMA) (2024). *DICOM PS3:
 Digital Imaging and Communications in Medicine* (NEMA Standards Publication
 PS 3). Retrieved from https://www.dicomstandard.org/
 
+Schaefer A, Kong R, Gordon EM, Laumann TO, Zuo XN, Holmes AJ, Eickhoff SB,
+Yeo BTT (2018). Local-global parcellation of the human cerebral cortex from
+intrinsic functional connectivity MRI. *Cerebral Cortex*, 28(9), 3095–3114.
+https://doi.org/10.1093/cercor/bhx179
+
+Smith RE, Tournier JD, Calamante F, Connelly A (2013). SIFT:
+Spherical-deconvolution informed filtering of tractograms. *NeuroImage*,
+67, 298–312. https://doi.org/10.1016/j.neuroimage.2012.11.049
+
 Tournier JD, Smith RE, Raffelt D, Tabbara R, Dhollander T, Pietsch M,
 Christiaens D, Jeurissen B, Yeh CH, Connelly A (2019). MRtrix3: A fast,
 flexible and open software framework for medical image processing and
@@ -73,9 +104,8 @@ visualisation. *NeuroImage*, 202, 116137.
 https://doi.org/10.1016/j.neuroimage.2019.116137
 
 van der Meer JN, Charbonnier L, Cedernaes J, Fischer K, Hidalgo-Lopez E,
-Pachoud B, Parmentier R, Bayer J, Bhatt P, Bhatt S, Bhatt M, Dresler M,
-Helfrich RF, Bhatt DL, Bhatt P, Born J, Bhatt M, Bhatt S, Wilhelm I (2020).
-Stockholm SleepyBrain dataset. OpenNeuro dataset ds000201.
+Pachoud B, Parmentier R, Bayer J, Dresler M, Helfrich RF, Born J,
+Wilhelm I (2020). Stockholm SleepyBrain dataset. OpenNeuro dataset ds000201.
 https://doi.org/10.18112/openneuro.ds000201.v1.0.3
 
 Wilkinson MD, Dumontier M, Aalbersberg IJ, Appleton G, Axton M, Baak A,

@@ -238,9 +238,15 @@ completeness scores for the source-integrity criteria, which will return
 unknown rather than evaluated. A fifth limitation is that the
 sensitivity and NPV estimates from the primary cohort rest on n=3
 confirmed failures across 69 sessions; confidence intervals are
-correspondingly wide. A powered external validation
-for VECTA-DWI-014 requires a cohort with sufficient failure events to
-permit cross-site variance estimation; the full TrackTBI cohort
+correspondingly wide. Additionally, the CIDUR cohort served as the primary
+development context for the criteria — the PhaseEncodingDirection absence
+issue (VECTA-DWI-021) was known from curation records before criterion
+specification was finalized — making this an in-sample evaluation. The
+performance estimates therefore reflect criterion behavior on familiar
+data rather than out-of-sample generalization; independent outcome-based
+external validation requires the full TrackTBI cohort. A powered external
+validation for VECTA-DWI-014 requires a cohort with sufficient failure
+events to permit cross-site variance estimation; the full TrackTBI cohort
 (approximately 600 sessions across multiple sites) is designed to provide
 this. The MASiVar prequal-v1.0.0 derivatives show that all five VECTA-DWI-030
 sessions produce no preprocessed NIfTI output; however, this pattern

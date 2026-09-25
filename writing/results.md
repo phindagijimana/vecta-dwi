@@ -230,8 +230,10 @@ sessions are flagged. Wilson 95% CIs in brackets.
 |---|---|---|---|---|---|---|---|---|---|
 | 0 | BIDS Validator errors > 0 | 0 | 0 | 66 | 3 | 0.000 [0.000, 0.561] | 1.000 [0.945, 1.000] | — | 0.957 [0.880, 0.985] |
 | 1 | PhaseEncodingDirection absent OR TotalReadoutTime absent | 2 | 0 | 66 | 1 | 0.667 [0.208, 0.939] | 1.000 [0.945, 1.000] | 1.000 [0.342, 1.000] | 0.985 [0.920, 0.997] |
-| 2 | Vecta Core (readiness ≠ ready) | 3 | 40 | 26 | 0 | 1.000 [0.439, 1.000] | 0.394 [0.285, 0.515] | 0.070 [0.024, 0.186] | 1.000 [0.871, 1.000] |
-| 3 | Vecta + DICOM source integrity | 3 | 40 | 26 | 0 | 1.000 [0.439, 1.000] | 0.394 [0.285, 0.515] | 0.070 [0.024, 0.186] | 1.000 [0.871, 1.000] |
+| 2 | Vecta Core (readiness ≠ ready) | 3ᵃ | 40 | 26 | 0 | 1.000 [0.439, 1.000] | 0.394 [0.285, 0.515] | 0.070 [0.024, 0.186] | 1.000 [0.871, 1.000] |
+| 3 | Vecta + DICOM source integrity | 3ᵃ | 40 | 26 | 0 | 1.000 [0.439, 1.000] | 0.394 [0.285, 0.515] | 0.070 [0.024, 0.186] | 1.000 [0.871, 1.000] |
+
+ᵃ sub-076 (the ready_with_limitations failure) failed at the eddy step for an undetermined cause distinct from the VECTA-DWI-014 condition; 40 other sessions with the same VECTA-DWI-014 finding succeeded. Vecta correctly classified sub-076 as flagged but the QSIPrep failure mechanism was not the criterion's stated condition. See Results: Notable individual cases.
 
 Level 0 (BIDS Validator errors) flags no sessions: all three failures
 produced zero BIDS Validator errors. Level 1 (absent PhaseEncodingDirection
@@ -267,11 +269,12 @@ To assess whether the absence of SDC in ready_with_limitations sessions
 (all GE) was associated with degraded connectome output quality, we
 compared tractography yield and downstream QC status between readiness
 groups across the 58 subjects with available connectome data (26 ready,
-32 ready_with_limitations). The QSIRecon configuration used a fixed
-tractography target of 10 million streamlines per session via iFOD2
-(MRtrix3); all 58 sessions with connectivity outputs achieved this
-target, indicating equivalent tractography yield regardless of SDC
-status. The CSD reconstruction pipeline used here does not produce
+32 ready_with_limitations). The QSIRecon configuration used a fixed tractography target of 10 million
+streamlines per session via iFOD2 (MRtrix3), filtered using SIFT (Smith
+et al., 2013), and parcellated using the Schaefer 200-region cortical
+atlas (Schaefer et al., 2018); all 58 sessions with connectivity outputs
+achieved this target, indicating equivalent tractography yield regardless
+of SDC status. The CSD reconstruction pipeline used here does not produce
 voxel-wise DTI-derived FA maps; therefore, a tract-weighted FA comparison
 between groups is not available from the current outputs. Both groups
 produced connectome outputs and passed downstream QC (connectome and
@@ -319,11 +322,11 @@ p = 0.022 uncorrected), suggesting that acquisition parameter differences
 between groups contribute to regional strength variation independent of SDC.
 
 The direction of the OFC finding is consistent with the known behavior of EPI
-geometric distortion in that region: in the absence of SDC, susceptibility-induced
-field inhomogeneity near the orbital plate displaces voxels in the phase-encode
-direction, which in anterior OFC typically shifts the image boundary anteriorly
-into adjacent white matter, potentially inflating apparent cortical streamline
-counts in that region. However, the presence of acquisition differences between
+geometric distortion in that region (Jezzard &amp; Balaban, 1995): in the absence
+of SDC, susceptibility-induced field inhomogeneity near the orbital plate
+displaces voxels in the phase-encode direction, which in anterior OFC
+typically shifts the image boundary anteriorly into adjacent white matter,
+potentially inflating apparent cortical streamline counts in that region. However, the presence of acquisition differences between
 groups prevents causal attribution of this finding to SDC status alone; the
 observation is hypothesis-generating rather than confirmatory evidence of an
 SDC effect. These findings are reported to characterize the scope of
@@ -578,7 +581,15 @@ the BIDS sidecar at the time of conversion, without DICOM access.
 
 Table 8 presents the criterion activation pattern across all five datasets.
 Each criterion was activated in at least one dataset, with the exception of
-VECTA-DWI-001 and VECTA-DWI-040, which did not trigger in any cohort.
+VECTA-DWI-001 and VECTA-DWI-040, which did not trigger in any of the five
+reported cohorts. VECTA-DWI-001 does activate in the pre-intervention
+analysis (n=2, sub-036 and sub-069; see Pre-intervention sensitivity
+analysis below), where the dcm2niix Skyra export produced only an unsigned
+PhaseEncodingAxis field without the signed PhaseEncodingDirection required
+by downstream pipelines — demonstrating that the criterion fires under
+real-world conditions, though infrequently and in a context driven by a
+specific dcm2niix/scanner interaction. VECTA-DWI-040 has not been observed
+to trigger in any real cohort and is validated via the synthetic fixture suite.
 VECTA-DWI-014 and VECTA-DWI-021 exhibited complementary co-occurrence
 (SleepyBrain) and mutually exclusive patterns (MASiVar, ON-Harmony), reflecting
 distinct acquisition and metadata practices. VECTA-DWI-030 activated exclusively in MASiVar, where preprocessing

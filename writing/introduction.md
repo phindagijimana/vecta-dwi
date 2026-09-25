@@ -4,15 +4,16 @@ Diffusion-weighted MRI (DWI) is widely used in research applications
 ranging from structural connectomics to white matter tract analysis.
 Specialized preprocessing pipelines such as QSIPrep (Cieslak et al.,
 2021), MRtrix3 (Tournier et al., 2019), and FSL's eddy (Andersson &
-Sotiropoulos, 2016) have standardized the transformation from raw DWI
-acquisitions to analysis-ready outputs, but these pipelines depend on
+Sotiropoulos, 2016), typically distributed as BIDS Apps (Gorgolewski et
+al., 2017), have standardized the transformation from raw DWI acquisitions
+to analysis-ready outputs, but these pipelines depend on
 specific data properties being present and correctly preserved from the
 scanner through the Brain Imaging Data Structure (BIDS; Gorgolewski et
-al., 2016) conversion step. Susceptibility distortion correction, for example,
-requires a reverse phase-encoding reference acquisition, a
-PhaseEncodingDirection field in the BIDS sidecar, and a TotalReadoutTime
-value; without these, distortion correction is not applicable and may
-proceed silently without correction. When these requirements are unmet,
+al., 2016) conversion step. Susceptibility distortion correction via reversed phase-encoding
+(Andersson et al., 2003), for example, requires a reverse
+phase-encoding reference acquisition, a PhaseEncodingDirection field in
+the BIDS sidecar, and a TotalReadoutTime value; without these, distortion
+correction is not applicable and may proceed silently without correction. When these requirements are unmet,
 preprocessing pipelines may fail with uninformative error messages, skip
 processing steps without reporting them, or complete without error while
 producing outputs of reduced validity. Discovering such data
@@ -66,10 +67,11 @@ rating, an evidence chain anchored to pipeline requirements and published
 standards, and a recommended remediation action, enabling targeted
 investigation rather than manual review of entire datasets.
 
-We applied Vecta-DWI to 62 BIDS-converted DWI sessions from the CIDUR
-cohort at the University of Rochester Medical Center, acquired across
-three scanner models from two vendors at two field strengths and
-augmented with original DICOM source data. We compared Vecta readiness
+We applied Vecta-DWI to the primary 62-session BIDS cohort from the
+CIDUR study at the University of Rochester Medical Center (derived from a
+71-session pre-intervention dataset), acquired across three scanner
+models from two vendors at two field strengths and augmented with
+original DICOM source data. We compared Vecta readiness
 states and criterion-level findings against QSIPrep v0.23.1 processing
 outcomes, testing whether structural metadata integrity checks performed
 before preprocessing correctly stratify sessions by downstream processing

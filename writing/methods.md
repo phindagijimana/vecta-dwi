@@ -165,8 +165,9 @@ described in the Results.
 
 To benchmark Vecta's criterion-level classification against simpler detection
 approaches, four detection levels were evaluated against QSIPrep processing
-outcomes on the 60 CIDUR sessions with available outcomes (sub-009 ses-1 and
-ses-2 were excluded because no QSIPrep outcome was available for either). The
+outcomes on the 69 sessions with confirmed QSIPrep outcomes (sub-009 ses-1 and
+ses-2 were excluded as no QSIPrep outcome was available; the extended outcome
+cohort is described in Results). The
 four levels were operationalized as follows:
 
 - **Level 0 (BIDS Validator only):** A session was flagged if its
@@ -185,9 +186,11 @@ cross-tabulated against QSIPrep success. Standard 2×2 performance metrics were
 computed: sensitivity (TP / (TP + FN)), specificity (TN / (TN + FP)), positive
 predictive value (PPV; TP / (TP + FP)), and negative predictive value (NPV;
 TN / (TN + FN)), where a positive is a flagged session and a case is a QSIPrep
-failure. PPV is undefined when no sessions are flagged. Computations were
-executed using scripts/compute_ablation_table.py against the per-session
-vecta.json outputs and the outcomes_long.tsv file produced by vecta join-outcomes.
+failure. PPV is undefined when no sessions are flagged. Ninety-five percent
+confidence intervals for all proportions were computed using the Wilson score
+method (Brown et al., 2001). Computations were executed using
+scripts/compute_ablation_table.py against the per-session vecta.json outputs
+and the outcomes_long.tsv file produced by vecta join-outcomes.
 
 ## TrackTBI transportability pilot
 
