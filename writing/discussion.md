@@ -89,7 +89,10 @@ the underlying condition in both cases.
 
 The criterion-level attribution provided by Vecta adds information
 beyond a binary pass/fail by identifying the specific evidence layer
-at which the problem originated and the recommended remediation. In the
+at which the problem originated and the recommended remediation — an
+approach consistent with quality assurance frameworks that have
+demonstrated measurable impact on downstream DWI metrics
+(Roalf et al., 2016). In the
 case of VECTA-DWI-014, the finding identified that the limitation was a
 site-level protocol decision rather than a data artifact, enabling
 researchers to accurately characterize their distortion-correction
@@ -257,6 +260,10 @@ therefore rests on S3 source confirmation of absent bvec files. The
 observed associations between Vecta findings and preprocessing outcomes
 should be interpreted as exploratory evidence supporting criterion face
 validity rather than calibrated predictive performance.
+Broader analysis variability in neuroimaging — where the same dataset
+analyzed by different teams produces substantially different conclusions
+(Botvinik-Nezer et al., 2020) — further motivates prospective readiness
+certification as a prerequisite to analysis.
 A sixth limitation is that Vecta's assessment scope begins at the BIDS
 representation layer and does not evaluate the correctness or
 completeness of the DICOM-to-BIDS conversion. The CIDUR dataset
@@ -295,7 +302,9 @@ by the modality-agnostic design of the criteria engine and output
 schema, but will require new specification components (variables,
 criteria, and profiles) developed and validated for each modality
 independently. We envision Vecta as a pre-processing readiness layer
-that, if integrated into neuroimaging workflows, could surface data
-integrity issues at the point where remediation is still possible —
-before computational resources have been committed and before
-downstream analyses have been performed on data of uncertain integrity.
+that, if integrated into neuroimaging workflows consistent with best
+practices for neuroimaging data management (Nichols et al., 2017),
+could surface data integrity issues at the point where remediation is
+still possible — before computational resources have been committed and
+before downstream analyses have been performed on data of uncertain
+integrity.

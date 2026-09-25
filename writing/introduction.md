@@ -21,6 +21,23 @@ insufficiencies only after preprocessing has been attempted wastes
 computational resources and introduces delays that are particularly
 costly in large multi-site studies.
 
+The scale of this problem is substantial. Variability in analytic
+choices and data handling contributes to low reproducibility in
+neuroimaging findings (Botvinik-Nezer et al., 2020; Nichols et al.,
+2017), and inconsistent acquisition and conversion practices are a
+primary source of that variability in DWI studies. Roalf et al. (2016)
+demonstrated that scanner and site differences produce systematic
+variation in DWI-derived metrics that can rival or exceed effect sizes
+of interest, underscoring the importance of detecting acquisition
+irregularities before they propagate through analysis. Large open
+repositories such as OpenNeuro (Markiewicz et al., 2021) have made
+multi-site, multi-scanner DWI datasets widely accessible but have also
+revealed the heterogeneity of acquisition and conversion practices
+across sites. Metadata fields required by modern pipelines are
+frequently absent, inconsistently populated, or silently dropped during
+DICOM-to-BIDS conversion, and these deficiencies are not reliably
+surfaced by existing validation tools.
+
 Several existing tools address complementary aspects of DWI data
 management without fully addressing this problem. The BIDS Validator
 (bids-standard/bids-validator) checks whether a dataset conforms to the
@@ -79,6 +96,14 @@ success. We report the assessment completeness, finding prevalence,
 readiness distribution, and positive predictive value for each readiness
 tier, and describe individual cases where the criterion-level attribution
 provided information not recoverable from aggregate pipeline success
-rates. To facilitate validation and adoption, the Vecta-DWI
-specification, engine, synthetic test fixtures, and analysis scripts are
-publicly available (github.com/phindagijimana/vecta-dwi).
+rates. Specifically, this work: (1) introduces the DBI construct and its
+four formal properties; (2) describes the Vecta-DWI v0.1 specification,
+engine, and open-source implementation; (3) validates criterion
+predictions against confirmed QSIPrep v0.23.1 outcomes across a
+69-session primary cohort spanning two vendors; (4) demonstrates
+criterion stability across five independent datasets totaling 614
+sessions; and (5) presents case studies illustrating cross-layer
+inference that binary readiness tools cannot perform. To facilitate
+validation and adoption, the Vecta-DWI specification, engine, synthetic
+test fixtures, and analysis scripts are publicly available
+(github.com/phindagijimana/vecta-dwi).

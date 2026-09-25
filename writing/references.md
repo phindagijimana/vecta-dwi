@@ -15,6 +15,12 @@ between studies diffusion MRI data using a non-parametric framework for
 movement and distortion correction. *NeuroImage*, 184, 801–812.
 https://doi.org/10.1016/j.neuroimage.2018.09.073
 
+Botvinik-Nezer R, Holzmeister F, Camerer CF, Dreber A, Johannesson M,
+Kirchler M, Kwon M, Olsson J, Talluri P, Poldrack RA, Schonberg T
+(2020). Variability in the analysis of a single neuroimaging dataset by
+many teams. *Nature*, 582, 84–88.
+https://doi.org/10.1038/s41586-020-2314-9
+
 Brown LD, Cai TT, DasGupta A (2001). Interval estimation for a binomial
 proportion. *Statistical Science*, 16(2), 101–117.
 https://doi.org/10.1214/ss/1009213286
@@ -84,9 +90,27 @@ neuroimaging data analysis: DICOM to NIfTI conversion.
 *Journal of Neuroscience Methods*, 264, 47–56.
 https://doi.org/10.1016/j.jneumeth.2016.03.001
 
+Markiewicz CJ, Gorgolewski KJ, Feingold F, Blair R, Halchenko Y,
+Miller E, Hardcastle N, Gorges D, Bhatt P, Poldrack RA (2021). The
+OpenNeuro resource for sharing of neuroscience data. *eLife*, 10,
+e71774. https://doi.org/10.7554/eLife.71774
+
 National Electrical Manufacturers Association (NEMA) (2024). *DICOM PS3:
 Digital Imaging and Communications in Medicine* (NEMA Standards Publication
 PS 3). Retrieved from https://www.dicomstandard.org/
+
+Nichols TE, Das S, Eickhoff SB, Evans AC, Glatard T, Hanke M,
+Kriegeskorte N, Milham MP, Poldrack RA, Poline JB, Proal E, Thirion B,
+Van Essen DC, White T, Yeo BTT (2017). Best practices in data analysis
+and sharing in neuroimaging using MRI. *Nature Neuroscience*, 20, 299–303.
+https://doi.org/10.1038/nn.4500
+
+Roalf DR, Quarmley M, Elliott MA, Satterthwaite TD, Vandekar SN,
+Ruparel K, Gennatas ED, Calkins ME, Moore TM, Hopson R, Prabhakaran K,
+Jackson CT, Verma R, Hakonarson H, Gur RC, Gur RE (2016). The impact of
+quality assurance assessment on diffusion tensor imaging outcomes in a
+large-scale population-based cohort. *NeuroImage*, 125, 903–912.
+https://doi.org/10.1016/j.neuroimage.2015.10.064
 
 Schaefer A, Kong R, Gordon EM, Laumann TO, Zuo XN, Holmes AJ, Eickhoff SB,
 Yeo BTT (2018). Local-global parcellation of the human cerebral cortex from
