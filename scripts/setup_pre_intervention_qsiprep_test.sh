@@ -20,7 +20,7 @@ set -euo pipefail
 FOR_REVIEW=/mnt/nfs/home/URMC-SH/pndagiji/Documents/CIDUR_BIDS/for_review/special_cases_vendor
 MAIN_BIDS=/mnt/nfs/home/URMC-SH/pndagiji/Documents/CIDUR_BIDS/data_bids
 QSIPREP_SIF=/mnt/nfs/home/URMC-SH/pndagiji/Documents/others/containers/qsiprep.sif
-FS_LICENSE=${FS_LICENSE:-/mnt/nfs/home/URMC-SH/pndagiji/Documents/others/containers/license.txt}
+FS_LICENSE=${FS_LICENSE:-/mnt/nfs/home/urmc-sh.rochester.edu/pndagiji/Documents/others/data_mining/freesurfer/license.txt}
 TEST_DIR=${TEST_DIR:-/mnt/nfs/home/URMC-SH/pndagiji/Documents/cidur_pre_intervention_qsiprep_test}
 BIDS_DIR=$TEST_DIR/bids
 OUT_DIR=$TEST_DIR/output
