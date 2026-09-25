@@ -526,6 +526,7 @@ triggered. Dash: DICOM not available; criterion not evaluated.
 | VECTA-DWI-014: Reverse PE unavailable | **34 (54.8%)** | **10 (100%)** | **76 (100%)** | 0 | **1 (0.6%)** |
 | VECTA-DWI-021: Essential metadata absent | 0 | 0 | **76 (100%)** | **281 (100%)** | 0 |
 | VECTA-DWI-030: Gradient file missing | 0 | 0 | 0 | **5 (1.8%)** | 0 |
+| VECTA-DWI-031: Gradient norms implausible | 0ᶜ | 0ᶜ | 0ᶜ | 0ᶜ | 0ᶜ |
 | VECTA-DWI-040: No DWI present | 0 | 0 | 0 | 0 | 0 |
 | VECTA-DWI-050: DICOM geometry inconsistent | 0/61ᵇ | — | — | — | — |
 | VECTA-DWI-060: DICOM/BIDS field-strength mismatch | 0/61ᵇ | — | — | — | — |
@@ -533,3 +534,46 @@ triggered. Dash: DICOM not available; criterion not evaluated.
 ᵃ 27 Philips sessions (sub-cIIs\* subjects) lacked JSON sidecars and were not
 assessed; 281 assessed sessions shown. ᵇ DICOM available for CIDUR only;
 evaluated for 61/62 sessions (one not applicable due to DICOM directory mismatch).
+ᶜ VECTA-DWI-031 was not activated in any dataset (all bvec files had unit-norm
+gradient vectors as expected from dcm2niix conversion); criterion validity was
+confirmed via controlled defect injection (see Section "Controlled criterion
+validation" below).
+
+## Controlled criterion validation
+
+To provide direct evidence that each Vecta-DWI criterion fires exactly when
+its target condition is present — and is silent otherwise — we applied
+controlled defect injection to a single known-good session. Sub-001 ses-1
+(Siemens Prisma, 67 directions, reverse-PE EPI fieldmap, Vecta baseline
+readiness: *ready*) was copied five times; four copies each received one
+precisely defined defect; one remained as an unmodified control. Vecta was
+run on all five subdatasets using the `dwi_connectomics` profile. Results are
+shown in Table 9.
+
+**Table 9.** Controlled defect injection: injected defect, criterion expected
+to fire, observed Vecta readiness, and observed findings.
+
+| Defect ID | Injected defect | Expected criterion | Observed readiness | Observed findings |
+|---|---|---|---|---|
+| baseline | None (control) | None | ready | [] |
+| def-021 | `PhaseEncodingDirection` removed from DWI sidecar | VECTA-DWI-021 | review\_required | VECTA-DWI-001, VECTA-DWI-021 |
+| def-014 | Reverse-PE EPI fieldmap deleted | VECTA-DWI-014 | ready\_with\_limitations | VECTA-DWI-014 |
+| def-030 | DWI `.bvec` file deleted | VECTA-DWI-030 | not\_ready | VECTA-DWI-030 |
+| def-031 | Non-zero bvec norms scaled to 0.5 | VECTA-DWI-031 | ready\_with\_limitations | VECTA-DWI-031 |
+
+All four criterion-level predictions were confirmed: each criterion fired
+exclusively for its target defect, and the baseline remained *ready* with no
+findings. The readiness states were also as expected: def-021 escalated to
+*review_required* because VECTA-DWI-001 (unsigned PE direction) co-fires
+whenever PhaseEncodingDirection is absent (VECTA-DWI-001 is a review
+criterion); def-030 produced *not_ready* because VECTA-DWI-030 is designated
+blocking (tractography cannot proceed without gradient files); def-014 and
+def-031 produced *ready_with_limitations* as non-blocking non-review criteria.
+VECTA-DWI-031 was not observed to fire in any real-world cohort — all bvec
+files produced by dcm2niix carried unit-norm gradient vectors — but the
+injection confirms the detection logic functions as designed.
+
+The QSIPrep processing predictions derived from each Vecta readiness state
+(FAILURE for def-021 and def-030; no-SDC fallback for def-014; eddy warning
+for def-031; SUCCESS for baseline) have not yet been empirically confirmed
+with QSIPrep runs; those jobs are queued as future work.
