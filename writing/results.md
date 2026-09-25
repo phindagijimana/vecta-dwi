@@ -178,7 +178,8 @@ a harder block than initially predicted, consistent with VECTA-DWI-021's
 review_required designation.
 
 Table 3 presents the joint distribution of Vecta readiness state and
-QSIPrep outcome across the extended outcome cohort (n=69 confirmed).
+QSIPrep outcome across the extended outcome cohort (n=71 sessions tracked;
+69 with confirmed QSIPrep outcomes, 2 without).
 
 | Vecta readiness | QSIPrep success | QSIPrep failure | No QSIPrep outcome | Total |
 |---|---|---|---|---|
@@ -345,7 +346,7 @@ data and expose the specific layer (DWI versus anatomical) at which the
 block occurred, enabling targeted remediation decisions without
 full-dataset manual review.
 
-**sub-076 ses-1.** The only QSIPrep failure in the cohort. Vecta rated
+**sub-076 ses-1.** The only QSIPrep failure in the 62-session primary BIDS cohort. Vecta rated
 this session ready_with_limitations on account of VECTA-DWI-014. The
 session was a GE legacy acquisition without distortion-correction
 support; QSIPrep produced anatomical derivatives but no preprocessed
@@ -399,7 +400,7 @@ All five 2-week sessions produced valid preprocessed DWI outputs (5/5,
 batch; Vecta assessed those DWI acquisitions as structurally intact, with
 no criterion triggered beyond VECTA-DWI-014. This pilot result is
 consistent with the ready_with_limitations processing success rate
-observed in the CIDUR cohort (97.1%) and indicates that VECTA-DWI-014
+observed in the CIDUR cohort (97.6%; 40/41) and indicates that VECTA-DWI-014
 correctly characterizes the distortion-correction limitation without
 blocking processing in either dataset.
 
@@ -553,10 +554,10 @@ The seven remaining excluded sessions triggered VECTA-DWI-014 only
 (no reverse-PE EPI fieldmap) — the same condition as the 34 GE sessions
 in the retained cohort. Their curation exclusion was a protocol-selection
 decision (non-standard gradient direction count) not detectable from
-sidecar metadata, and is outside Vecta's DBI scope. QSIPrep has been
-submitted for these 7 sessions; results are pending. Based on the 33/34
-success rate observed for the same criterion in the main cohort,
-successful QSIPrep completion is expected. One shared session showed a
+sidecar metadata, and is outside Vecta's DBI scope. QSIPrep was
+submitted for all 7 sessions; all 7 succeeded with full DWI derivatives,
+consistent with the 40/41 (97.6%) success rate observed for the same
+criterion across the extended outcome cohort. One shared session showed a
 readiness change (ready → ready_with_limitations) after the curation
 step removed one of its two complementary-PE DWI acquisitions; Vecta's
 sidecar-level reverse-PE detection had identified the pair, and

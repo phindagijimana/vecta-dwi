@@ -3,7 +3,7 @@
 In this study, we describe Vecta-DWI, a declarative framework for
 assessing Data Birth Integrity of DWI datasets before preprocessing. We
 applied the framework to 71 CIDUR sessions spanning three readiness
-states and confirmed QSIPrep v0.23.1 outcomes for 62 sessions. Three
+states and confirmed QSIPrep v0.23.1 outcomes for 69 sessions. Three
 QSIPrep failures were observed across three readiness states; all three
 occurred in sessions Vecta had flagged as non-ready. The failure rate
 was 0% for ready sessions (0/26), 2.4% for ready_with_limitations
@@ -59,7 +59,7 @@ a valid signed PhaseEncodingDirection and TotalReadoutTime and was
 invisible to any metadata-completeness check. Level 2 (Vecta Core)
 captures all three failures because VECTA-DWI-014 and VECTA-DWI-021
 are independent criteria evaluating complementary evidence layers.
-Sensitivity is 0.000 (Level 0), 0.667 [0.155, 0.957] (Level 1),
+Sensitivity is 0.000 (Level 0), 0.667 [0.208, 0.939] (Level 1),
 and 1.000 [0.439, 1.000] (Level 2); NPV is 0.957, 0.985, and 1.000
 respectively. These values rest on n=3 confirmed failures across n=69
 confirmed sessions; the sensitivity and NPV confidence intervals are
@@ -158,11 +158,13 @@ and prior to any filename-label decision. The root cause (dcm2niix populating
 only the unsigned PhaseEncodingAxis field on two Siemens Skyra acquisitions)
 is invisible to BIDS Validator and undetectable from BIDS filenames alone.
 Vecta's finding directly predicts the downstream preprocessing consequence:
-without a signed PhaseEncodingDirection, susceptibility distortion correction
-fails at the SDC calibration step — confirmed empirically in the TrackTBI
-cohort under the same condition. This convergence of three independent
-pathways — Vecta sidecar finding, curation exclusion via filename detection,
-and confirmed QSIPrep failure — supports the face validity of VECTA-DWI-021
+without a signed PhaseEncodingDirection, QSIPrep crashes at the DWI
+parameter-extraction step (`get_acq_parameters_df` in `merge.py`) —
+confirmed empirically in the CIDUR pre-intervention runs for sub-036 and
+sub-069, and via controlled defect injection (def-021). This convergence
+of three independent pathways — Vecta sidecar finding, curation exclusion
+via filename detection, and confirmed QSIPrep failure — supports the face
+validity of VECTA-DWI-021
 and demonstrates that sidecar-level metadata assessment detects preprocessing
 prerequisites that neither conformance checking nor filename inspection can
 resolve. The readiness regression in sub-002 ses-3, where the curation step
@@ -228,15 +230,15 @@ artifacts, thermal noise, signal dropout — that are not detectable from
 BIDS metadata alone. Image quality assessment, as provided by tools such
 as MRIQC (Esteban et al., 2017) or eddyqc (Bastiani et al., 2019), addresses a complementary and
 downstream evidence layer; we regard these tools as orthogonal to
-Vecta's scope rather than competitors. A third limitation is that
+Vecta's scope rather than competitors. A fourth limitation is that
 DICOM-source module variables (VECTA-DWI-050, VECTA-DWI-060) require
 original DICOM to be available alongside the BIDS dataset. Sites that
 retain only the BIDS representation will receive lower assessment
 completeness scores for the source-integrity criteria, which will return
-unknown rather than evaluated. A fourth limitation is that the
-sensitivity and NPV estimates from the primary cohort rest on a single
-QSIPrep failure event. Confidence intervals on sensitivity cannot be
-meaningfully computed at this sample size. A powered external validation
+unknown rather than evaluated. A fifth limitation is that the
+sensitivity and NPV estimates from the primary cohort rest on n=3
+confirmed failures across 69 sessions; confidence intervals are
+correspondingly wide. A powered external validation
 for VECTA-DWI-014 requires a cohort with sufficient failure events to
 permit cross-site variance estimation; the full TrackTBI cohort
 (approximately 600 sessions across multiple sites) is designed to provide
@@ -249,7 +251,7 @@ therefore rests on S3 source confirmation of absent bvec files. The
 observed associations between Vecta findings and preprocessing outcomes
 should be interpreted as exploratory evidence supporting criterion face
 validity rather than calibrated predictive performance.
-A fifth limitation is that Vecta's assessment scope begins at the BIDS
+A sixth limitation is that Vecta's assessment scope begins at the BIDS
 representation layer and does not evaluate the correctness or
 completeness of the DICOM-to-BIDS conversion. The CIDUR dataset
 represents standard institutional BIDS conversion conditions: dcm2niix
