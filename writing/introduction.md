@@ -84,26 +84,32 @@ rating, an evidence chain anchored to pipeline requirements and published
 standards, and a recommended remediation action, enabling targeted
 investigation rather than manual review of entire datasets.
 
-We applied Vecta-DWI to the primary 62-session BIDS cohort from the
-CIDUR study at the University of Rochester Medical Center (derived from a
-71-session pre-intervention dataset), acquired across three scanner
-models from two vendors at two field strengths and augmented with
-original DICOM source data. We compared Vecta readiness
-states and criterion-level findings against QSIPrep v0.23.1 processing
-outcomes, testing whether structural metadata integrity checks performed
-before preprocessing correctly stratify sessions by downstream processing
-success. We report the assessment completeness, finding prevalence,
-readiness distribution, and positive predictive value for each readiness
-tier, and describe individual cases where the criterion-level attribution
-provided information not recoverable from aggregate pipeline success
-rates. Specifically, this work: (1) introduces the DBI construct and its
-four formal properties; (2) describes the Vecta-DWI v0.1 specification,
-engine, and open-source implementation; (3) validates criterion
-predictions against confirmed QSIPrep v0.23.1 outcomes across a
-69-session primary cohort spanning two vendors; (4) demonstrates
-criterion stability across five independent datasets totaling 614
-sessions; and (5) presents case studies illustrating cross-layer
-inference that binary readiness tools cannot perform. To facilitate
-validation and adoption, the Vecta-DWI specification, engine, synthetic
-test fixtures, and analysis scripts are publicly available
+Criteria were developed using the Clinical Imaging Data for UR Researchers
+(CIDUR) cohort (62 sessions; three scanner models, two vendors, two field
+strengths) from the University of Rochester Medical Center as an in-sample
+development context, augmented
+with original DICOM source data. Primary external validation was
+conducted on a 1,275-session cohort (TrackTBI; 649 subjects, three
+vendors: Siemens, GE, Philips) to assess generalizability across
+acquisition platforms and institutions. We compared Vecta readiness
+states and criterion-level findings against QSIPrep
+1.0.1.dev0+gee9aa2e.d20250115 processing outcomes, testing whether
+structural metadata integrity checks performed before preprocessing
+correctly stratify sessions by downstream processing success. We report
+the assessment completeness, finding prevalence, readiness distribution,
+and predictive performance for each readiness tier, and describe
+individual cases where criterion-level attribution provided information
+not recoverable from aggregate pipeline outcomes. Specifically, this
+work: (1) introduces the DBI construct and its four formal properties;
+(2) describes the Vecta-DWI v0.1 specification, engine, and open-source
+implementation; (3) uses the CIDUR development cohort (69 confirmed
+outcomes, two vendors) to characterize two mechanistically distinct
+failure modes; (4) provides primary external validation in 1,275
+TrackTBI sessions (649 subjects, three vendors, sensitivity 0.989,
+NPV 0.984); (5) demonstrates criterion stability across three independent
+OpenNeuro datasets (549 sessions; 522 assessed); and (6) presents case
+studies illustrating cross-layer inference that binary readiness tools
+cannot perform. To facilitate validation and adoption,
+the Vecta-DWI specification, engine, synthetic test fixtures, and
+analysis scripts are publicly available
 (github.com/phindagijimana/vecta-dwi).

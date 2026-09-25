@@ -139,8 +139,9 @@ DWI protocol (b = 1000 s/mm²). Gradient table size varied by vendor:
 
 ## Assessment execution
 
-Vecta-DWI v0.1 was applied to all 62 sessions using the vecta assess
-command with the dwi_connectomics profile. Original
+All Vecta assessments in this paper used specification version v0.1.0
+(profile dwi_connectomics v0.1.0). Vecta-DWI v0.1 was applied to all 62
+sessions using the vecta assess command with the dwi_connectomics profile. Original
 DICOM was available for all sessions and was provided via the --dicom
 argument, enabling evaluation of DICOM source-integrity variables
 (VECTA.DWI.DICOM.*). All per-session assessments were written to
@@ -149,7 +150,7 @@ aggregates were produced using the vecta aggregate command.
 
 ## Outcome labeling
 
-QSIPrep v0.23.1 processing outcomes were extracted from the QSIPrep
+QSIPrep 1.0.1.dev0+gee9aa2e.d20250115 processing outcomes were extracted from the QSIPrep
 output tree using the vecta label-outcomes command. A session was
 classified as QSIPrep success (QSIPREP_SUCCESS = True) if a
 *_desc-preproc_dwi.nii.gz file was present in the session-level DWI
@@ -188,22 +189,63 @@ predictive value (PPV; TP / (TP + FP)), and negative predictive value (NPV;
 TN / (TN + FN)), where a positive is a flagged session and a case is a QSIPrep
 failure. PPV is undefined when no sessions are flagged. Ninety-five percent
 confidence intervals for all proportions were computed using the Wilson score
-method (Brown et al., 2001). Computations were executed using
+method (Brown et al., 2001). Computations were executed using Python 3.9 (NumPy 1.26.4) via
 scripts/compute_ablation_table.py against the per-session vecta.json outputs
 and the outcomes_long.tsv file produced by vecta join-outcomes.
 
-## TrackTBI transportability pilot
+## TrackTBI external validation cohort
 
-An initial transportability pilot was conducted using BIDS-converted DWI
-sessions from five participants in the TrackTBI study (Yue et al., 2013), acquired at
-Baylor College of Medicine and Massachusetts General Hospital using Siemens
-TrioTim and Skyra scanners (syngo software versions B17, B19, and D13) at
-b = 1300 s/mm² with gradient tables of 65 and 72 directions. Each participant
-contributed two longitudinal sessions (2-week and 6-month post-injury).
-Original DICOM was not available; assessment was conducted on BIDS
-representations only, with DICOM source-integrity criteria returning
-unknown. QSIPrep v0.23.1 outcomes were available for the 2-week sessions
-only; the 6-month sessions had not been processed in this batch.
+External validation was conducted using BIDS-converted DWI sessions from
+the Transforming Research and Clinical Knowledge in Traumatic Brain Injury
+(TrackTBI) study ([TODO: replace Yue et al. 2013 with full cohort citation —
+Yue et al. 2020 NEJM or FITBIR repository citation]), accessed via the Federal
+Interagency Traumatic Brain Injury Research (FITBIR) repository. The cohort comprised
+649 subjects contributing 1,275 sessions across two longitudinal time
+points: 634 sessions at 2-week post-injury (2WK) and 641 sessions at
+6-month post-injury (6MO).
+
+Sessions were acquired across multiple sites on scanners from three
+vendors: Siemens (584 sessions), GE (363 sessions), and Philips
+(328 sessions). Siemens scanner software versions spanned three
+generations: syngo MR B17 (304 sessions), syngo MR D13 (159 sessions),
+and syngo MR E11 (98 sessions). Multiple scanner models were represented
+across vendors and sites.
+
+Original DICOM was not available for any TrackTBI session; accordingly,
+assessment was conducted on BIDS representations only. DICOM
+source-integrity criteria (VECTA-DWI-050, VECTA-DWI-060) were therefore
+not evaluated for any session. DICOM-to-BIDS conversion provenance
+(conversion tool, version, and per-session parameters) was not available
+to the authors for the TrackTBI dataset; the systematic absence of
+PhaseEncodingDirection in GE and Philips sidecars may reflect specific
+scanner model, software version, or conversion tool behavior present in
+this cohort rather than a universal vendor property.
+
+QSIPrep preprocessing was conducted on the URMC HPC cluster across
+multiple processing batches (g1, g2, g3) using QSIPrep
+1.0.1.dev0+gee9aa2e.d20250115 (Singularity image qsiprep_1.0.0.sif,
+which reports version 1.0.1.dev0 at runtime).
+Outcomes were extracted from the QSIPrep output tree using the same
+procedure as the CIDUR cohort: a session was classified as QSIPrep
+success if a *_desc-preproc_dwi.nii.gz file was present in the
+session-level DWI output directory; otherwise it was classified as
+failure.
+
+Sessions were excluded from performance metric computation in two
+circumstances: (1) never_attempted sessions (n = 202) for which no
+QSIPrep run was recorded, arising from HPC resource constraints (quota
+incidents cancelling submitted jobs) and missing anatomical prerequisites
+(absent or malformed T1w) unrelated to Vecta readiness findings; and
+(2) two sessions (sub-TBI031004 ses-2WK, sub-TBI101003 ses-2WK) for
+which QSIPrep was run on post-assessment sidecars with manually patched
+PhaseEncodingDirection as part of a controlled remediation test — these
+runs do not reflect standard pipeline behavior on the original sidecar.
+The remaining 1,071 sessions with confirmed QSIPrep outcomes formed the
+basis for all sensitivity, specificity, PPV, and NPV calculations.
+
+Vecta-DWI v0.1 was applied to all 1,275 sessions using the same
+vecta assess command with the dwi_connectomics profile used for the CIDUR
+cohort. Cohort aggregates were produced using the vecta aggregate command.
 
 ## OpenNeuro public dataset validation
 

@@ -1,5 +1,34 @@
 # Results
 
+## Figure captions
+
+**Figure 1.** Vecta-DWI readiness state versus QSIPrep processing outcome in the
+CIDUR development cohort (n=71 sessions; in-sample evaluation). Stacked bars
+show the proportion of sessions in each outcome category. Failure rates were 0%
+(0/26) for ready, 2.4% (1/41) for ready_with_limitations, and 100% (2/2) for
+review_required. All three failures occurred in Vecta-flagged sessions.
+
+**Figure 2.** Detection level comparison against QSIPrep failure in the CIDUR
+cohort (n=69 confirmed outcomes; 3 failures). Grouped bars show sensitivity and
+NPV for each detection level, with Wilson 95% confidence intervals. Wide CIs
+reflect n=3 failures; the comparison is mechanistically illustrative rather than
+statistically powered.
+
+**Figure 3.** Criterion activation rate (% of sessions triggering each criterion)
+across five datasets. Gray cells indicate DICOM not available and source-integrity
+criteria therefore not evaluated. Bold text indicates any activation. The
+cross-dataset pattern illustrates that criterion co-occurrence and prevalence vary
+systematically by acquisition and conversion practice.
+
+**Figure 4.** Vecta-DWI readiness state versus QSIPrep processing outcome in the
+TrackTBI external validation cohort (n=1,273 eligible sessions; 1,071 with
+confirmed outcomes). Left: stacked proportional bars with session counts annotated.
+Right: QSIPrep failure rate per readiness tier with Wilson 95% confidence interval.
+Failure rates were 1.6% (7/451) for ready_with_limitations and 100% (620/620) for
+review_required among sessions with confirmed outcomes.
+
+---
+
 ## Study cohort and assessment completeness
 
 Six sessions were excluded from the BIDS tree before Vecta assessment due
@@ -38,19 +67,21 @@ platforms at this site (see Finding prevalence, below).
 
 ## Finding prevalence and criterion-level attribution
 
-Table 1 summarizes criterion evaluation results across the 62 assessed
-sessions.
+**Table 1.** Criterion evaluation results across the 62 CIDUR sessions.
+Triggered: number of sessions for which the criterion condition was met.
+Evaluated: sessions for which all required variables were resolvable.
+Prevalence: Triggered / Evaluated.
 
 | Criterion | Description | Triggered | Evaluated | Prevalence |
 |---|---|---|---|---|
-| VECTA-DWI-001 | Missing b=0 reference volume | 0 | 62 | 0% |
-| VECTA-DWI-014 | Reverse PE acquisition unavailable | 34 | 62 | 54.8% |
-| VECTA-DWI-021 | Essential metadata insufficient (PE direction or TotalReadoutTime absent) | 0 | 62 | 0% |
-| VECTA-DWI-030 | DWI gradient file (.bval/.bvec) missing or unparseable | 0 | 62 | 0% |
-| VECTA-DWI-031 | DWI gradient vectors have implausible norms (non-unit) | 0 | 62 | 0% |
-| VECTA-DWI-040 | No DWI acquisition present (cohort integrity) | 0 | 62 | 0% |
-| VECTA-DWI-050 | DICOM geometry inconsistency within session | 0 | 61 | 0% |
-| VECTA-DWI-060 | DICOM/BIDS field-strength disagreement | 0 | 61 | 0% |
+| VECTA-DWI-001 | Phase-encoding direction cannot be determined (review criterion) | 0 | 62 | 0% |
+| VECTA-DWI-014 | Complementary phase-encoding reference unavailable | 34 | 62 | 54.8% |
+| VECTA-DWI-021 | One or more essential metadata items missing or unknown | 0 | 62 | 0% |
+| VECTA-DWI-030 | DWI gradient file (.bval and/or .bvec) missing | 0 | 62 | 0% |
+| VECTA-DWI-031 | DWI gradient vectors have implausible norms | 0 | 62 | 0% |
+| VECTA-DWI-040 | Session has no DWI acquisition | 0 | 62 | 0% |
+| VECTA-DWI-050 | DWI DICOM series has internally inconsistent geometry | 0 | 61 | 0% |
+| VECTA-DWI-060 | MagneticFieldStrength disagrees between DICOM and BIDS sidecar | 0 | 61 | 0% |
 
 VECTA-DWI-014 was the sole triggered criterion, accounting for all 34
 ready_with_limitations findings. It triggered for every GE session
@@ -91,6 +122,11 @@ assesses structural conformance rather than acquisition characteristics,
 and are not derivable from BIDS filenames alone. The Vecta variable
 record provides a machine-readable protocol audit trail that persists
 independently of the assessment outcome.
+
+**Table 2.** Protocol configurations identified in the CIDUR cohort (n=62 sessions).
+Rows 7–10 represent four low-prevalence configurations (1 Siemens Vida Fit and 3 GE
+sessions) with heterogeneous software versions and voxel geometries not individually
+listed due to n < 2.
 
 | Configuration | Scanner | Field strength | Software | Volumes | Voxel size (mm) | n |
 |---|---|---|---|---|---|---|
@@ -135,11 +171,12 @@ cases that differentiate the two approaches — a session with an EPI
 fieldmap whose `IntendedFor` field does not reference the DWI
 acquisition, or a session with a non-EPI fieldmap type (e.g., GRE
 phasediff) that could produce a false-negative from a naive any-fmap
-check. The TrackTBI pilot provided one such case: one participant had a
-GRE dual-echo phasediff fieldmap; the naive any-fmap check would rate
-this session as having a fieldmap, while VECTA-DWI-014 correctly
-identified the absence of a reverse-PE EPI acquisition and triggered
-as expected. Beyond binary classification, Vecta provides attributes
+check. The TrackTBI cohort provided such cases: among the seven false-negative
+sessions (ready_with_limitations, QSIPrep failure), five carried a
+non-EPI fieldmap (e.g., GRE dual-echo phasediff) with corrupt or
+incomplete metadata; the naive any-fmap check would rate these sessions
+as having a fieldmap, while VECTA-DWI-014 correctly identified the absence
+of a reverse-PE EPI acquisition and triggered as expected. Beyond binary classification, Vecta provides attributes
 absent from any file-presence check: severity designation, lifecycle
 layer attribution (acquisition versus BIDS representation), evidence
 basis, potential downstream effects, and recommended remediation steps,
@@ -177,9 +214,18 @@ workflow begins, meaning QSIPrep fails regardless of fieldmap presence —
 a harder block than initially predicted, consistent with VECTA-DWI-021's
 review_required designation.
 
-Table 3 presents the joint distribution of Vecta readiness state and
-QSIPrep outcome across the extended outcome cohort (n=71 sessions tracked;
-69 with confirmed QSIPrep outcomes, 2 without).
+Note on evaluation context: The CIDUR cohort served as the primary
+development context for Vecta-DWI v0.1. The PhaseEncodingDirection absence
+issue (VECTA-DWI-021) was known from curation records before criterion
+specification was finalized. Performance estimates from this cohort therefore
+reflect criterion behavior on familiar data and should be interpreted as
+illustrative of criterion face validity rather than out-of-sample
+generalization. Independent external validation is provided by the TrackTBI
+cohort (649 subjects, 1,275 sessions; see below).
+
+**Table 3.** Joint distribution of Vecta readiness state and QSIPrep outcome
+across the extended CIDUR outcome cohort (n=71 sessions tracked; 69 with
+confirmed QSIPrep outcomes, 2 without). See footnotes for individual case details.
 
 | Vecta readiness | QSIPrep success | QSIPrep failure | No QSIPrep outcome | Total |
 |---|---|---|---|---|
@@ -223,8 +269,10 @@ are shown in brackets.
 
 **Table 4.** Performance metrics for four detection levels against QSIPrep
 processing failure as outcome (n = 69; 3 failures, 66 successes;
-2 sessions without QSIPrep outcome excluded). PPV undefined (—) when no
-sessions are flagged. Wilson 95% CIs in brackets.
+2 sessions without QSIPrep outcome excluded). This comparison is
+mechanistically illustrative: with n=3 failures, all CIs are wide and
+values should not be interpreted as precise population estimates. PPV
+undefined (—) when no sessions are flagged. Wilson 95% CIs in brackets.
 
 | Level | Description | TP | FP | TN | FN | Sensitivity [95% CI] | Specificity [95% CI] | PPV [95% CI] | NPV [95% CI] |
 |---|---|---|---|---|---|---|---|---|---|
@@ -263,76 +311,17 @@ comparison: Level 1 achieves near-perfect precision (PPV 1.000) for
 the metadata-absence mode but has systematic blind spot for the
 acquisition-absence mode.
 
-## Connectome output metrics by readiness group
+## Connectome output metrics
 
-To assess whether the absence of SDC in ready_with_limitations sessions
-(all GE) was associated with degraded connectome output quality, we
-compared tractography yield and downstream QC status between readiness
-groups across the 58 subjects with available connectome data (26 ready,
-32 ready_with_limitations). The QSIRecon configuration used a fixed tractography target of 10 million
-streamlines per session via iFOD2 (MRtrix3), filtered using SIFT (Smith
-et al., 2013), and parcellated using the Schaefer 200-region cortical
-atlas (Schaefer et al., 2018); all 58 sessions with connectivity outputs
-achieved this target, indicating equivalent tractography yield regardless
-of SDC status. The CSD reconstruction pipeline used here does not produce
-voxel-wise DTI-derived FA maps; therefore, a tract-weighted FA comparison
-between groups is not available from the current outputs. Both groups
-produced connectome outputs and passed downstream QC (connectome and
-node-strength metrics available and passing for all 58 subjects).
-These results are consistent with VECTA-DWI-014's non-blocking severity
-designation: the criterion correctly flags a methodological limitation —
-absence of distortion correction — without predicting connectome failure.
-
-## Regional connectome differences associated with SDC absence
-
-To characterize the downstream connectomic consequences of the VECTA-DWI-014
-condition beyond tractography yield, we compared regional node strength between
-the 26 Siemens (with SDC) and 32 GE (no-SDC) sessions with available connectome
-outputs. Because the two groups differ systematically in voxel size
-(Siemens ≈ 2×2×2 mm, GE 1×1×2 mm) and gradient direction count (Siemens 67,
-GE 51–53), global streamline count is not interpretable as a between-group
-metric independent of acquisition parameters. The primary metric was therefore
-an intra-subject susceptibility index — the ratio of mean node strength across
-susceptibility-sensitive regions (bilateral entorhinal, parahippocampal,
-lateral and medial orbitofrontal, fusiform, inferior temporal, and orbital
-inferior frontal) to mean node strength across non-susceptible control regions
-(bilateral postcentral, precentral, paracentral, superior parietal, precuneus,
-cuneus, and superior frontal). This ratio controls for between-subject
-differences in overall tractography yield and is independent of the voxel size
-and gradient count confounders.
-
-At the global level, mean node strength did not differ significantly between
-groups (Siemens median 199,714, GE median 199,613; Mann-Whitney U = 427,
-p = 0.87), consistent with the fixed tractography target applied equally to
-both groups. The susceptibility index was also not significantly different
-at the composite level (Siemens median 0.28, GE median 0.28; U = 379,
-p = 0.57), indicating that the mean across susceptibility-sensitive regions
-as a class was not selectively depressed in GE sessions.
-
-Per-region analysis revealed a significant between-group difference in bilateral
-lateral orbitofrontal cortex (OFC) that survived FDR correction
-(Benjamini-Hochberg). GE (no-SDC) sessions showed higher lateral OFC node
-strength than Siemens (SDC) sessions in both hemispheres
-(left: Siemens median 151,286, GE median 167,391, p_adj = 0.005;
-right: Siemens median 154,551, GE median 174,908, p_adj = 0.005). No other
-susceptibility-sensitive region reached FDR significance. Marginal
-non-significant differences were present in several non-susceptible control
-regions (e.g., left superior parietal p = 0.024, right superior frontal
-p = 0.022 uncorrected), suggesting that acquisition parameter differences
-between groups contribute to regional strength variation independent of SDC.
-
-The direction of the OFC finding is consistent with the known behavior of EPI
-geometric distortion in that region (Jezzard &amp; Balaban, 1995): in the absence
-of SDC, susceptibility-induced field inhomogeneity near the orbital plate
-displaces voxels in the phase-encode direction, which in anterior OFC
-typically shifts the image boundary anteriorly into adjacent white matter,
-potentially inflating apparent cortical streamline counts in that region. However, the presence of acquisition differences between
-groups prevents causal attribution of this finding to SDC status alone; the
-observation is hypothesis-generating rather than confirmatory evidence of an
-SDC effect. These findings are reported to characterize the scope of
-downstream consequence associated with the VECTA-DWI-014 condition and to
-demonstrate that connectome-layer differences can be detected in regions
-specifically expected to be sensitive to the flagged limitation.
+Across the 58 subjects with available connectome data (26 ready,
+32 ready_with_limitations), all sessions achieved the fixed
+10-million-streamline tractography target via iFOD2/SIFT (Smith et al.,
+2013), parcellated with the Schaefer 200-region atlas (Schaefer et al.,
+2018), and all 58 subjects passed downstream QC. This equivalence across
+readiness groups is consistent with VECTA-DWI-014's non-blocking
+severity designation: the criterion correctly flags absent distortion
+correction as a methodological limitation without predicting connectome
+yield failure.
 
 ## Notable individual cases
 
@@ -364,48 +353,140 @@ preprocessing succeeded. The inconsistency arises from the subject-level
 granularity of the QC file, not from a Vecta misclassification; ses-2
 was not assessed by Vecta (only ses-1 appeared in the session inventory).
 
-## Criterion replication: TrackTBI independent cohort
+## TrackTBI external validation
 
-To assess whether the primary triggered criterion replicated in an
-independent cohort with a different institution, scanner platform, and
-protocol, the framework was applied to a subset of five
-participants from the TrackTBI study (Yue et al., 2013). These sessions were
-acquired at Baylor College of Medicine and Massachusetts General Hospital
-using Siemens TrioTim and Skyra scanners (syngo software versions B17,
-B19, and D13) with a b = 1300 s/mm² single-shell protocol and gradient
-table sizes of 65 and 72 directions respectively — a different
-institution, scanner platform, b-value, and gradient scheme from the
-CIDUR cohort. Original DICOM was not available for this pilot;
-accordingly, DICOM source-integrity criteria (VECTA-DWI-050,
-VECTA-DWI-060) were not evaluated, and the mean assessment completeness
-ratio was 0.882 across all sessions.
+### Cohort and readiness distribution
 
-Vecta-DWI assessed all 10 sessions (5 subjects × 2 longitudinal time
-points: 2-week and 6-month post-injury) to completion. All 10 received a
-readiness state of ready_with_limitations, with VECTA-DWI-014 as the
-sole triggered criterion. None of the five participants had a
-reverse-phase-encoding EPI fieldmap; one participant had a GRE dual-echo
-phasediff fieldmap, which Vecta correctly identified as a non-EPI
-acquisition and did not treat as satisfying the reverse-PE availability
-requirement.
+Vecta-DWI was applied to 1,275 sessions from 649 subjects in the TrackTBI
+study (634 sessions at 2-week post-injury, 641 at 6-month post-injury)
+spanning three vendors: Siemens (584 sessions across multiple models and
+three syngo software generations), GE (363 sessions), and Philips
+(328 sessions). Original DICOM was not available; assessment was
+conducted on BIDS representations only, and DICOM source-integrity
+criteria (VECTA-DWI-050, VECTA-DWI-060) were not evaluated for any session.
 
-Table 5 presents the joint distribution for the five 2-week sessions,
-the only sessions for which QSIPrep outcomes were available in this
-batch.
+**Table 5.** Vecta-DWI readiness distribution across 1,275 TrackTBI sessions.
 
-| Vecta readiness | QSIPrep success | QSIPrep failure | No QSIPrep outcome | Total |
+| Readiness state | Sessions | Percentage |
+|---|---|---|
+| ready_with_limitations | 584 | 45.8% |
+| review_required | 691 | 54.2% |
+| **Total** | **1,275** | **100%** |
+
+### Vendor stratification
+
+Readiness state was perfectly stratified by vendor: all 584 Siemens
+sessions received ready_with_limitations, and all 691 GE and Philips
+sessions received review_required. No Siemens session was review_required,
+and no GE or Philips session was ready_with_limitations.
+
+The sole triggered criterion for all 584 Siemens sessions was
+VECTA-DWI-014 (reverse-PE acquisition unavailable; 45.8% of cohort),
+consistent with the CIDUR finding: Siemens sessions had intact metadata
+but lacked a reverse-phase-encoding EPI fieldmap acquisition. The sole
+triggered criteria for all 691 GE and Philips sessions were VECTA-DWI-001
+(PE direction unknown) and VECTA-DWI-021 (essential metadata absent —
+PhaseEncodingDirection or TotalReadoutTime absent from BIDS sidecar), with
+both criteria co-triggering in every case (54.2% of cohort). Review-required
+sessions received an assessment status of completed_with_unknowns; the
+mean completeness ratio for this tier (completeness_with_unknowns) reflects
+that the PE-direction variable and derived metadata fields were unresolvable
+from BIDS alone.
+
+### QSIPrep outcome distribution
+
+Of the 1,275 assessed sessions, 202 had no QSIPrep run recorded
+(never_attempted): 133 in the ready_with_limitations tier and 69 in the
+review_required tier. Never_attempted sessions arose from HPC resource
+constraints (batch quota incidents cancelling submitted jobs) and missing
+anatomical prerequisites (absent or malformed T1w for a subset of sessions),
+not from Vecta readiness findings; the decision to attempt QSIPrep was made
+independently of Vecta assessment status. Never_attempted sessions were
+unevenly distributed across readiness tiers: 133 of 584 ready_with_limitations
+sessions (22.8%) versus 69 of 689 review_required sessions (10.0%) were
+never attempted. Post-hoc review of batch submission logs indicated that the
+higher rate in ready_with_limitations reflects Siemens sessions submitted in
+earlier HPC batches that were disproportionately affected by quota incidents;
+the disproportion was not driven by readiness state. Critically, this
+asymmetry is conservative with respect to Vecta's performance estimates: the
+unattempted ready_with_limitations sessions, if attempted, would most likely
+have succeeded (observed failure rate 1.6%), not failed. These 202 sessions
+were excluded from performance metric computation.
+
+Two additional review_required sessions (sub-TBI031004 ses-2WK and
+sub-TBI101003 ses-2WK) were excluded from performance analysis: QSIPrep
+was run on post-assessment BIDS sidecars in which PhaseEncodingDirection
+had been manually patched as part of a controlled remediation test. These
+runs do not reflect standard-pipeline behavior with the original
+unmodified sidecar and are not informative about whether VECTA-DWI-021
+predicts standard QSIPrep failure. The remaining 1,071 sessions had
+confirmed QSIPrep outcomes (1,275 assessed − 202 never_attempted − 2
+post-remediation test sessions = 1,071).
+
+**Table 6.** Joint distribution of Vecta readiness state and QSIPrep
+outcome across 1,273 eligible TrackTBI sessions (1,275 assessed minus
+2 post-remediation test sessions).
+
+| Vecta readiness | QSIPrep success | QSIPrep failure | Never attempted | Total |
 |---|---|---|---|---|
-| ready_with_limitations | 5 | 0 | 5 | 10 |
-| **Total** | **5** | **0** | **5** | **10** |
+| ready_with_limitations | 444 | 7 | 133 | 584 |
+| review_required | 0 | 620 | 69 | 689 |
+| **Total** | **444** | **627** | **202** | **1,273** |
 
-All five 2-week sessions produced valid preprocessed DWI outputs (5/5,
-100%). The six-month sessions had not been run through QSIPrep in this
-batch; Vecta assessed those DWI acquisitions as structurally intact, with
-no criterion triggered beyond VECTA-DWI-014. This pilot result is
-consistent with the ready_with_limitations processing success rate
-observed in the CIDUR cohort (97.6%; 40/41) and indicates that VECTA-DWI-014
-correctly characterizes the distortion-correction limitation without
-blocking processing in either dataset.
+### Failure rates and prediction accuracy
+
+Among sessions with confirmed QSIPrep outcomes (n = 1,071), the failure
+rate was 1.6% (7/451) for ready_with_limitations sessions and 100%
+(620/620) for review_required sessions. Every review_required session
+that entered QSIPrep failed; no ready_with_limitations session that
+failed could be attributed to the reverse-PE absence condition.
+
+Performance metrics (n = 1,071 sessions with confirmed outcomes;
+627 failures, 444 successes; 202 never_attempted and 2 post-remediation
+test sessions excluded) are presented in Table 7. Wilson 95% confidence
+intervals are shown in brackets.
+
+**Table 7.** Vecta-DWI performance metrics for the TrackTBI external
+validation cohort (n = 1,071; 627 failures, 444 successes).
+A positive is a session flagged as review_required; a case is a QSIPrep
+failure. Wilson 95% CIs in brackets.
+
+| Metric | Value [95% CI] | Numerator / Denominator |
+|---|---|---|
+| Sensitivity | 0.989 [0.977, 0.995] | 620 / 627 |
+| Specificity | 1.000 [0.991, 1.000] | 444 / 444 |
+| PPV | 1.000 [0.994, 1.000] | 620 / 620 |
+| NPV | 0.984 [0.968, 0.992] | 444 / 451 |
+
+### False negatives
+
+Seven sessions were rated ready_with_limitations but failed QSIPrep.
+Five had cause=fieldmap_error: each carried a non-EPI fieldmap (e.g., a
+GRE phasediff acquisition) with corrupt or incomplete metadata. VECTA-DWI-014
+evaluates reverse-PE EPI fieldmap availability; it does not inspect
+non-EPI fieldmap metadata integrity. These five cases represent a scope
+gap: the criterion correctly identifies the absence of a reverse-PE EPI
+reference but cannot predict failure from a corrupt non-EPI fieldmap that
+the pipeline also attempts to use. The remaining 2 false negatives had
+no identified cause; their QSIPrep logs did not contain a diagnostic error
+attributable to the DWI layer.
+
+### Sensitivity analysis for never_attempted exclusion
+
+To assess whether the exclusion of 202 never_attempted sessions biases the
+performance estimates, a proportional imputation was applied: never_attempted
+sessions in each readiness tier were assigned failure rates equal to the
+observed rates for attempted sessions in that tier (1.6% for
+ready_with_limitations, 100% for review_required). Under this assumption,
+133 never_attempted ready_with_limitations sessions contribute ~2 additional
+failures; 69 never_attempted review_required sessions contribute 69 additional
+failures. The imputed sensitivity is 689/698 = 0.987 and the imputed NPV is
+574/583 = 0.985 — both within 0.002 of the observed values (0.989 and 0.984
+respectively), confirming that the exclusion does not materially affect the
+conclusions. Under the conservative worst-case scenario in which all
+202 never_attempted sessions would have failed, sensitivity falls to 0.831;
+however, this scenario is implausible for the ready_with_limitations tier,
+which had a 1.6% observed failure rate among attempted sessions.
 
 ## OpenNeuro public dataset validation
 
@@ -416,8 +497,13 @@ Meer et al., 2020), the MASiVar multisite variability dataset (ds003416;
 Cai et al., 2021), and the ON-Harmony multi-scanner harmonization dataset
 (ds004712; Karakuzu et al., 2022). No DICOM
 was available for any of these datasets; accordingly, source-integrity criteria
-(VECTA-DWI-050, VECTA-DWI-060) were not evaluated. Table 6 summarizes the
-criterion-level results across all three datasets.
+(VECTA-DWI-050, VECTA-DWI-060) were not evaluated. Table 6 in the preceding section presents TrackTBI outcome data; OpenNeuro
+criterion-level results across all three datasets are summarized in Table 8.
+
+**Table 8.** Vecta-DWI assessment summary across three OpenNeuro datasets.
+Sessions assessed, readiness distribution, criterion activation counts, and
+mean completeness ratio. DICOM not available for any dataset; source-integrity
+criteria not evaluated.
 
 | Dataset | Sessions assessed | Ready | Ready_with_limitations | Not assessed | VECTA-DWI-014 | VECTA-DWI-021 | VECTA-DWI-030 | Mean completeness |
 |---|---|---|---|---|---|---|---|---|
@@ -492,8 +578,8 @@ and cannot serve as complementary reverse-PE references, even though both AP
 and PA labeled files are physically present. A naive bidirectional-PE check
 based on filename labels (dir-AP and dir-PA present) would rate this session
 as having a valid reverse-PE reference; Vecta correctly identifies the axis
-mismatch and triggers VECTA-DWI-014. This case is analogous to the GRE phasediff
-edge case observed in the TrackTBI pilot: in both instances, a file whose label
+mismatch and triggers VECTA-DWI-014. This case is analogous to the GRE phasediff edge cases observed in the
+TrackTBI external validation cohort: in both instances, a file whose label
 suggests distortion-correction capability does not satisfy the criterion's
 metadata-level conditions.
 
@@ -505,7 +591,7 @@ pre-intervention BIDS dataset (71 sessions: the 62 retained sessions plus
 the 9 sessions whose DWI acquisitions were removed by protocol-variant
 selection; see Methods).
 
-**Table 7.** Readiness distribution before and after protocol-variant
+**Table 9.** Readiness distribution before and after protocol-variant
 selection. The pre-intervention dataset includes 9 sessions subsequently
 excluded from the analysis cohort.
 
@@ -537,7 +623,7 @@ approach identified the same two sessions through entirely independent
 evidence paths.
 
 To confirm the predicted QSIPrep failure, both sessions were submitted
-to QSIPrep v0.23.1 using the same parameters as the main cohort. Both
+to QSIPrep 1.0.1.dev0+gee9aa2e.d20250115 using the same parameters as the main cohort. Both
 failed. The crash occurred at the DWI parameter-extraction stage
 (`get_acq_parameters_df`, `qsiprep/workflows/dwi/merge.py`) when
 QSIPrep attempted a string operation (`.str.replace("-", "")`) on a
@@ -579,38 +665,37 @@ the BIDS sidecar at the time of conversion, without DICOM access.
 
 ## Cross-dataset criterion activation summary
 
-Table 8 presents the criterion activation pattern across all five datasets.
+Table 10 presents the criterion activation pattern across all five datasets.
 Each criterion was activated in at least one dataset, with the exception of
-VECTA-DWI-001 and VECTA-DWI-040, which did not trigger in any of the five
-reported cohorts. VECTA-DWI-001 does activate in the pre-intervention
-analysis (n=2, sub-036 and sub-069; see Pre-intervention sensitivity
-analysis below), where the dcm2niix Skyra export produced only an unsigned
-PhaseEncodingAxis field without the signed PhaseEncodingDirection required
-by downstream pipelines — demonstrating that the criterion fires under
-real-world conditions, though infrequently and in a context driven by a
-specific dcm2niix/scanner interaction. VECTA-DWI-040 has not been observed
-to trigger in any real cohort and is validated via the synthetic fixture suite.
-VECTA-DWI-014 and VECTA-DWI-021 exhibited complementary co-occurrence
-(SleepyBrain) and mutually exclusive patterns (MASiVar, ON-Harmony), reflecting
-distinct acquisition and metadata practices. VECTA-DWI-030 activated exclusively in MASiVar, where preprocessing
-failure was independently confirmed. Note: the assessments reported here
-used profile version v0.1 in which VECTA-DWI-030 was non-blocking
-(producing ready_with_limitations). A subsequent profile correction
-(v0.1.1) designated VECTA-DWI-030 as blocking; re-assessment under the
-corrected profile would reclassify those 5 MASiVar sessions to
-not_ready, strengthening the alignment between Vecta readiness state and
-confirmed QSIPrep failure.
-VECTA-DWI-050 and VECTA-DWI-060 were evaluable only in CIDUR (DICOM available);
-neither triggered, indicating a clean conversion in that cohort.
+VECTA-DWI-040, which did not trigger in any reported cohort and is validated
+via the synthetic fixture suite. VECTA-DWI-001 activated in the TrackTBI
+external validation cohort (691/1,275, 54.2%), where GE and Philips sessions
+lacked a signed PhaseEncodingDirection in the BIDS sidecar; it also activates
+in the CIDUR pre-intervention analysis (n=2, sub-036 and sub-069; see
+Pre-intervention sensitivity analysis below), where the dcm2niix Skyra export
+produced only an unsigned PhaseEncodingAxis field without the signed
+PhaseEncodingDirection required by downstream pipelines. VECTA-DWI-014 and
+VECTA-DWI-021 co-triggered for all 691 TrackTBI GE and Philips sessions,
+exhibited complementary co-occurrence in SleepyBrain, and showed mutually
+exclusive patterns in MASiVar and ON-Harmony, reflecting distinct acquisition
+and metadata practices across vendor platforms. VECTA-DWI-030 activated
+exclusively in MASiVar, where S3 source inspection confirmed the corresponding
+bvec files were never deposited. All results in this paper were generated
+under Vecta-DWI specification version v0.1.0; a subsequent profile update
+(v0.1.1) reclassified VECTA-DWI-030 as blocking but does not affect any
+performance metric reported here (VECTA-DWI-030 triggered only in MASiVar,
+which has no QSIPrep outcome data). VECTA-DWI-050 and VECTA-DWI-060 were evaluable only
+in CIDUR (DICOM available); neither triggered, indicating a clean conversion in
+that cohort.
 
-**Table 8.** Criterion activation across all five datasets. Bold: criterion
+**Table 10.** Criterion activation across all five datasets. Bold: criterion
 triggered. Dash: DICOM not available; criterion not evaluated.
 
-| Criterion | CIDUR (n=62) | TrackTBI (n=10) | SleepyBrain (n=76) | MASiVar (n=281ᵃ) | ON-Harmony (n=165) |
+| Criterion | CIDUR (n=62) | TrackTBI (n=1275) | SleepyBrain (n=76) | MASiVar (n=281ᵃ) | ON-Harmony (n=165) |
 |---|---|---|---|---|---|
-| VECTA-DWI-001: PE direction unknown | 0 | 0 | 0 | 0 | 0 |
-| VECTA-DWI-014: Reverse PE unavailable | **34 (54.8%)** | **10 (100%)** | **76 (100%)** | 0 | **1 (0.6%)** |
-| VECTA-DWI-021: Essential metadata absent | 0 | 0 | **76 (100%)** | **281 (100%)** | 0 |
+| VECTA-DWI-001: PE direction unknown | 0 | **691 (54.2%)** | 0 | 0 | 0 |
+| VECTA-DWI-014: Complementary PE reference unavailable | **34 (54.8%)** | **584 (45.8%)** | **76 (100%)** | 0 | **1 (0.6%)** |
+| VECTA-DWI-021: Essential metadata absent | 0 | **691 (54.2%)** | **76 (100%)** | **281 (100%)** | 0 |
 | VECTA-DWI-030: Gradient file missing | 0 | 0 | 0 | **5 (1.8%)** | 0 |
 | VECTA-DWI-031: Gradient norms implausible | 0ᶜ | 0ᶜ | 0ᶜ | 0ᶜ | 0ᶜ |
 | VECTA-DWI-040: No DWI present | 0 | 0 | 0 | 0 | 0 |
@@ -634,9 +719,9 @@ controlled defect injection to a single known-good session. Sub-001 ses-1
 readiness: *ready*) was copied five times; four copies each received one
 precisely defined defect; one remained as an unmodified control. Vecta was
 run on all five subdatasets using the `dwi_connectomics` profile. Results are
-shown in Table 9.
+shown in Table 11.
 
-**Table 9.** Controlled defect injection: injected defect, criterion expected
+**Table 11.** Controlled defect injection: injected defect, criterion expected
 to fire, observed Vecta readiness, observed findings, and confirmed QSIPrep
 outcome.
 
@@ -660,7 +745,7 @@ VECTA-DWI-031 was not observed to fire in any real-world cohort — all bvec
 files produced by dcm2niix carried unit-norm gradient vectors — but the
 injection confirms the detection logic functions as designed.
 
-QSIPrep v0.23.1 outcomes were confirmed for all five subdatasets. The failure
+QSIPrep 1.0.1.dev0+gee9aa2e.d20250115 outcomes were confirmed for all five subdatasets. The failure
 prediction was verified for def-021 and def-030, and the success prediction was
 verified for baseline, def-014, and def-031. The def-021 outcome is noteworthy:
 QSIPrep reported "QSIPrep finished successfully!" and exited with code 0, but

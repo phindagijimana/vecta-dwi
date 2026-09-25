@@ -9,10 +9,10 @@ _Complete all placeholders marked [TODO] before submission._
 (3–5 bullet points; ≤85 characters each; required by NeuroImage)
 
 - Vecta-DWI assesses DWI preprocessing readiness before pipelines run
-- All 3 QSIPrep failures occurred in Vecta-flagged sessions (sensitivity 1.000)
-- PhaseEncodingDirection absence causes silent DWI skip—undetectable from exit code
-- Criterion-level attribution maps failures to acquisition vs. metadata layers
-- Framework validated across 5 datasets: CIDUR, TrackTBI, and 3 OpenNeuro cohorts
+- TrackTBI external validation (1,275 sessions): sensitivity 0.989, NPV 0.984, PPV 1.000
+- Perfect vendor stratification: Siemens→ready_with_limitations; GE/Philips→review_required
+- PhaseEncodingDirection absence causes silent DWI skip—undetectable from pipeline exit code
+- Validated across 5 datasets: CIDUR (development), TrackTBI (1,275 sessions), 3 OpenNeuro cohorts
 
 ---
 
@@ -94,6 +94,17 @@ The authors declare no competing financial or non-financial interests.
 - [ ] CRediT — confirm with all co-authors and fill in
 - [ ] Funding — insert grant numbers from PI
 - [ ] Acknowledgments — draft with PI
-- [ ] Figures 3–6 — currently missing (readiness × outcome visual, detection level comparison, OFC surface plot, cross-dataset criterion heatmap)
-- [ ] Full TrackTBI external validation (~600 sessions) — formal outcome-based external validation
-- [ ] Abstract word count — currently 251 words (NeuroImage limit 250; trim 1 word before final submission)
+- [ ] Clark et al. (2024) — complete journal/volume/pages (PMID 39484409)
+- [ ] TrackTBI citation — replace Yue et al. (2013) with full cohort citation; marked [TODO] in methods.md
+- [ ] IRB protocol number — insert in Ethics Statement
+- [ ] CRediT — confirm with all co-authors
+- [ ] Funding — insert grant numbers from PI
+- [ ] Acknowledgments — draft with PI
+- [x] Figures 1–4 — GENERATED: figure_1_cidur_readiness_outcome.png, figure_2_detection_levels.png, figure_3_criterion_heatmap.png, figure_4_tracktbi_readiness_outcome.png (300 DPI, writing/figures/)
+- [x] Full TrackTBI external validation — COMPLETED: 1,275 sessions, sensitivity 0.989, NPV 0.984, PPV 1.000
+- [x] QSIPrep version — RESOLVED: 1.0.1.dev0+gee9aa2e.d20250115 throughout
+- [x] Abstract restructured — TrackTBI primary, CIDUR development, 250 words, CIs included
+- [x] Criterion descriptions — Table 1 aligned with spec YAML finding labels
+- [x] Never_attempted asymmetry — explained (22.8% vs 10.0%); proportional imputation added
+- [x] v0.1.1 note — removed; clean v0.1.0 version statement in methods and Table 10
+- [x] Table numbering — all 11 tables labeled and numbered consecutively

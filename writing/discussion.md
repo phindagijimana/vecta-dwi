@@ -3,7 +3,7 @@
 In this study, we describe Vecta-DWI, a declarative framework for
 assessing Data Birth Integrity of DWI datasets before preprocessing. We
 applied the framework to 71 CIDUR sessions spanning three readiness
-states and confirmed QSIPrep v0.23.1 outcomes for 69 sessions. Three
+states and confirmed QSIPrep 1.0.1.dev0+gee9aa2e.d20250115 outcomes for 69 sessions. Three
 QSIPrep failures were observed across three readiness states; all three
 occurred in sessions Vecta had flagged as non-ready. The failure rate
 was 0% for ready sessions (0/26), 2.4% for ready_with_limitations
@@ -34,8 +34,9 @@ binary classification across all 62 CIDUR sessions. This equivalence
 is expected in a cohort with no edge cases (no sessions with EPI
 fieldmaps whose IntendedFor does not reference DWI, and no sessions
 with non-EPI fieldmap types misidentified as reverse-PE capable). The
-TrackTBI pilot provided one such edge case: a session with a GRE
-phasediff fieldmap that a naive any-fmap check would misclassify,
+1,275-session TrackTBI external validation cohort provided one such
+edge case: a session with a GRE phasediff fieldmap (TBI011204) that a
+naive any-fmap check would misclassify as SDC-capable,
 while Vecta correctly identifies the absence of a reverse-PE EPI
 acquisition. Beyond binary classification, Vecta uniquely provides
 severity designation, lifecycle attribution, evidence basis, potential
@@ -46,6 +47,30 @@ VECTA-DWI-014 findings: all passed BIDS validation, because the BIDS
 specification does not require fieldmap acquisitions. This gap between
 conformance and readiness is the central motivation for a dedicated
 readiness assessment layer.
+
+The perfect vendor stratification observed in the TrackTBI external
+validation — Siemens sessions uniformly receiving ready_with_limitations
+(VECTA-DWI-014) and GE and Philips sessions uniformly receiving
+review_required (VECTA-DWI-021 + VECTA-DWI-001) — reveals a systematic
+difference in DICOM-to-BIDS metadata generation across the scanners
+represented in this dataset. BIDS conversion provenance (conversion tool,
+version, and per-session parameters) was not available to the authors for
+the TrackTBI dataset; the attribution of PhaseEncodingDirection absence to
+vendor versus specific scanner model, software version, or conversion tool
+behavior cannot be confirmed from the data available. Within this cohort,
+Siemens sidecar files carried a signed PhaseEncodingDirection field and GE
+and Philips sidecar files did not, a pattern that held without exception
+across all 1,275 sessions. Regardless of attribution, this is not a
+session-specific artifact but a cohort-level data integrity pattern that
+Vecta surfaces systematically. The implications for multi-site studies using
+GE or Philips scanners are significant: VECTA-DWI-021 will flag sessions
+without PhaseEncodingDirection, and without this field QSIPrep cannot
+proceed with susceptibility distortion correction. Researchers planning
+multi-site DWI studies with mixed-vendor acquisitions should audit
+PhaseEncodingDirection completeness before initiating preprocessing, and
+site-level remediation (re-exporting from DICOM with an updated dcm2niix
+version, or manually populating the field from acquisition parameters) may
+be required at scale.
 
 The detection approach comparison (Table 4) illustrates the cost of
 under-specification and demonstrates a critical distinction between
@@ -97,32 +122,12 @@ case of VECTA-DWI-014, the finding identified that the limitation was a
 site-level protocol decision rather than a data artifact, enabling
 researchers to accurately characterize their distortion-correction
 options rather than investigate potential data transfer or conversion
-errors. Connectome output metrics were broadly consistent with the
-non-blocking designation: the QSIRecon configuration used a fixed
-tractography target of 10 million streamlines per session, and all 58
-subjects with available connectome data achieved this target across
-both groups, indicating equivalent tractography yield regardless of SDC
-status. All 58 subjects passed downstream QC. At the regional level, an
-exploratory analysis of node strength identified bilateral lateral
-orbitofrontal cortex as showing significantly higher apparent connectivity
-in GE (no-SDC) sessions compared to Siemens (SDC) sessions after FDR
-correction (left and right OFC, p_adj = 0.005). The direction of this
-difference — elevated apparent connectivity in the absence of SDC — is
-consistent with the known behavior of EPI susceptibility distortion near
-the orbital plate, where field inhomogeneity can displace image
-boundaries anteriorly and inflate apparent streamline density in OFC. This
-finding should be interpreted cautiously: the two groups differ in voxel
-size and gradient direction count, and marginal differences were also
-observed in non-susceptible control regions, indicating that acquisition
-parameter differences contribute to regional strength variation
-independent of SDC status. The OFC observation is reported as
-hypothesis-generating evidence — a connectome-layer difference in a region
-specifically expected to be sensitive to the VECTA-DWI-014 condition —
-not as a calibrated measure of SDC effect. Taken together, these findings
-support the interpretation that VECTA-DWI-014 correctly characterizes a
-methodological limitation whose connectome consequences are regionally
-specific and detectable in susceptibility-sensitive areas at the
-exploratory level.
+errors. Connectome output metrics were consistent with the non-blocking
+designation: all 58 subjects with available connectome data achieved
+the fixed 10-million-streamline tractography target and passed
+downstream QC regardless of SDC status, confirming that VECTA-DWI-014
+correctly characterizes the absent distortion correction as a
+methodological limitation rather than a connectome yield predictor.
 
 Two individual cases illustrate additional uses of the framework. The
 first demonstrates a cross-layer inference capability that neither BIDS
@@ -205,40 +210,38 @@ This study has several notable limitations. A primary limitation is that
 the primary validation cohort comprises a single site with two vendors
 but limited protocol diversity: all sessions used single-shell DWI at
 b = 1000 s/mm², and the vendor-stratified readiness split reflects a
-single protocol-level difference. An independent criterion
-replication cohort using five participants from the TrackTBI dataset —
-acquired at different institutions with Siemens TrioTim and Skyra scanners
-at b = 1300 s/mm² — produced consistent results: VECTA-DWI-014 triggered
-in all sessions and all 2-week sessions processed successfully by QSIPrep. The three OpenNeuro datasets provide broader external evidence:
-SleepyBrain and MASiVar demonstrate criterion behavior in datasets with
-sparse or absent TotalReadoutTime metadata, while MASiVar is a multi-shell
-protocol (b = 1000 and 2000 s/mm²), demonstrating that the framework
-operates correctly on multi-shell acquisitions. The full TrackTBI cohort
-(approximately 600 sessions across multiple sites) will constitute the
-formal outcome-based external validation.
-A second limitation is that the regional connectome comparison between
-Siemens (SDC) and GE (no-SDC) sessions is confounded by systematic
-acquisition differences: voxel size (Siemens ≈ 2×2×2 mm, GE 1×1×2 mm)
-and gradient direction count (Siemens 67, GE 51–53) differ between
-groups, making between-group regional strength differences uninterpretable
-as pure SDC effects. The susceptibility index (intra-subject ratio) and
-focus on susceptibility-sensitive regions were chosen to reduce these
-confounders, but cannot eliminate them; the OFC finding should be
-considered hypothesis-generating and replicated in a cohort with
-matched acquisition parameters before causal interpretation.
-A third limitation is that Vecta-DWI v0.1 evaluates structural metadata
+single protocol-level difference. The TrackTBI cohort (649 subjects, 1,275 sessions; Siemens 584,
+GE 363, Philips 328) provides independent outcome-based external
+validation across three vendors and multiple sites. Vecta produced
+perfect vendor stratification: all Siemens sessions received
+ready_with_limitations (VECTA-DWI-014; no reverse-PE EPI), while all GE
+and Philips sessions received review_required (VECTA-DWI-021 +
+VECTA-DWI-001; absent PhaseEncodingDirection). This vendor-level
+separation reflects a systematic, cohort-level difference in DICOM-to-BIDS
+metadata generation; because BIDS conversion provenance was not available
+for TrackTBI, the pattern is reported as an empirical observation rather
+than attributed to a specific conversion tool or vendor behavior. From
+1,071 sessions with confirmed QSIPrep outcomes (627 confirmed failures),
+sensitivity was 0.989 (95% CI [0.977, 0.995]) and NPV was 0.984
+(95% CI [0.968, 0.992]). The three OpenNeuro datasets
+provide broader external evidence: SleepyBrain and MASiVar demonstrate
+criterion behavior in datasets with sparse or absent TotalReadoutTime
+metadata, while MASiVar is a multi-shell protocol (b = 1000 and
+2000 s/mm²), demonstrating that the framework operates correctly on
+multi-shell acquisitions.
+A second limitation is that Vecta-DWI v0.1 evaluates structural metadata
 and gradient file integrity but does not include image quality assessment.
 Sessions rated ready may still have image quality problems — motion
 artifacts, thermal noise, signal dropout — that are not detectable from
 BIDS metadata alone. Image quality assessment, as provided by tools such
 as MRIQC (Esteban et al., 2017) or eddyqc (Bastiani et al., 2019), addresses a complementary and
 downstream evidence layer; we regard these tools as orthogonal to
-Vecta's scope rather than competitors. A fourth limitation is that
+Vecta's scope rather than competitors. A third limitation is that
 DICOM-source module variables (VECTA-DWI-050, VECTA-DWI-060) require
 original DICOM to be available alongside the BIDS dataset. Sites that
 retain only the BIDS representation will receive lower assessment
 completeness scores for the source-integrity criteria, which will return
-unknown rather than evaluated. A fifth limitation is that the
+unknown rather than evaluated. A fourth limitation is that the
 sensitivity and NPV estimates from the primary cohort rest on n=3
 confirmed failures across 69 sessions; confidence intervals are
 correspondingly wide. Additionally, the CIDUR cohort served as the primary
@@ -246,12 +249,12 @@ development context for the criteria — the PhaseEncodingDirection absence
 issue (VECTA-DWI-021) was known from curation records before criterion
 specification was finalized — making this an in-sample evaluation. The
 performance estimates therefore reflect criterion behavior on familiar
-data rather than out-of-sample generalization; independent outcome-based
-external validation requires the full TrackTBI cohort. A powered external
-validation for VECTA-DWI-014 requires a cohort with sufficient failure
-events to permit cross-site variance estimation; the full TrackTBI cohort
-(approximately 600 sessions across multiple sites) is designed to provide
-this. The MASiVar prequal-v1.0.0 derivatives show that all five VECTA-DWI-030
+data rather than out-of-sample generalization. The TrackTBI cohort
+(649 subjects, 1,275 sessions, three vendors) provides this independent
+external validation: sensitivity 0.989 (95% CI [0.977, 0.995]) and
+NPV 0.984 (95% CI [0.968, 0.992]) were estimated from 1,071 sessions
+with confirmed outcomes across a cohort developed independently of the
+Vecta criterion specification. The MASiVar prequal-v1.0.0 derivatives show that all five VECTA-DWI-030
 sessions produce no preprocessed NIfTI output; however, this pattern
 reflects a sub-cohort-level preprocessing incompatibility affecting all
 sessions from those scanner groups, not an outcome specific to the
@@ -264,7 +267,7 @@ Broader analysis variability in neuroimaging — where the same dataset
 analyzed by different teams produces substantially different conclusions
 (Botvinik-Nezer et al., 2020) — further motivates prospective readiness
 certification as a prerequisite to analysis.
-A sixth limitation is that Vecta's assessment scope begins at the BIDS
+A fifth limitation is that Vecta's assessment scope begins at the BIDS
 representation layer and does not evaluate the correctness or
 completeness of the DICOM-to-BIDS conversion. The CIDUR dataset
 represents standard institutional BIDS conversion conditions: dcm2niix
@@ -283,13 +286,32 @@ conversion-boundary traceability — derived map detection, multi-series
 disambiguation, and session-to-DICOM mapping validation — is a priority
 for future versions and would make the assessment scope contiguous from
 DICOM through BIDS.
+A sixth limitation, revealed by the TrackTBI external validation, is
+that Vecta does not currently evaluate the metadata integrity of
+non-EPI fieldmap acquisitions. The 7 false negatives in the TrackTBI
+cohort — sessions rated ready_with_limitations (VECTA-DWI-014) that
+failed QSIPrep — had a failure cause of fieldmap_error: corrupt metadata
+on GRE phasediff fieldmap acquisitions. VECTA-DWI-014 correctly
+identifies the absence of a reverse-PE EPI reference; however, it does
+not inspect the metadata completeness of non-EPI fieldmaps that are
+present. A session carrying a GRE phasediff fieldmap with corrupt or
+incomplete metadata will be rated ready_with_limitations (correctly
+noting the absence of reverse-PE EPI), but may still fail QSIPrep if
+the pipeline attempts to use the non-EPI fieldmap and encounters the
+metadata deficiency. This represents a criterion scope gap: a new
+criterion evaluating phasediff fieldmap metadata completeness —
+verifying required fields such as EchoTime1, EchoTime2, and Units —
+would close this gap and reduce these false negatives.
 
-Future work will address several of these limitations. The TrackTBI pilot
-demonstrates criterion consistency across independent institutions and
-scanner platforms; the full cohort will provide sufficient power to
-formally test whether the VECTA-DWI-014 finding-to-outcome association
-replicates across a multi-site, multi-scanner, multi-protocol dataset,
-and to evaluate criteria that did not trigger in CIDUR.
+Future work will address several of these limitations. The TrackTBI
+external validation is now complete: 649 subjects, 1,275 sessions across
+three vendors, with sensitivity 0.989 and NPV 0.984 estimated from 1,071
+sessions with confirmed QSIPrep outcomes — confirming that Vecta criteria
+replicate across independent institutions and scanner platforms. The
+7 false negatives in that cohort point to the next criterion development
+priority: a phasediff fieldmap metadata completeness check (verifying
+EchoTime1, EchoTime2, and Units fields) to close the non-EPI fieldmap
+metadata scope gap identified above.
 An image quality domain incorporating MRIQC-derived metrics is planned
 for Vecta-DWI v0.2, enabling joint assessment of metadata integrity and
 image quality in a single framework. Extension to multi-shell protocols
