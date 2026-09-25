@@ -51,8 +51,10 @@ for ext in nii.gz bval bvec json; do
   cp "$FOR_REVIEW/sub-069/ses-1/dwi/sub-069_ses-1_acq-24dirax_dir-ap_dwi.$ext" \
      "$BIDS_DIR/sub-069/ses-1/dwi/"
 done
-for f in "$FOR_REVIEW/sub-069/ses-1/fmap/"*; do
-  cp "$f" "$BIDS_DIR/sub-069/ses-1/fmap/"
+for ext in nii.gz json; do
+  for f in "$FOR_REVIEW/sub-069/ses-1/fmap/"*."$ext"; do
+    [ -e "$f" ] && cp "$f" "$BIDS_DIR/sub-069/ses-1/fmap/"
+  done
 done
 cp "$MAIN_BIDS/sub-069/ses-1/anat/sub-069_ses-1_T1w.nii.gz" "$BIDS_DIR/sub-069/ses-1/anat/"
 cp "$MAIN_BIDS/sub-069/ses-1/anat/sub-069_ses-1_T1w.json"   "$BIDS_DIR/sub-069/ses-1/anat/"

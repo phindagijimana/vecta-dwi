@@ -6,8 +6,8 @@ applied the framework to 71 CIDUR sessions spanning three readiness
 states and confirmed QSIPrep v0.23.1 outcomes for 62 sessions. Three
 QSIPrep failures were observed across three readiness states; all three
 occurred in sessions Vecta had flagged as non-ready. The failure rate
-was 0% for ready sessions (0/26), 2.9% for ready_with_limitations
-sessions (1/34), and 100% for review_required sessions (2/2) — a
+was 0% for ready sessions (0/26), 2.4% for ready_with_limitations
+sessions (1/41), and 100% for review_required sessions (2/2) — a
 monotonically ordered risk stratification. However, the three failures
 are mechanistically heterogeneous. The two review_required failures
 (sub-036 and sub-069) have a confirmed direct cause: QSIPrep crashed
@@ -19,7 +19,7 @@ precisely characterizes. The single ready_with_limitations failure
 completed anatomical preprocessing, and entered the eddy step, where
 the available log (truncated at 844 lines) does not capture the crash.
 Sub-076 has a valid signed PhaseEncodingDirection and its fieldmap
-absence is shared by 33 other GE sessions that succeeded. The most
+absence is shared by 40 other GE sessions that succeeded. The most
 likely cause is a data-specific eddy failure — possibly related to
 the unusually low b0 count (3) or slightly non-standard gradient count
 (50 b1000 directions vs 51–53 in other GE sessions) — rather than the
@@ -60,19 +60,32 @@ invisible to any metadata-completeness check. Level 2 (Vecta Core)
 captures all three failures because VECTA-DWI-014 and VECTA-DWI-021
 are independent criteria evaluating complementary evidence layers.
 Sensitivity is 0.000 (Level 0), 0.667 [0.155, 0.957] (Level 1),
-and 1.000 [0.438, 1.000] (Level 2); NPV is 0.952, 0.983, and 1.000
-respectively. These values rest on n=3 confirmed failures; the
-confidence intervals are correspondingly wide and should be interpreted
-as illustrative of criterion behavior rather than precise population
-estimates. The positive predictive value of 0.083 at Level 2 warrants
-careful interpretation: VECTA-DWI-014 makes a structural claim about
-data properties — specifically, that no reverse phase-encoding reference
+and 1.000 [0.439, 1.000] (Level 2); NPV is 0.957, 0.985, and 1.000
+respectively. These values rest on n=3 confirmed failures across n=69
+confirmed sessions; the sensitivity and NPV confidence intervals are
+correspondingly wide and should be interpreted as illustrative of
+criterion behavior rather than precise population estimates. The
+positive predictive value of 0.070 at Level 2 warrants careful
+interpretation: VECTA-DWI-014 makes a structural claim about data
+properties — specifically, that no reverse phase-encoding reference
 is available for susceptibility distortion correction — not a claim that
-the pipeline will abort. The 33 GE sessions classified as false positives
+the pipeline will abort. The 40 GE sessions classified as false positives
 did not receive SDC; QSIPrep completed via a fallback path, but the
 absence of distortion correction is a methodological limitation of those
 outputs, not a false alarm. Level 3 is identical to Level 2 because no
 DICOM source-integrity criteria triggered in this cohort.
+
+Controlled defect injection confirmed VECTA-DWI-021 detection and
+revealed that PhaseEncodingDirection absence produces two distinct
+QSIPrep failure modes depending on session context. The real-world
+sessions (sub-036, sub-069) crashed immediately at `get_acq_parameters_df()`
+with an `AttributeError`. The injection session produced a silent failure:
+QSIPrep reported "finished successfully!" with exit code 0 but produced
+only anatomical derivatives — the DWI session was excluded from the
+workflow during grouping without any error message. The silent-skip
+mode is operationally more dangerous than a crash, because no failure
+signal reaches the researcher. Vecta-DWI-021 correctly identifies
+the underlying condition in both cases.
 
 The criterion-level attribution provided by Vecta adds information
 beyond a binary pass/fail by identifying the specific evidence layer
