@@ -42,9 +42,13 @@ TD (2021). QSIPrep: an integrative platform for the preprocessing and
 reconstruction of diffusion MRI data. *Nature Methods*, 18, 775–778.
 https://doi.org/10.1038/s41592-021-01185-5
 
-Clark T, Schuler RE, Bandrowski A, Martone ME, FAIR Data Maturity Model
-Working Group, Bridge2AI Standards Working Group (2024). AI-readiness
-criteria for biomedical data. [journal/volume/pages: verify from PMID 39484409]
+Clark T, Caufield H, Parker JA, Al Manir S, Amorim E, Eddy J, Gim N,
+Gow B, Goar W, Hansen JN, Harris N, Hermjakob H, Joachimiak M, Jordan G,
+Lee I-H, McWeeney SK, Nebeker C, Nikolov M, Ratcliffe SJ, Reese J,
+Shaffer J, Sheffield N, Sheynkman G, Stevenson J, Chen JY, Mungall C,
+Wagner A, Kong SW, Ghosh SS, Patel B, Williams A, Munoz-Torres MC (2024).
+AI-readiness criteria for biomedical data. *bioRxiv* (preprint).
+https://doi.org/10.1101/2024.10.23.619844
 
 Esteban O, Birman D, Schaer M, Koyejo OO, Poldrack RA, Gorgolewski KJ
 (2017). MRIQC: Advancing the automatic prediction of image quality in MRI

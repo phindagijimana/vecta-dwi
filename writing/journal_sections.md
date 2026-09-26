@@ -89,17 +89,15 @@ The authors declare no competing financial or non-financial interests.
 
 ## Checklist notes for submission
 
-- [ ] Clark et al. (2024) reference — complete journal/volume/pages from PMID 39484409
+_Needs PI / co-author input:_
 - [ ] IRB protocol number — insert in Ethics Statement
 - [ ] CRediT — confirm with all co-authors and fill in
 - [ ] Funding — insert grant numbers from PI
 - [ ] Acknowledgments — draft with PI
-- [ ] Clark et al. (2024) — complete journal/volume/pages (PMID 39484409)
-- [ ] TrackTBI citation — replace Yue et al. (2013) with full cohort citation; marked [TODO] in methods.md
-- [ ] IRB protocol number — insert in Ethics Statement
-- [ ] CRediT — confirm with all co-authors
-- [ ] Funding — insert grant numbers from PI
-- [ ] Acknowledgments — draft with PI
+- [ ] TrackTBI citation — confirm appropriate full-cohort citation for the 649-subject FITBIR dataset; Yue et al. (2013) covers the pilot study design; if the full TRACK-TBI cohort requires a different paper (e.g., Nelson et al. 2019 JAMA Neurology, PMID 31157856), update methods.md [TODO] line
+
+_Resolved:_
+- [x] Clark et al. (2024) — bioRxiv preprint, DOI 10.1101/2024.10.23.619844; author list corrected in references.md (was wrong; now matches PMC record)
 - [x] Figures 1–4 — GENERATED: figure_1_cidur_readiness_outcome.png, figure_2_detection_levels.png, figure_3_criterion_heatmap.png, figure_4_tracktbi_readiness_outcome.png (300 DPI, writing/figures/)
 - [x] Full TrackTBI external validation — COMPLETED: 1,275 sessions, sensitivity 0.989, NPV 0.984, PPV 1.000
 - [x] QSIPrep version — RESOLVED: 1.0.1.dev0+gee9aa2e.d20250115 throughout
@@ -108,3 +106,6 @@ The authors declare no competing financial or non-financial interests.
 - [x] Never_attempted asymmetry — explained (22.8% vs 10.0%); proportional imputation added
 - [x] v0.1.1 note — removed; clean v0.1.0 version statement in methods and Table 10
 - [x] Table numbering — all 11 tables labeled and numbered consecutively
+- [x] Table 1/2/3 bold labels — added with captions
+- [x] CIDUR acronym — expanded to "Clinical Imaging Data for UR Researchers" at first use (introduction.md)
+- [x] Python version — "Python 3.9 (NumPy 1.26.4)" added to statistical methods sentence
