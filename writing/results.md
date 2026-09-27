@@ -361,17 +361,26 @@ readiness finding. These tools are complementary: a session can pass
 MRIQC and fail Vecta (metadata absent, image fine) or fail MRIQC and
 pass Vecta (motion artifact, metadata intact).
 
-## Connectome output metrics
+## Connectome output metrics and VECTA-DWI-014 severity calibration
 
-Across the 58 subjects with available connectome data (26 ready,
-32 ready_with_limitations), all sessions achieved the fixed
-10-million-streamline tractography target via iFOD2/SIFT (Smith et al.,
-2013), parcellated with the Schaefer 200-region atlas (Schaefer et al.,
-2018), and all 58 subjects passed downstream QC. This equivalence across
-readiness groups is consistent with VECTA-DWI-014's non-blocking
-severity designation: the criterion correctly flags absent distortion
-correction as a methodological limitation without predicting connectome
-yield failure.
+VECTA-DWI-014 is classified as major severity but non-blocking: it
+flags the absence of reverse-PE EPI capability as a methodological
+limitation without preventing the session from proceeding. To assess
+whether this severity calibration is appropriate — i.e., that absent
+SDC degrades output quality but does not prevent tractography — connectome
+outputs were examined for the 58 subjects with available data
+(26 ready, 32 ready_with_limitations). All 58 subjects achieved the
+fixed 10-million-streamline tractography target via iFOD2/SIFT (Smith
+et al., 2013), parcellated with the Schaefer 200-region atlas (Schaefer
+et al., 2018), and all 58 passed downstream QC regardless of readiness
+tier. This equivalence confirms that VECTA-DWI-014's non-blocking
+designation is appropriate for the tractography-yield dimension: absent
+SDC in a single-shell b=1000 s/mm² protocol did not prevent tractography
+completion at this target density. It does not indicate that SDC absence
+has no effect on microstructural accuracy or tract geometry — those
+would require voxel-level comparison beyond the scope of this paper —
+but it supports the criterion's intent to characterize the limitation
+accurately rather than block processing unnecessarily.
 
 ## Notable individual cases
 

@@ -8,8 +8,8 @@ declarative, version-controlled framework exists to assess preprocessing
 readiness at the metadata layer before pipelines run. We developed
 Vecta-DWI, a Data Birth Integrity (DBI) framework that evaluates 22
 variables and 8 criteria against a declared intended-use profile without
-preprocessing. Criteria were developed using the CIDUR in-sample
-development cohort (62 sessions; two vendors); all three QSIPrep
+preprocessing. Criteria were developed using the CIDUR in-sample development cohort
+(62 sessions; three scanner models, two vendors); all three QSIPrep
 failures across 69 sessions with confirmed outcomes occurred in
 Vecta-flagged sessions, spanning two mechanistically distinct modes —
 PhaseEncodingDirection absence and reverse-PE acquisition absence —
@@ -25,7 +25,7 @@ negatives had non-EPI fieldmaps with corrupt metadata outside Vecta's
 current criterion scope. Three publicly available datasets (549 sessions;
 522 assessed) confirmed criterion stability across protocols and vendors.
 Vecta-DWI identifies failure modes invisible to conformance-based
-validation, provides criterion-level attribution for targeted remediation,
+validation, provides criterion-level attribution for remediation,
 and is open-source, demonstrating that the DBI design approach —
 declarative, intended-use-conditional, null-safe readiness assessment —
 is practically instantiable and generalizes across vendors and acquisition
