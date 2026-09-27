@@ -26,11 +26,11 @@ diffusion-weighted MRI; data quality; preprocessing readiness; BIDS; metadata in
 
 _Fill in actual contributions once co-authors are confirmed._
 
-**[First author / P. Ndagijimana]:** Conceptualization, Methodology, Software, Formal Analysis, Investigation, Data Curation, Writing – Original Draft, Visualization
+**Philbert Ndagijimana:** Conceptualization, Methodology, Software, Formal Analysis, Investigation, Data Curation, Writing – Original Draft, Visualization
 
-**[Co-author(s)]:** [TODO — specify contributions: e.g., Data Curation, Resources, Investigation]
+**[Co-author(s) — TBD]:** [TODO — confirm with PI; specify contributions: e.g., Data Curation, Resources, Investigation]
 
-**[PI / Last author]:** Conceptualization, Supervision, Writing – Review & Editing, Funding Acquisition, Resources
+**James J Gugger:** Conceptualization, Supervision, Writing – Review & Editing, Funding Acquisition, Resources
 
 ---
 

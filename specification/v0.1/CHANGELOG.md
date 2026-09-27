@@ -1,6 +1,15 @@
 # Vecta-DWI specification changelog
 
-## v0.1.0 — 2026-09-19 (draft)
+## v0.1.0 — 2026-09-27 (release)
+
+First public release. 22 variables, 8 active criteria, dwi_connectomics profile.
+Validated on CIDUR (62 sessions), TrackTBI (1,275 sessions; sensitivity 0.989,
+NPV 0.984), and three OpenNeuro datasets (522 sessions). See manuscript for
+full validation results.
+
+---
+
+## v0.1.0 — 2026-09-19 (development history)
 
 Initial specification skeleton.
 

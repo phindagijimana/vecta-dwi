@@ -2,13 +2,15 @@
 
 ## Current author list
 
-**First author:** P. Ndagijimana (corresponding author)
+**First author:** Philbert Ndagijimana (corresponding author)
 — Conceptualization, Methodology, Software, Formal Analysis, Investigation,
 Data Curation, Writing – Original Draft, Visualization
 
-**[Co-author(s)]:** TBD — see below
+**[Co-author(s)]:** TBD — see below for candidates
 
-**Last author / PI:** TBD — required before submission
+**Last author / PI:** James J Gugger
+— Conceptualization, Supervision, Writing – Review & Editing,
+Funding Acquisition, Resources
 
 ---
 

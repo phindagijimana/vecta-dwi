@@ -6,10 +6,13 @@ build-backend = "hatchling.build"
 name = "vecta-dwi"
 version = "0.1.0"
 description = "Vecta-DWI: a Data Birth Integrity framework for DWI processing readiness"
-readme = "VECTA_DWI_v0.1_BUILD_PLAN.md"
+readme = "README.md"
 requires-python = ">=3.9"
-license = { text = "Proprietary — not yet released" }
-authors = [{ name = "pndagiji" }]
+license = { file = "LICENSE" }
+authors = [
+    { name = "Philbert Ndagijimana" },
+    { name = "James J Gugger" },
+]
 dependencies = [
     "pydantic>=2.0",
     "PyYAML>=6.0",
