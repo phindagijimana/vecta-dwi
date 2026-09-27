@@ -11,7 +11,7 @@ safely, and version-pinning the assessment contract — produces a
 framework whose outputs correctly stratify sessions by preprocessing
 outcome at scale. We
 applied the framework to 71 CIDUR sessions spanning three readiness
-states and confirmed QSIPrep 1.0.1.dev0+gee9aa2e.d20250115 outcomes for 69 sessions. Three
+states and confirmed QSIPrep 1.0.1.dev0 outcomes for 69 sessions. Three
 QSIPrep failures were observed across three readiness states; all three
 occurred in sessions Vecta had flagged as non-ready. The failure rate
 was 0% for ready sessions (0/26), 2.4% for ready_with_limitations
@@ -358,9 +358,9 @@ verifying required fields such as EchoTime1, EchoTime2, and Units —
 would close this gap and reduce these false negatives.
 
 Future work will address several of these limitations. The TrackTBI
-external validation is now complete: 649 subjects, 1,275 sessions across
-three vendors, with sensitivity 0.989 and NPV 0.984 estimated from 1,071
-sessions with confirmed QSIPrep outcomes — confirming that Vecta criteria
+external validation encompassed 649 subjects, 1,275 sessions across
+three vendors; sensitivity 0.989 and NPV 0.984 were estimated from 1,071
+sessions with confirmed QSIPrep outcomes, confirming that Vecta criteria
 replicate across independent institutions and scanner platforms. The
 7 false negatives in that cohort point to the next criterion development
 priority: a phasediff fieldmap metadata completeness check (verifying
