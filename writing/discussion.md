@@ -1,7 +1,15 @@
 # Discussion
 
-In this study, we describe Vecta-DWI, a declarative framework for
-assessing Data Birth Integrity of DWI datasets before preprocessing. We
+In this study, we describe Vecta-DWI, an implementation of the Data
+Birth Integrity (DBI) framework for DWI preprocessing readiness, and
+validate it empirically across five datasets spanning 1,275 sessions and
+three scanner vendors. The results serve two purposes: they demonstrate
+that Vecta-DWI is a practical and generalizable tool, and they provide
+evidence that the DBI design approach itself — assessing readiness
+declaratively against an intended-use profile, handling unknown states
+safely, and version-pinning the assessment contract — produces a
+framework whose outputs correctly stratify sessions by preprocessing
+outcome at scale. We
 applied the framework to 71 CIDUR sessions spanning three readiness
 states and confirmed QSIPrep 1.0.1.dev0+gee9aa2e.d20250115 outcomes for 69 sessions. Three
 QSIPrep failures were observed across three readiness states; all three

@@ -62,7 +62,15 @@ sidecar field does not degrade the image; yet that absence will cause
 QSIPrep to crash before the preprocessing workflow is instantiated.
 The gap is not that existing tools are inadequate — they answer
 different questions — but that no tool occupies the metadata-integrity
-layer between BIDS conversion and pipeline execution.
+layer between BIDS conversion and pipeline execution. Site-specific
+pre-flight scripts address this for individual studies, but they are not
+portable across sites, not independently reviewable, not version-
+controlled, and not extensible to new modalities without reimplementing
+the core logic from scratch. What is needed is not another tool but a
+formal framework — a specification of what readiness means, stated
+declaratively and independently of any implementation, so that the same
+assessment contract can be instantiated consistently across studies,
+compared across versions, and extended to other imaging modalities.
 
 We define Data Birth Integrity (DBI) as the degree to which the
 information, structure, provenance, acquisition characteristics, and
@@ -71,21 +79,28 @@ present, internally consistent, traceable, and appropriately preserved
 from acquisition and source data into the analysis-ready representation.
 DBI is deliberately intended-use conditional: a dataset can be
 sufficient for one analysis and insufficient for another. DBI is a
-theoretical framework, not a tool: it specifies what a preprocessing
-readiness assessment must guarantee, in the same way that the FAIR data
+theoretical framework: it specifies what a preprocessing readiness
+assessment must guarantee, in the same way that the FAIR data
 stewardship principles (Wilkinson et al., 2016) specify what data must
-be to support reuse, but do not prescribe a specific implementation.
-Vecta-DWI is an instantiation of DBI for DWI preprocessing readiness;
-the empirical work in this paper validates Vecta-DWI. The DBI framework
-provides the theoretical grounding for Vecta's four design properties
-and explains why they are required rather than merely convenient. This
-framing extends and operationalizes adjacent frameworks — including
+be to support reuse without prescribing a specific implementation.
+This framing extends and operationalizes adjacent frameworks — including
 AI-readiness criteria for biomedical data (Clark et al., 2024) and
 machine-actionable provenance (Levinson et al., 2024) — to the specific
 task of determining whether a DWI session can enter a designated
 preprocessing workflow. DBI assessment operates at the lifecycle layer
 of evidence acquisition and representation, preceding and complementing
 downstream QC tools that characterize what the pipeline produced.
+
+Vecta-DWI is the first instantiation of DBI, developed for DWI
+preprocessing readiness. The empirical work in this paper serves two
+purposes: it validates Vecta-DWI as a practical tool, and it
+demonstrates that the DBI design approach — declarative criteria,
+intended-use profiles, null-safe variable states, and version-pinned
+specifications — produces a framework that generalizes across vendors
+and acquisition platforms with the quantitative performance required for
+production use. If DBI-conformant tools achieve this in DWI, the same
+design pattern can be applied to other modalities without rediscovering
+the framework properties from scratch.
 
 We describe Vecta-DWI, an open-source framework that operationalizes DBI
 for DWI processing readiness. Vecta-DWI embodies a versioned
