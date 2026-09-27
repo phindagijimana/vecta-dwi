@@ -14,7 +14,7 @@ The framework is built on a versioned specification (variables → criteria → 
 pip install git+https://github.com/phindagijimana/vecta-dwi.git
 ```
 
-Requires Python ≥ 3.10. For development:
+Requires Python ≥ 3.9. For development:
 
 ```bash
 git clone https://github.com/phindagijimana/vecta-dwi.git
@@ -223,7 +223,7 @@ pip install -e ".[dev]"
 pytest
 ```
 
-28 tests covering meta-schema validation, specification validation, five synthetic BIDS fixtures with frozen golden outputs, and seven integration scenarios (reference case, missing reverse PE, unknown PE direction, missing gradient files, bval/volume mismatch, missing readout metadata, DICOM/BIDS field-strength conflict).
+29 tests covering meta-schema validation, specification validation, five synthetic BIDS fixtures with frozen golden outputs, and seven integration scenarios (reference case, missing reverse PE, unknown PE direction, missing gradient files, bval/volume mismatch, missing readout metadata, DICOM/BIDS field-strength conflict).
 
 ---
 
@@ -243,11 +243,11 @@ data/                (gitignored) Local run outputs, subject mappings, BIDS tree
 
 ## Validation
 
-Vecta-DWI v0.1 has been evaluated on:
+Vecta-DWI v0.1 has been evaluated on five datasets spanning 1,275 sessions and three scanner vendors:
 
-- **CIDUR clinical cohort** (69 sessions, 3 scanner models, 2 vendors, 2 field strengths): QSIPrep v0.23.1 outcomes confirmed for all 69 sessions. All 3 failures occurred in Vecta-flagged sessions; no ready session failed. Sensitivity 1.000 (95% CI [0.439, 1.000]), NPV 1.000 (95% CI [0.871, 1.000]). A naive PhaseEncodingDirection-absent check matched 2 of 3 failures and could not detect the acquisition-layer failure mode.
-- **TrackTBI pilot** (10 sessions, independent institutions, Siemens TrioTim/Skyra, b=1300 s/mm²): criterion findings consistent with CIDUR; all 5 processed sessions succeeded.
-- **Three OpenNeuro datasets** (506 additional sessions): SleepyBrain (ds000201), MASiVar (ds003416), ON-Harmony (ds004712) — criterion fire patterns consistent across protocols and vendors.
+- **CIDUR clinical cohort** (62 sessions; 3 scanner models, 2 vendors, 2 field strengths — in-sample development context): QSIPrep 1.0.1.dev0 outcomes confirmed for 69 sessions (including 7 pre-intervention). All 3 QSIPrep failures occurred in Vecta-flagged sessions. A naive PhaseEncodingDirection-absent check matched 2 of 3 failures and could not detect the acquisition-layer failure mode (VECTA-DWI-014).
+- **TrackTBI** (1,275 sessions; 649 subjects; Siemens, GE, Philips — primary external validation): perfect vendor stratification (Siemens → ready_with_limitations; GE/Philips → review_required; 0 misclassifications). From 1,071 sessions with confirmed QSIPrep 1.0.1.dev0 outcomes: sensitivity 0.989 (95% CI [0.977, 0.995]), NPV 0.984 (95% CI [0.968, 0.992]), PPV 1.000, specificity 1.000.
+- **Three OpenNeuro datasets** (522 assessed sessions): SleepyBrain (ds000201), MASiVar (ds003416), ON-Harmony (ds004712) — criterion stability confirmed across protocols, vendors, and acquisition platforms.
 - **Controlled defect injection**: all 5 per-criterion injections (VECTA-DWI-014, -021, -030, -031, baseline) produced the predicted Vecta readiness state and the predicted QSIPrep outcome, including a silent DWI skip (no error, exit 0, anat-only output) under VECTA-DWI-021.
 
 ---

@@ -360,7 +360,7 @@
     "profile_version": "0.1.0",
     "schema_version": "0.1.0",
     "specification_version": "0.1.0",
-    "vecta_software_version": "0.1.0-dev0"
+    "vecta_software_version": "0.1.0"
   },
   "readiness": {
     "blocking_finding_refs": [],
