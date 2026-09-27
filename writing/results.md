@@ -347,8 +347,10 @@ failure sessions and 40 false-positive GE sessions.
 _MRIQC PED flag / MRIQC fmap flag: MRIQC DWI IQMs do not include
 PhaseEncodingDirection completeness or fieldmap availability fields;
 "not reported" reflects the documented MRIQC DWI output schema, not a
-null result from a run. Empirical MRIQC output for these sessions is
-available from the corresponding author._
+null result from a run. MRIQC IQMs for these sessions would be expected
+to fall within normal ranges: the failure modes (absent sidecar fields,
+fieldmap metadata corruption) do not alter the acquired signal and
+therefore do not degrade image quality metrics._
 
 The distinction is not that MRIQC is inadequate — it correctly answers
 its design question (is the image quality acceptable?) — but that it
