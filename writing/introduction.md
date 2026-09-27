@@ -49,10 +49,20 @@ images, but characterizes image quality after acquisition rather than
 structural prerequisites before preprocessing. eddyqc (Bastiani et al.,
 2019) and QSIPrep's
 built-in quality measures assess processing quality from outputs that
-already require the pipeline to have run successfully. None of these
-tools answer the question that confronts researchers preparing a DWI
-dataset for analysis: does this session have what this pipeline needs
-to run correctly?
+already require the pipeline to have run successfully. None of these tools answer the question that confronts researchers
+preparing a DWI dataset for analysis: does this session have what this
+pipeline needs to run correctly? Critically, MRIQC's DWI image quality
+metrics — SNR, framewise displacement, B0 field uniformity, b-value
+summary statistics — are derived from the acquired image data and do not
+include PhaseEncodingDirection completeness, TotalReadoutTime presence,
+fieldmap availability relative to DWI sessions, or gradient file
+integrity. A session lacking a signed PhaseEncodingDirection will
+receive normal MRIQC image quality scores, because the absence of that
+sidecar field does not degrade the image; yet that absence will cause
+QSIPrep to crash before the preprocessing workflow is instantiated.
+The gap is not that existing tools are inadequate — they answer
+different questions — but that no tool occupies the metadata-integrity
+layer between BIDS conversion and pipeline execution.
 
 We define Data Birth Integrity (DBI) as the degree to which the
 information, structure, provenance, acquisition characteristics, and
@@ -60,16 +70,22 @@ representation needed for a specified downstream scientific use are
 present, internally consistent, traceable, and appropriately preserved
 from acquisition and source data into the analysis-ready representation.
 DBI is deliberately intended-use conditional: a dataset can be
-sufficient for one analysis and insufficient for another. This framing
-extends and operationalizes adjacent frameworks — including broad
-AI-readiness criteria (Clark et al., 2024), machine-actionable provenance
-(Levinson et al., 2024), and the FAIR stewardship principles (Wilkinson
-et al., 2016) — to
-the specific task of determining whether a DWI session can enter a
-designated preprocessing workflow. DBI assessment operates at the
-lifecycle layer of evidence acquisition and representation, preceding
-and complementing downstream QC tools that characterize what the
-pipeline produced.
+sufficient for one analysis and insufficient for another. DBI is a
+theoretical framework, not a tool: it specifies what a preprocessing
+readiness assessment must guarantee, in the same way that the FAIR data
+stewardship principles (Wilkinson et al., 2016) specify what data must
+be to support reuse, but do not prescribe a specific implementation.
+Vecta-DWI is an instantiation of DBI for DWI preprocessing readiness;
+the empirical work in this paper validates Vecta-DWI. The DBI framework
+provides the theoretical grounding for Vecta's four design properties
+and explains why they are required rather than merely convenient. This
+framing extends and operationalizes adjacent frameworks — including
+AI-readiness criteria for biomedical data (Clark et al., 2024) and
+machine-actionable provenance (Levinson et al., 2024) — to the specific
+task of determining whether a DWI session can enter a designated
+preprocessing workflow. DBI assessment operates at the lifecycle layer
+of evidence acquisition and representation, preceding and complementing
+downstream QC tools that characterize what the pipeline produced.
 
 We describe Vecta-DWI, an open-source framework that operationalizes DBI
 for DWI processing readiness. Vecta-DWI embodies a versioned
@@ -99,17 +115,19 @@ correctly stratify sessions by downstream processing success. We report
 the assessment completeness, finding prevalence, readiness distribution,
 and predictive performance for each readiness tier, and describe
 individual cases where criterion-level attribution provided information
-not recoverable from aggregate pipeline outcomes. Specifically, this
-work: (1) introduces the DBI construct and its four formal properties;
-(2) describes the Vecta-DWI v0.1 specification, engine, and open-source
-implementation; (3) uses the CIDUR development cohort (69 confirmed
-outcomes, two vendors) to characterize two mechanistically distinct
-failure modes; (4) provides primary external validation in 1,275
-TrackTBI sessions (649 subjects, three vendors, sensitivity 0.989,
-NPV 0.984); (5) demonstrates criterion stability across three independent
-OpenNeuro datasets (549 sessions; 522 assessed); and (6) presents case
-studies illustrating cross-layer inference that binary readiness tools
-cannot perform. To facilitate validation and adoption,
+not recoverable from aggregate pipeline outcomes. Specifically, this work: (1) introduces the DBI framework and its
+four formal design properties, and describes the Vecta-DWI v0.1
+specification, engine, and open-source implementation; (2) uses the
+CIDUR development cohort (69 confirmed outcomes, two vendors) to
+characterize two mechanistically distinct failure modes missed by
+metadata-completeness and conformance-based tools; (3) provides primary
+external validation in 1,275 TrackTBI sessions (649 subjects, three
+vendors) and criterion stability across three independent OpenNeuro
+datasets (549 sessions), yielding sensitivity 0.989 [0.977, 0.995]
+and NPV 0.984 [0.968, 0.992]; and (4) presents case studies
+demonstrating criterion-level attribution, pre-intervention detection,
+and cross-layer inference that BIDS Validator, MRIQC, and file-presence
+checks cannot provide. To facilitate validation and adoption,
 the Vecta-DWI specification, engine, synthetic test fixtures, and
 analysis scripts are publicly available
 (github.com/phindagijimana/vecta-dwi).

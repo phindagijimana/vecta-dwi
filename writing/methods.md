@@ -13,20 +13,25 @@ conditional: the same session may be sufficient for one analysis and
 insufficient for another depending on what the downstream workflow
 requires.
 
-Four formal properties distinguish DBI assessment from ad hoc quality
-checks. First, **intended-use conditionality**: assessment is always
-evaluated relative to a declared profile that encodes downstream
-requirements; readiness states are profile-relative, not absolute.
-Second, **null safety**: the value state `unknown` is never coerced to
-false or absent; a criterion requiring a variable in an `unknown` state
-returns `unknown` status and emits no finding, preventing both
-false-positive findings and false reassurance. Third, **determinism**:
-for a fixed specification version and fixed inputs, the engine produces
-an identical output; findings are reproducible without re-running any
-preprocessing. Fourth, **specification-version pinning**: variables,
-criteria, and profiles carry explicit version identifiers so that
-assessment runs can be compared unambiguously and specification changes
-are traceable.
+Four formal properties constitute the design requirements of any
+DBI-conformant implementation. First, **intended-use conditionality**:
+assessment is always evaluated relative to a declared profile that
+encodes downstream requirements; readiness states are profile-relative,
+not absolute. Second, **null safety**: the value state `unknown` is
+never coerced to false or absent; a criterion requiring a variable in
+an `unknown` state returns `unknown` status and emits no finding,
+preventing both false-positive findings and false reassurance. Third,
+**determinism**: for a fixed specification version and fixed inputs,
+the engine produces an identical output; findings are reproducible
+without re-running any preprocessing. Fourth, **specification-version
+pinning**: variables, criteria, and profiles carry explicit version
+identifiers so that assessment runs can be compared unambiguously and
+specification changes are traceable. These properties are design
+guarantees, not empirical claims; their practical consequences are
+illustrated by the CIDUR pre-intervention analysis (null safety
+preventing false reassurance when PhaseEncodingDirection is absent)
+and the specification-version statement that fixes all reported results
+to v0.1.0.
 
 We operationalize DBI through a versioned specification executed by a
 deterministic engine, with scientific meaning encoded in the
@@ -72,7 +77,16 @@ and the readiness decision rules: sessions with no triggered findings are
 rated ready; sessions with triggered non-blocking findings are rated
 ready_with_limitations; sessions where a blocking criterion fires are
 rated not_ready; sessions where a review criterion returns unknown status
-are rated review_required.
+are rated review_required. The `dwi_connectomics` profile is the only
+profile specified in Vecta-DWI v0.1; extension to other intended-use
+profiles (resting-state fMRI, multi-shell acquisition, quantitative MRI)
+is architecturally supported but requires separate specification
+development and empirical validation outside the scope of this paper.
+All variable extraction algorithms assume dcm2niix (Li et al., 2016)
+field naming conventions in BIDS sidecar JSON files; datasets converted
+using other tools may produce non-standard field names that Vecta's
+extractor does not recognize, yielding `extraction_failed` states
+rather than evaluated values for affected variables.
 
 ### Value state vocabulary
 
@@ -241,7 +255,21 @@ which QSIPrep was run on post-assessment sidecars with manually patched
 PhaseEncodingDirection as part of a controlled remediation test — these
 runs do not reflect standard pipeline behavior on the original sidecar.
 The remaining 1,071 sessions with confirmed QSIPrep outcomes formed the
-basis for all sensitivity, specificity, PPV, and NPV calculations.
+basis for all sensitivity, specificity, PPV, and NPV calculations; this
+is the complete available sample from FITBIR and was not a pre-specified
+target. Had the two excluded remediation-test sessions been run on their
+original unmodified BIDS sidecars, both would be expected to fail
+(VECTA-DWI-021 predicts QSIPrep crash at PhaseEncodingDirection
+extraction) and including them would not change any performance metric.
+
+False negatives — sessions rated ready_with_limitations that failed
+QSIPrep — were categorized by examining QSIPrep workflow logs. A session
+was classified as `fieldmap_error` if the log contained evidence that
+QSIPrep attempted to use a non-EPI fieldmap acquisition (e.g., GRE
+phasediff) and encountered absent or corrupt required metadata fields
+(EchoTime1, EchoTime2, or Units). A session was classified as
+`unidentified` if the log did not contain a diagnostic message
+attributable to the DWI acquisition layer.
 
 Vecta-DWI v0.1 was applied to all 1,275 sessions using the same
 vecta assess command with the dwi_connectomics profile used for the CIDUR

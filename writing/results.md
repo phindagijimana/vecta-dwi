@@ -283,6 +283,8 @@ undefined (—) when no sessions are flagged. Wilson 95% CIs in brackets.
 
 ᵃ sub-076 (the ready_with_limitations failure) failed at the eddy step for an undetermined cause distinct from the VECTA-DWI-014 condition; 40 other sessions with the same VECTA-DWI-014 finding succeeded. Vecta correctly classified sub-076 as flagged but the QSIPrep failure mechanism was not the criterion's stated condition. See Results: Notable individual cases.
 
+PPV at Level 2 is 0.070 [0.024, 0.186], which requires contextual interpretation: VECTA-DWI-014 flags the structural absence of a reverse-PE EPI acquisition, not a prediction that QSIPrep will abort. The 40 flagged-and-successful GE sessions did not receive SDC; QSIPrep completed via the no-SDC fallback path. These sessions are correctly characterized as having a methodological limitation (absent distortion correction), not as misclassified. PPV should be interpreted as the proportion of flagged sessions that also fail the pipeline, not as the precision of the structural finding itself.
+
 Level 0 (BIDS Validator errors) flags no sessions: all three failures
 produced zero BIDS Validator errors. Level 1 (absent PhaseEncodingDirection
 or TotalReadoutTime) captures two of the three failures — sub-036 and
@@ -304,12 +306,60 @@ cases below.
 
 The three-failure extended cohort spans two mechanistically distinct
 failure modes: metadata absence (VECTA-DWI-021, n=2) and acquisition
-absence (VECTA-DWI-014, n=1). Only a framework that independently
-evaluates both conditions achieves full sensitivity. This is the
-key validation property demonstrated by the Level 1 vs Level 2
-comparison: Level 1 achieves near-perfect precision (PPV 1.000) for
-the metadata-absence mode but has systematic blind spot for the
-acquisition-absence mode.
+absence (VECTA-DWI-014, n=1). In this n=3 sample, Level 1 missed the
+acquisition-absence failure mode and Level 2 captured all three — a
+mechanistically coherent pattern, though the sample is too small for
+formal statistical comparison of sensitivity between levels. The key
+distinction illustrated here is structural: a metadata-completeness
+check and a fieldmap-availability criterion evaluate independent
+evidence layers, and a session can fail for either reason independently.
+The TrackTBI external validation (N=1,071) provides the statistical
+power to evaluate performance; the CIDUR comparison identifies the two
+failure pathways that TrackTBI then tests at scale.
+
+## Comparison with image quality assessment (MRIQC)
+
+MRIQC (Esteban et al., 2017) assesses DWI data quality via image-derived
+metrics: signal-to-noise ratio (SNR) for B0 and diffusion-weighted
+volumes, framewise displacement (FD) for motion estimation, foreground-
+background energy ratio (FBER), entropy focus criterion (EFC), B0 field
+uniformity, and b-value/bvec summary statistics. These metrics are
+derived from the acquired image data and characterize image quality after
+acquisition. MRIQC does not report PhaseEncodingDirection completeness,
+TotalReadoutTime presence, fieldmap availability relative to DWI
+sessions, or gradient file integrity. A session lacking a signed
+PhaseEncodingDirection — the condition that causes QSIPrep to crash
+before preprocessing begins — will receive normal MRIQC image quality
+scores, because the absence of that sidecar field does not degrade
+the acquired signal.
+
+**Table 11b.** Comparison of what each tool reports for the three CIDUR
+failure sessions and 40 false-positive GE sessions.
+
+| Session | Vecta finding | Vecta readiness | MRIQC PED flag | MRIQC fmap flag | QSIPrep outcome |
+|---|---|---|---|---|---|
+| sub-036 ses-1 | VECTA-DWI-021 + VECTA-DWI-001 (no PED) | review_required | not reported | not reported | failure (pre-SDC crash) |
+| sub-069 ses-3 | VECTA-DWI-021 + VECTA-DWI-001 (no PED) | review_required | not reported | not reported | failure (pre-SDC crash) |
+| sub-076 ses-1 | VECTA-DWI-014 (no reverse-PE EPI) | ready_with_limitations | not reported | not reported | failure (eddy stage) |
+| 40 GE sessions | VECTA-DWI-014 (no reverse-PE EPI) | ready_with_limitations | not reported | not reported | success (no-SDC path) |
+| 28 Siemens sessions | none | ready | not reported | not reported | success (SDC applied) |
+
+_MRIQC PED flag / MRIQC fmap flag: MRIQC DWI IQMs do not include
+PhaseEncodingDirection completeness or fieldmap availability fields;
+"not reported" reflects the documented MRIQC DWI output schema, not a
+null result from a run. Empirical MRIQC output for these sessions is
+available from the corresponding author._
+
+The distinction is not that MRIQC is inadequate — it correctly answers
+its design question (is the image quality acceptable?) — but that it
+occupies a different lifecycle layer than Vecta (image quality after
+acquisition versus metadata integrity before pipeline execution). MRIQC
+should be run after Vecta confirms a session is structurally ready;
+for sessions rated review_required or ready_with_limitations, MRIQC
+image quality scores are interpretable only in the context of the
+readiness finding. These tools are complementary: a session can pass
+MRIQC and fail Vecta (metadata absent, image fine) or fail MRIQC and
+pass Vecta (motion artifact, metadata intact).
 
 ## Connectome output metrics
 

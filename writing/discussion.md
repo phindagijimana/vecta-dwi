@@ -129,6 +129,27 @@ downstream QC regardless of SDC status, confirming that VECTA-DWI-014
 correctly characterizes the absent distortion correction as a
 methodological limitation rather than a connectome yield predictor.
 
+**Recommended integration into neuroimaging workflows.** Vecta-DWI is
+designed to be run at BIDS conversion time, before any preprocessing
+batch is submitted. The intended workflow is: (1) convert DICOM to BIDS;
+(2) run `vecta assess` with the appropriate intended-use profile and,
+where available, the original DICOM directory; (3) review the cohort
+aggregate — sessions rated review_required should be inspected for
+PhaseEncodingDirection and TotalReadoutTime completeness before batching;
+sessions rated ready_with_limitations can proceed to preprocessing with
+documentation of the specific limitation (e.g., no SDC will be applied)
+and downstream interpretation adjusted accordingly; sessions rated ready
+can proceed without qualification. This assessment adds minutes per
+session and requires no preprocessing to have run; it surfaces fixable
+metadata gaps at the point where remediation is still practical — before
+computational resources have been committed and before downstream
+analyses depend on potentially incomplete outputs. For the PhaseEncoding
+Direction absence pattern observed in all GE and Philips sessions of the
+TrackTBI cohort, the assessment output provides a specific remediation
+path: re-export from DICOM with a dcm2niix version that populates the
+signed direction field, or manually populate from acquisition parameters
+documented in the scanning protocol.
+
 Two individual cases illustrate additional uses of the framework. The
 first demonstrates a cross-layer inference capability that neither BIDS
 Validator nor a fieldmap presence check can provide. For sub-009
@@ -233,10 +254,20 @@ A second limitation is that Vecta-DWI v0.1 evaluates structural metadata
 and gradient file integrity but does not include image quality assessment.
 Sessions rated ready may still have image quality problems — motion
 artifacts, thermal noise, signal dropout — that are not detectable from
-BIDS metadata alone. Image quality assessment, as provided by tools such
-as MRIQC (Esteban et al., 2017) or eddyqc (Bastiani et al., 2019), addresses a complementary and
-downstream evidence layer; we regard these tools as orthogonal to
-Vecta's scope rather than competitors. A third limitation is that
+BIDS metadata alone. Image quality assessment tools such as MRIQC
+(Esteban et al., 2017) and eddyqc (Bastiani et al., 2019) address a
+complementary downstream evidence layer: MRIQC derives image quality
+metrics (SNR, framewise displacement, B0 uniformity) from the acquired
+image data, while Vecta evaluates metadata integrity before the image
+is ever passed to a pipeline. As described in Results, MRIQC DWI image
+quality metrics do not report PhaseEncodingDirection completeness,
+fieldmap availability, or gradient file integrity — the conditions Vecta
+specifically evaluates. A session can pass MRIQC (image quality
+acceptable) and fail Vecta (metadata absent), or fail MRIQC (motion
+artifact) and pass Vecta (metadata intact). These tools are orthogonal
+and designed to be used in sequence: Vecta at BIDS conversion time to
+confirm structural readiness, MRIQC after preprocessing to characterize
+image quality. An image quality domain is planned for Vecta-DWI v0.2. A third limitation is that
 DICOM-source module variables (VECTA-DWI-050, VECTA-DWI-060) require
 original DICOM to be available alongside the BIDS dataset. Sites that
 retain only the BIDS representation will receive lower assessment
@@ -286,7 +317,22 @@ conversion-boundary traceability — derived map detection, multi-series
 disambiguation, and session-to-DICOM mapping validation — is a priority
 for future versions and would make the assessment scope contiguous from
 DICOM through BIDS.
-A sixth limitation, revealed by the TrackTBI external validation, is
+A sixth limitation is that outcome-based validation was conducted
+against one pipeline only (QSIPrep 1.0.1.dev0). The readiness criteria
+are designed around requirements common to BIDS-App DWI pipelines —
+PhaseEncodingDirection for SDC, TotalReadoutTime for SDC calibration,
+gradient files for DWI modeling — but the claim that Vecta findings
+predict failure has been empirically tested only against QSIPrep.
+The two blocking failure modes identified in CIDUR (absent PED causing
+QSIPrep crash, absent fieldmap causing no-SDC fallback) are not
+QSIPrep-specific: any pipeline that reads PhaseEncodingDirection from
+the BIDS sidecar (fMRIPrep, dMRIprep, Tractoflow) will encounter the
+same NaN-handling issue, and the fieldmap-absence condition is a BIDS-
+level acquisition property, not a QSIPrep behavior. Confirming that
+these criteria predict failure in at least one additional pipeline
+(fMRIPrep or MRtrix3-based workflow) is a priority for v0.2 validation.
+
+A seventh limitation, revealed by the TrackTBI external validation, is
 that Vecta does not currently evaluate the metadata integrity of
 non-EPI fieldmap acquisitions. The 7 false negatives in the TrackTBI
 cohort — sessions rated ready_with_limitations (VECTA-DWI-014) that

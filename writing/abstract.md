@@ -3,8 +3,9 @@
 DWI preprocessing pipelines require acquisition parameters, gradient
 files, and fieldmap acquisitions to be present, internally consistent,
 and preserved through BIDS conversion; when unmet, pipelines fail
-silently or produce outputs of uncertain validity, yet no framework
-exists to assess processing readiness before preprocessing begins. We
+silently or produce outputs of uncertain validity, yet no generalizable,
+declarative, version-controlled framework exists to assess preprocessing
+readiness at the metadata layer before pipelines run. We
 developed Vecta-DWI, a declarative Data Birth Integrity (DBI) framework
 that evaluates 22 variables and 8 criteria against a declared
 intended-use profile without requiring preprocessing. Criteria were
