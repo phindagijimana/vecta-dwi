@@ -1,5 +1,5 @@
 assessment_status_state: completed_with_unknowns
-readiness_state: ready_with_limitations
+readiness_state: not_ready
 variables:
   VECTA.DWI.ACQ.BVAL_COUNT:
     value: 7
@@ -20,6 +20,8 @@ criteria:
   VECTA-DWI-001: satisfied
   VECTA-DWI-014: finding             # PE known + no complementary → false → finding
   VECTA-DWI-021: satisfied
+  VECTA-DWI-030: finding             # bvec absent → gradient files missing → blocking
 findings_present:
   VECTA-DWI-001: false
   VECTA-DWI-014: true
+  VECTA-DWI-030: true

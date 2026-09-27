@@ -91,6 +91,21 @@
       "status": "finding"
     },
     {
+      "criterion_id": "VECTA-DWI-031",
+      "criterion_version": "0.1.0",
+      "evaluated_at": "<TIMESTAMP>",
+      "evaluation_engine_version": "0.1.0",
+      "finding_refs": [],
+      "input_snapshot": {
+        "VECTA.DWI.ACQ.BVEC_PLAUSIBILITY": {
+          "state": "unknown",
+          "value": null
+        }
+      },
+      "profile_id": "dwi_connectomics",
+      "status": "unknown"
+    },
+    {
       "criterion_id": "VECTA-DWI-040",
       "criterion_version": "0.1.0",
       "evaluated_at": "<TIMESTAMP>",
@@ -405,7 +420,9 @@
     "vecta_software_version": "0.1.0-dev0"
   },
   "readiness": {
-    "blocking_finding_refs": [],
+    "blocking_finding_refs": [
+      "finding-0002"
+    ],
     "dimensions": {
       "assessment_completeness": {
         "applicable_variables": 17,
@@ -417,11 +434,13 @@
         "observed_or_derived": 12,
         "ratio": 0.7059,
         "unknown": 5,
-        "unknown_criteria": 2
+        "unknown_criteria": 3
       },
       "processing_readiness": {
-        "contributing_findings": [],
-        "state": "ready_with_limitations"
+        "contributing_findings": [
+          "finding-0002"
+        ],
+        "state": "not_ready"
       }
     },
     "limitations": [],
@@ -429,7 +448,7 @@
     "profile_version": "0.1.0",
     "review_finding_refs": [],
     "rule_version": "readiness_dwi_v1",
-    "state": "ready_with_limitations"
+    "state": "not_ready"
   },
   "schema_version": "0.1.0",
   "session_id": "01",

@@ -1,5 +1,5 @@
 assessment_status_state: completed_with_unknowns
-readiness_state: ready_with_limitations
+readiness_state: not_ready
 variables:
   VECTA.DWI.ACQ.BVAL_COUNT:
     value: null

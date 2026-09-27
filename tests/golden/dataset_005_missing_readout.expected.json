@@ -91,6 +91,21 @@
       "status": "satisfied"
     },
     {
+      "criterion_id": "VECTA-DWI-031",
+      "criterion_version": "0.1.0",
+      "evaluated_at": "<TIMESTAMP>",
+      "evaluation_engine_version": "0.1.0",
+      "finding_refs": [],
+      "input_snapshot": {
+        "VECTA.DWI.ACQ.BVEC_PLAUSIBILITY": {
+          "state": "derived",
+          "value": true
+        }
+      },
+      "profile_id": "dwi_connectomics",
+      "status": "satisfied"
+    },
+    {
       "criterion_id": "VECTA-DWI-040",
       "criterion_version": "0.1.0",
       "evaluated_at": "<TIMESTAMP>",
@@ -401,7 +416,7 @@
       "assessment_completeness": {
         "applicable_variables": 17,
         "calculation_id": "assessment_completeness_v1",
-        "evaluable_criteria": 5,
+        "evaluable_criteria": 6,
         "extraction_failed": 0,
         "invalid": 0,
         "not_collected": 0,
